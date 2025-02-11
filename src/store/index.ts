@@ -52,6 +52,8 @@ export default useCartStore;
 
 export const useProductStore = create<ProductState>((set) => ({
   products: [],
+  setProducts: (product) =>
+    set((state) => ({ products: [...state.products, product] })),
   fetchProducts: async () => {
     try {
       const data = await fetchProducts(); // Fetch products from Supabase

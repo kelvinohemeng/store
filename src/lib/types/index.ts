@@ -7,6 +7,7 @@ export interface Product {
   product_type: string;
   stock: number;
   quantity: number;
+  image_url: string[];
 }
 export interface PaystactProduct {
   id: string | number;
@@ -38,5 +39,15 @@ export interface CartState {
 }
 export interface ProductState {
   products: Product[];
+  setProducts: (product: Product) => void;
   fetchProducts: () => Promise<void>;
 }
+
+export type Order = {
+  id: number | string;
+  total: number;
+  status: string;
+  created_at: string;
+  quantity: number;
+  items: Product[];
+};
