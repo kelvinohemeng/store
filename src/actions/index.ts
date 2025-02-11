@@ -68,3 +68,7 @@ export const submitNewProduct = async (formData: FormData) => {
     };
   }
 };
+
+export const deleteProduct = async (id: string | number) => {
+  const { error } = await supabase.from("Products").delete().eq("id", id);
+};

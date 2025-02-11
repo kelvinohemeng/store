@@ -48,7 +48,6 @@ export const useCartStore = create<CartState>((set, get) => ({
   // Get total number of items in cart (sum of quantities)
   totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
 }));
-export default useCartStore;
 
 export const useProductStore = create<ProductState>((set) => ({
   products: [],
@@ -62,4 +61,14 @@ export const useProductStore = create<ProductState>((set) => ({
       console.error("Error fetching products:", error);
     }
   },
+}));
+
+type State = {
+  state: boolean;
+  setState: (newState: boolean) => void;
+};
+
+export const useProductSlideState = create<State>((set) => ({
+  state: false,
+  setState: (newState) => set({ state: newState }),
 }));
