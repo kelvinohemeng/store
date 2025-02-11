@@ -38,24 +38,26 @@ const AdminRoot = ({ children }: { children: ReactNode }) => {
 
         {/* //content */}
         <div className="w-full flex flex-col">
-          <div className="min-h-[250px] flex flex-col justify-center p-8">
-            <div className="max-w-[500px]">
-              <h1 className="text-4xl font-semibold capitalize mb-6">
-                Your {currentPath.split("/").at(-1)}
-              </h1>
-              <p className="text-lg mb-3">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                Voluptate consectetur laboriosam nam, ex incidunt iste
-              </p>
+          <div className=" flex flex-col justify-center p-8 py-12">
+            <div className="flex justify-between">
+              <div>
+                <h1 className="text-4xl font-semibold capitalize mb-6">
+                  Your {currentPath.split("/").at(-1)}
+                </h1>
+                <p className="text-base mb-3">
+                  Add a ew products to your online store,{" "}
+                </p>
+              </div>
               <button
                 onClick={() => setState(true)}
-                className="w-fit px-5 py-2 bg-green-500 text-white font-semibold rounded-lg"
+                className="w-fit h-fit px-5 py-2 bg-green-500 text-white font-semibold rounded-lg flex gap-3 text-lg"
               >
-                Add new products
+                <span>Add new products</span>
+                <span>+</span>
               </button>
             </div>
           </div>
-          <div className="w-full h-[1px] bg-black" />
+          <div className="w-full h-[1px] bg-slate-600 border-opacity-70" />
           <div className="p-8 overflow-y-scroll !overflow-x-hidden">
             {children}
           </div>
