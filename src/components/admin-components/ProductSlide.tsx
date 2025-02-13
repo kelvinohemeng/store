@@ -8,13 +8,13 @@ import imageCompression from "browser-image-compression";
 
 export default function CreateProductSlide() {
   const categories = ["Electronics", "Fashion", "Home & Kitchen"];
-  const [selectedCategory, setSelectedCategory] = useState("");
+  // const [selectedCategory, setSelectedCategory] = useState("");
 
-  const handleCategoryChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSelectedCategory(event.target.value);
-  };
+  // const handleCategoryChange = (
+  //   event: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   setSelectedCategory(event.target.value);
+  // };
 
   const { state, setState } = useProductSlideState();
   const ref = useRef<HTMLFormElement>(null);
@@ -62,7 +62,7 @@ export default function CreateProductSlide() {
     try {
       setisLoading(true);
 
-      const category = formData.get("category") as string;
+      // const category = formData.get("category") as string;
 
       // Append all selected images to the FormData
       images.forEach((image, index) => {
@@ -74,7 +74,7 @@ export default function CreateProductSlide() {
 
       fetchProducts();
     } catch (err: any) {
-      alert("Failed to create product");
+      alert(`Failed to create product: ${err.message}`);
     } finally {
       setState("");
       setImages([]);

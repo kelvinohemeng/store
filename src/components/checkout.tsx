@@ -2,12 +2,12 @@
 "use client";
 
 import { supabase } from "@/lib/utils/supabase";
-import useCartStore from "@/store";
+import { useCartStore } from "@/store";
 import { useState } from "react";
 
 export const CheckoutButton = () => {
   const [loading, setLoading] = useState(false);
-  const { items, clearCart, totalPrice } = useCartStore();
+  const { items, totalPrice } = useCartStore();
   const total = totalPrice();
 
   const initializePayment = async () => {

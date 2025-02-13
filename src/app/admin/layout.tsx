@@ -2,15 +2,10 @@
 
 import CreateButton from "@/components/admin-components/CreateButton";
 import SidebarNav from "@/components/admin-components/SidebarNav";
-import { useProductSlideState } from "@/store";
-import { FolderSimplePlus } from "@phosphor-icons/react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode } from "react";
 
 const AdminRoot = ({ children }: { children: ReactNode }) => {
-  const { setState } = useProductSlideState();
-
   const currentPath = usePathname();
 
   return (

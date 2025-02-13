@@ -1,4 +1,4 @@
-import { Order } from "@/lib/types";
+// import { Order } from "@/lib/types";
 
 export default async function OrderConfirmation({
   params,
@@ -8,7 +8,7 @@ export default async function OrderConfirmation({
   const orderId = (await params).orderId;
 
   async function fetchOrder(id: string) {
-    const response = await fetch("http://localhost:3000/api/orders", {
+    const response = await fetch("http://ecomara.netlify.app/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

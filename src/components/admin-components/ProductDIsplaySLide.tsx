@@ -10,7 +10,7 @@ import "swiper/css";
 import { NextButton, PrevButton } from "./SwiperBtn";
 import { useRef } from "react";
 import DefaultButton from "../global-components/ProductButton";
-import { deleteProduct, updateProduct } from "@/actions";
+import { deleteProduct } from "@/actions";
 import UpdateProductSlide from "./UpdateProductSlide";
 
 export default function ProductDisplaySlide({
@@ -64,8 +64,8 @@ export default function ProductDisplaySlide({
             }}
           >
             {product?.image_url?.map((imageFile, index) => (
-              <SwiperSlide>
-                <div key={index} className=" aspect-video">
+              <SwiperSlide key={index}>
+                <div className=" aspect-video">
                   <img
                     className="w-full h-full object-cover"
                     src={imageFile}

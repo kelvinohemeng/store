@@ -1,10 +1,9 @@
 "use client";
 
-import { file, Product } from "@/lib/types";
+import { Product } from "@/lib/types";
 import { useProductSlideState } from "@/store";
 import Image from "next/image";
 import React, { useState } from "react";
-import ProductDisplaySlide from "./ProductDIsplaySLide";
 
 const ProductCard = ({
   product,
@@ -17,7 +16,7 @@ const ProductCard = ({
   isLoading?: boolean;
   outOfStock?: boolean;
 }) => {
-  const { state, setState } = useProductSlideState();
+  const { setState } = useProductSlideState();
 
   const [imageLoaded, setImageLoaded] = useState(false);
   const imageUrl: string | undefined = product?.image_url[0];
@@ -31,7 +30,7 @@ const ProductCard = ({
       <>
         <div
           onClick={openProductDetails}
-          key={product?.id}
+          key={product?.id || index}
           className="relative w-full max-w-[250px] min-w-[250px] p-4 border border-slate-300 bg-white rounded-xl flex flex-col gap-4 transition hover:translate-y-[-12px] cursor-pointer"
         >
           <div className="relative w-full aspect-square overflow-hidden rounded-md">

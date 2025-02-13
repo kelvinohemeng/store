@@ -1,10 +1,9 @@
 import { Product } from "@/lib/types";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useProductStore, useSelectedState } from "@/store";
+import { useSelectedState } from "@/store";
 import CreateButton from "./CreateButton";
 
 export default function ProductDisplay({ products }: { products: Product[] }) {
@@ -12,7 +11,6 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log(products);
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000); // Wait for 2 seconds before deciding if there are no products
@@ -42,7 +40,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
           <AnimatePresence>
             {product.quantity > 0 ? (
               <motion.div
-                key={product.id}
+                key={product.id || index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -40 }}

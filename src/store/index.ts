@@ -1,12 +1,6 @@
 import { create } from "zustand";
 import { fetchProducts } from "@/lib/utils/supabase";
-import {
-  CartState,
-  ProductState,
-  Product,
-  SelectedState,
-  Action,
-} from "@/lib/types";
+import { CartState, ProductState, SelectedState, Action } from "@/lib/types";
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
