@@ -6,6 +6,7 @@ import { useProductSlideState, useProductStore } from "@/store";
 import { updateProduct } from "@/actions";
 import imageCompression from "browser-image-compression";
 import { Product } from "@/lib/types";
+import Image from "next/image";
 
 const UpdateProductSlide = ({ product }: { product: Product | null }) => {
   const { state, setState } = useProductSlideState();
@@ -163,7 +164,7 @@ const UpdateProductSlide = ({ product }: { product: Product | null }) => {
                     key={index}
                     className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-lg overflow-hidden"
                   >
-                    <img
+                    <Image
                       src={url}
                       alt={`Preview ${index}`}
                       className="w-full h-full object-cover border group-hover:opacity-80"
