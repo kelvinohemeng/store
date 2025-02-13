@@ -9,6 +9,13 @@ export interface Product {
   quantity: number;
   image_url: string[];
 }
+
+export type file = {
+  file: {
+    normalFile: string;
+    blobExtension: string;
+  };
+};
 export interface PaystactProduct {
   id: string | number;
   name: string;
@@ -38,6 +45,8 @@ export interface CartState {
   totalPrice: () => number;
 }
 export interface ProductState {
+  isLoading: boolean;
+  setisLoading: (loadingState: boolean) => void;
   products: Product[];
   setProducts: (product: Product) => void;
   fetchProducts: () => Promise<void>;
@@ -51,3 +60,10 @@ export type Order = {
   quantity: number;
   items: Product[];
 };
+
+export interface SelectedState {
+  selectedProduct: Product | null;
+  setSelectedProduct: (product: Product) => void;
+}
+
+export type Action = "" | "view" | "update" | "create";

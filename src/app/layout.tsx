@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        className="w-screen min-h-screen overflow-x-hidden"
+        className="w-screen min-h-screen h-full overflow-x-hidden"
       >
         {children}
       </body>

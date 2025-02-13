@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { fetchProducts } from "@/lib/utils/supabase";
-import { CartState, ProductState, Product } from "@/lib/types";
+import {
+  CartState,
+  ProductState,
+  Product,
+  SelectedState,
+  Action,
+} from "@/lib/types";
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
@@ -49,26 +55,36 @@ export const useCartStore = create<CartState>((set, get) => ({
   totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
 }));
 
-export const useProductStore = create<ProductState>((set) => ({
+export const useProductStore = create<ProductState>((set, get) => ({
+  isLoading: true,
+  setisLoading: (loadingState) => set({ isLoading: loadingState }),
   products: [],
   setProducts: (product) =>
     set((state) => ({ products: [...state.products, product] })),
   fetchProducts: async () => {
     try {
+      get().setisLoading(true);
       const data = await fetchProducts(); // Fetch products from Supabase
       set({ products: data }); // Update the state with fetched products
     } catch (error) {
       console.error("Error fetching products:", error);
+    } finally {
+      get().setisLoading(false);
     }
   },
 }));
 
 type State = {
-  state: boolean;
-  setState: (newState: boolean) => void;
+  state: Action;
+  setState: (newState: Action) => void;
 };
 
 export const useProductSlideState = create<State>((set) => ({
-  state: false,
+  state: "",
   setState: (newState) => set({ state: newState }),
+}));
+
+export const useSelectedState = create<SelectedState>((set) => ({
+  selectedProduct: null,
+  setSelectedProduct: (product) => set({ selectedProduct: product }),
 }));
