@@ -12,106 +12,113 @@ const UpdateProductSlide = ({ product }: { product: Product | null }) => {
   const { state, setState } = useProductSlideState();
   const ref = useRef<HTMLFormElement>(null);
   const { fetchProducts, setisLoading } = useProductStore();
-  const [images, setImages] = useState<File[]>([]);
-  const [initialPreviewUrls, setInitialPreviewUrls] = useState<string[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [removedImages, setRemovedImages] = useState<string[]>([]); // Track deleted images
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
 
   useEffect(() => {
     if (product) {
-      setInitialPreviewUrls(product.image_url || []);
-      // Initialize other form fields if needed
+      setExistingImages(product.image_url || []);
     }
   }, [product]);
 
-  const allPreviews = [...initialPreviewUrls, ...previewUrls];
-
-  // handle update change
-  const handleUpdateImageChange = async (
+  const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (!event.target.files) return;
 
     const files = Array.from(event.target.files);
+    const totalImages = existingImages.length + newImages.length + files.length;
 
-    // Calculate remaining slots (max 3 total)
-    const remainingSlots = 3 - initialPreviewUrls.length;
-
-    if (files.length > remainingSlots) {
-      alert(`You can only upload ${remainingSlots.toString()} more image(s).`);
+    if (totalImages > 3) {
+      alert(
+        `You can only have up to 3 images total. You can add ${
+          3 - existingImages.length - newImages.length
+        } more.`
+      );
       return;
     }
 
-    const compressedImages = await Promise.all(
-      files.map(async (file) => {
-        const options = {
-          maxSizeMB: 1,
-          maxWidthOrHeight: 1024,
-          useWebWorker: true,
-        };
-        const compressedBlob = await imageCompression(file, options);
+    try {
+      const compressedImages = await Promise.all(
+        files.map(async (file) => {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1024,
+            useWebWorker: true,
+          };
 
-        const fileExt = file.name.split(".").pop() || "jpeg";
-        return new File([compressedBlob], `${file.name}`, {
-          type: `image/${fileExt}`,
-        });
-      })
-    );
+          const compressedBlob = await imageCompression(file, options);
+          const fileExtension =
+            file.name.split(".").pop()?.toLowerCase() || "jpg";
 
-    setImages((prev) => [...prev, ...compressedImages]);
+          // Create a new filename with timestamp to avoid duplicates
+          const timestamp = Date.now();
+          const newFilename = `product-image-${timestamp}.${fileExtension}`;
 
-    // Ensure new previews are generated properly
-    // const newPreviews = compressedImages.map((file) =>
-    //   URL.createObjectURL(file)
-    // );
-    setPreviewUrls((prev) => [
-      ...prev,
-      ...compressedImages.map((file) => URL.createObjectURL(file)),
-    ]);
-  };
+          return new File([compressedBlob], newFilename, {
+            type: `image/${fileExtension}`,
+          });
+        })
+      );
 
-  // Ensure removal affects both state variables
-  const removeImage = (index: number) => {
-    if (index < initialPreviewUrls.length) {
-      // Remove from existing images (need server-side handling)
-      const removedUrl = initialPreviewUrls[index];
-      setRemovedImages((prev) => [...prev, removedUrl]); // Track it
-      setInitialPreviewUrls((prev) => prev.filter((_, i) => i !== index));
-    } else {
-      // Remove from new uploads
-      const newIndex = index - initialPreviewUrls.length;
-      setImages((prev) => prev.filter((_, i) => i !== newIndex));
-      setPreviewUrls((prev) => prev.filter((_, i) => i !== newIndex));
+      setNewImages((prev) => [...prev, ...compressedImages]);
+    } catch (error) {
+      console.error("Error processing images:", error);
+      alert("Failed to process images. Please try again.");
     }
   };
 
-  //server action
+  const removeExistingImage = (index: number) => {
+    const imageUrl = existingImages[index];
+    setImagesToDelete((prev) => [...prev, imageUrl]);
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index: number) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const updateAction = async (formData: FormData) => {
     try {
       setisLoading(true);
 
-      // Append removed images (so the server knows which ones to delete)
-      removedImages.forEach((url) => formData.append("removedImages", url));
-
-      // Append all selected images to the FormData
-      initialPreviewUrls.forEach((url) =>
-        formData.append("existingImages", url)
-      );
-      images.forEach((image) => {
-        formData.append("images", image);
+      // Add images to be deleted
+      imagesToDelete.forEach((url) => {
+        formData.append("imagesToDelete", url);
       });
-      // reset values
-      if (product?.id) {
-        await updateProduct(product.id, formData);
-        fetchProducts();
-        setState("");
+
+      // Add remaining existing images
+      existingImages.forEach((url) => {
+        formData.append("existingImages", url);
+      });
+
+      // Add new images
+      newImages.forEach((file) => {
+        formData.append("newImages", file);
+      });
+
+      if (!product?.id) {
+        throw new Error("Product ID is missing");
       }
+
+      const result = await updateProduct(product.id, formData);
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
+      await fetchProducts();
+      setState("");
+
+      // Reset states
+      setNewImages([]);
+      setExistingImages([]);
+      setImagesToDelete([]);
     } catch (err: any) {
-      alert(`Failed to create product: ${err?.message}`);
+      console.error("Update error:", err);
+      alert(`Failed to update product: ${err?.message}`);
     } finally {
-      setImages([]);
-      setPreviewUrls([]);
       setisLoading(false);
       ref?.current?.reset();
     }
@@ -154,44 +161,68 @@ const UpdateProductSlide = ({ product }: { product: Product | null }) => {
             </div>
           </label>
           <div className="space-y-3 h-full">
-            <p>Select images for Products</p>
+            <p>Product Images (Max 3)</p>
             <div id="product_image" className="flex gap-4">
-              {/* Image Preview Section */}
-              {/* {previewUrls.length > 0 && ( )} */}
               <div className="flex flex-wrap gap-3">
-                {allPreviews.map((url, index) => (
+                {/* Existing Images */}
+                {existingImages.map((url, index) => (
                   <div
-                    key={index}
+                    key={`existing-${index}`}
                     className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-lg overflow-hidden"
                   >
                     <Image
                       src={url}
-                      alt={`Preview ${index}`}
-                      className="w-full h-full object-cover border group-hover:opacity-80"
+                      alt={`Product ${index + 1}`}
+                      fill
+                      className="object-cover group-hover:opacity-80"
                     />
                     <button
                       type="button"
+                      onClick={() => removeExistingImage(index)}
                       className="absolute top-2 right-2 bg-red-500 text-white text-sm h-5 w-5 rounded-full opacity-0 group-hover:opacity-100"
-                      onClick={() => removeImage(index)}
                     >
                       ✕
                     </button>
                   </div>
                 ))}
-                <label htmlFor="images" className=" flex flex-col gap-4">
-                  <div className=" !cursor-pointer flex items-center justify-center relative h-[90px]  aspect-square border border-slate-400 rounded-lg">
-                    <input
-                      id="images"
-                      type="file"
-                      name="images"
-                      multiple
-                      accept="image/*"
-                      className=" w-full h-full opacity-0 pointer-events-none absolute"
-                      onChange={handleUpdateImageChange}
+
+                {/* New Images */}
+                {newImages.map((file, index) => (
+                  <div
+                    key={`new-${index}`}
+                    className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-lg overflow-hidden"
+                  >
+                    <Image
+                      src={URL.createObjectURL(file)}
+                      alt={`New upload ${index + 1}`}
+                      fill
+                      className="object-cover group-hover:opacity-80"
                     />
-                    <span className="text-4xl">+</span>
+                    <button
+                      type="button"
+                      onClick={() => removeNewImage(index)}
+                      className="absolute top-2 right-2 bg-red-500 text-white text-sm h-5 w-5 rounded-full opacity-0 group-hover:opacity-100"
+                    >
+                      ✕
+                    </button>
                   </div>
-                </label>
+                ))}
+
+                {/* Upload Button */}
+                {existingImages.length + newImages.length < 3 && (
+                  <label className="flex flex-col gap-4 cursor-pointer">
+                    <div className="flex items-center justify-center relative h-[90px] aspect-square border border-slate-400 rounded-lg">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageChange}
+                        className="w-full h-full opacity-0 absolute cursor-pointer"
+                      />
+                      <span className="text-4xl">+</span>
+                    </div>
+                  </label>
+                )}
               </div>
             </div>
           </div>
@@ -221,7 +252,7 @@ const UpdateProductSlide = ({ product }: { product: Product | null }) => {
           </label>
           <ProductButton
             text="Update Product"
-            pendingText="Your Product is Updating"
+            pendingText="Updating Product..."
           />
         </form>
       </div>

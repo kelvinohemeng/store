@@ -67,7 +67,7 @@ export default function ProductDisplaySlide({
             {product?.image_url?.map((imageFile, index) => (
               <SwiperSlide key={index}>
                 <div className=" aspect-video">
-                  <Image
+                  <img
                     className="w-full h-full object-cover"
                     src={imageFile}
                     alt=""

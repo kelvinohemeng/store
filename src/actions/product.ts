@@ -86,88 +86,122 @@ export const deleteProduct = async (id: string | number | undefined) => {
 
 //update product from table
 
-export const updateProduct = async (
-  id: string | number | undefined,
+// ... existing code ...
+
+export async function updateProduct(
+  productId: string | number | undefined,
   formData: FormData
-) => {
-  if (!id) return { success: false, error: "Product ID is required" };
-
-  const name = formData.get("name");
-  const description = formData.get("description");
-  const type = formData.get("type");
-  const imageFiles = formData.getAll("images") as File[];
-  const removedImages = formData.getAll("removedImages") as string[];
-  const existingImages = formData.getAll("existingImages") as string[];
-
+) {
   try {
-    const deletePromises = removedImages.map(async (url) => {
-      // Extract path from URL (adjust based on your URL structure)
-      const path = url.split("/product_images/")[1];
-      const { error } = await supabase.storage
-        .from("product_images")
-        .remove([path]);
+    // Get all the form data
+    const existingImages = formData.getAll("existingImages") as string[];
+    const imagesToDelete = formData.getAll("imagesToDelete") as string[];
+    const newImageFiles = formData.getAll("newImages") as File[];
 
-      if (error) console.error("Delete failed for:", path, error.message);
-    });
+    // Delete images from storage
+    for (const imageUrl of imagesToDelete) {
+      const path = imageUrl.split("/products/").pop(); // Get filename from URL
+      if (path) {
+        const { error: deleteError } = await supabase.storage
+          .from("product_images")
+          .remove([`products/${path}`]);
 
-    await Promise.all(deletePromises);
-
-    let newImageUrls: string[] = [];
-    if (imageFiles.length > 0) {
-      newImageUrls = await uploadProductImages(imageFiles);
+        if (deleteError) {
+          console.error("Error deleting image:", deleteError);
+          throw new Error(`Failed to delete image: ${deleteError.message}`);
+        }
+      }
     }
 
-    const { data, error } = await supabase
-      .from("Products")
-      .update({
-        product_name: name,
-        product_description: description,
-        product_type: type,
-        image_url: [...existingImages, ...newImageUrls],
-      })
-      .eq("id", id)
-      .select();
+    // Upload new images
+    const newImageUrls = await Promise.all(
+      newImageFiles.map(async (file) => {
+        const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const fileName = `product_${Date.now()}_${Math.random()
+          .toString(36)
+          .slice(2)}.${fileExt}`;
+        const filePath = `products/${fileName}`;
 
-    if (error) throw error;
-    return { success: true, data };
-  } catch (e) {
-    console.error("Update failed:", e);
+        const { data, error: uploadError } = await supabase.storage
+          .from("product_images")
+          .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error("Error uploading image:", uploadError);
+          throw new Error(`Failed to upload image: ${uploadError.message}`);
+        }
+
+        // Get public URL
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("product_images").getPublicUrl(filePath);
+
+        return publicUrl;
+      })
+    );
+
+    // Combine existing and new image URLs
+    const finalImageUrls = [...existingImages, ...newImageUrls];
+
+    // Update product in database
+    const { error: updateError } = await supabase
+      .from("Products") // Note the capital P in Products
+      .update({
+        product_name: formData.get("name"),
+        product_description: formData.get("description"),
+        product_type: formData.get("type"),
+        image_url: finalImageUrls,
+      })
+      .eq("id", productId);
+
+    if (updateError) {
+      console.error("Error updating product:", updateError);
+      throw new Error(`Database update failed: ${updateError.message}`);
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Update product error:", error);
     return {
       success: false,
-      error: e instanceof Error ? e.message : "Unknown error",
+      error:
+        error instanceof Error ? error.message : "Failed to update product",
     };
   }
-};
+}
 
-const uploadProductImages = async (files: File[]) => {
-  const uploadedImageUrls: string[] = [];
-  const uniqueFiles = new Map();
+// const uploadProductImages = async (files: File[]) => {
+//   const uploadedImageUrls: string[] = [];
+//   const uniqueFiles = new Map();
 
-  for (const file of files) {
-    const fileExt = file.name.split(".").pop() || "jpeg";
-    if (uniqueFiles.has(file.name)) continue;
-    uniqueFiles.set(file.name, true);
+//   for (const file of files) {
+//     const fileExt = file.name.split(".").pop() || "jpeg";
+//     if (uniqueFiles.has(file.name)) continue;
+//     uniqueFiles.set(file.name, true);
 
-    const fileName = `product_${Date.now()}_${Math.random()
-      .toString(36)
-      .slice(2)}.${fileExt}`;
-    const filePath = `products/${fileName}`;
+//     const fileName = `product_${Date.now()}_${Math.random()
+//       .toString(36)
+//       .slice(2)}.${fileExt}`;
+//     const filePath = `products/${fileName}`;
 
-    const { error } = await supabase.storage
-      .from("product_images")
-      .upload(filePath, file, { cacheControl: "3600", upsert: false });
+//     const { error } = await supabase.storage
+//       .from("product_images")
+//       .upload(filePath, file, { cacheControl: "3600", upsert: false });
 
-    if (error) throw new Error(`Image upload failed: ${error.message}`);
+//     if (error) throw new Error(`Image upload failed: ${error.message}`);
 
-    const imageUrl = supabase.storage
-      .from("product_images")
-      .getPublicUrl(filePath).data.publicUrl;
+//     const imageUrl = supabase.storage
+//       .from("product_images")
+//       .getPublicUrl(filePath).data.publicUrl;
 
-    uploadedImageUrls.push(imageUrl);
-  }
+//     uploadedImageUrls.push(imageUrl);
+//   }
 
-  return uploadedImageUrls;
-};
+//   return uploadedImageUrls;
+// };
 
 // const updateExistingProductImages = async (paths: string[]) => {
 //   const { data, error } = await supabase.storage
