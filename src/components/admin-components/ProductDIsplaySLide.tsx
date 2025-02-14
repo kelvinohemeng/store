@@ -10,7 +10,7 @@ import "swiper/css";
 import { NextButton, PrevButton } from "./SwiperBtn";
 import { useRef } from "react";
 import DefaultButton from "../global-components/ProductButton";
-import { deleteProduct } from "@/actions";
+import { deleteProduct } from "@/actions/product";
 import UpdateProductSlide from "./UpdateProductSlide";
 import Image from "next/image";
 

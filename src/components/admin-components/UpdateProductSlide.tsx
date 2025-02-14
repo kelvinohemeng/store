@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ProductButton from "./ProductButton";
 import { useProductSlideState, useProductStore } from "@/store";
-import { updateProduct } from "@/actions";
+import { updateProduct } from "@/actions/product";
 import imageCompression from "browser-image-compression";
 import { Product } from "@/lib/types";
 import Image from "next/image";

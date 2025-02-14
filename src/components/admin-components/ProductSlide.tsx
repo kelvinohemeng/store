@@ -1,6 +1,6 @@
 "use client";
 
-import { submitNewProduct } from "@/actions";
+import { submitNewProduct } from "@/actions/product";
 import { useProductSlideState, useProductStore } from "@/store";
 import { useRef, useState } from "react";
 import ProductButton from "./ProductButton";
