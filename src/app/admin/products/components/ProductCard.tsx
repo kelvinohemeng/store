@@ -45,7 +45,7 @@ const ProductCard = ({
               sizes="100vw"
               className={`w-full h-full object-cover rounded-md transition-all duration-300 grayscale-100 blur-2xl scale-110`}
               alt={product?.product_name ?? "Product image"}
-              onLoadingComplete={() => setImageLoaded(true)}
+              onLoad={() => setImageLoaded(true)}
             />
             <div className="absolute inset-0 z-5 flex items-center justify-center">
               <p className="px-3 py-2 bg-red-500 text-white border-white border rounded-full">
@@ -60,11 +60,11 @@ const ProductCard = ({
               {product?.product_description}
             </p>
             <div className="flex flex-wrap gap-2">
-              <div className="p-2 py-1 text-white bg-green-400 rounded-lg w-full max-w-[40px] grid place-items-center">
-                <span>$ {product?.product_price}</span>
+              <div className="p-2 text-white bg-green-500 rounded-lg w-full max-w-max grid place-items-center">
+                <p className="leading-[100%]">GHC {product?.product_price}</p>
               </div>
               <div className="p-2 py-1 border rounded-lg w-full max-w-[120px] border-slate-400 grid place-items-center">
-                <p>In Stock: {product?.stock}</p>
+                <p className="leading-[100%]">In Stock: {product?.quantity}</p>
               </div>
             </div>
           </div>
@@ -124,11 +124,11 @@ const ProductCard = ({
             {product?.product_description}
           </p>
           <div className="flex flex-wrap gap-2">
-            <div className="p-2 py-1 text-white bg-green-400 rounded-lg w-full max-w-[40px] grid place-items-center">
-              <span>$ {product?.product_price}</span>
+            <div className="p-2 text-white bg-green-500 rounded-lg w-full max-w-max grid place-items-center">
+              <p className="leading-[100%]">GHC {product?.product_price}</p>
             </div>
             <div className="p-2 py-1 border rounded-lg w-full max-w-[120px] border-slate-400 grid place-items-center">
-              <p>In Stock: {product?.stock}</p>
+              <p className="leading-[100%]">In Stock: {product?.quantity}</p>
             </div>
           </div>
         </div>

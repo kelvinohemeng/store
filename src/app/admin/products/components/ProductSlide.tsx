@@ -7,7 +7,7 @@ import ProductButton from "./ProductButton";
 import imageCompression from "browser-image-compression";
 
 export default function CreateProductSlide() {
-  const categories = ["Electronics", "Fashion", "Home & Kitchen"];
+  const categories = ["Dress", "Shoe", "Glasses"];
   // const [selectedCategory, setSelectedCategory] = useState("");
 
   // const handleCategoryChange = (
@@ -21,6 +21,7 @@ export default function CreateProductSlide() {
   const { fetchProducts, setisLoading } = useProductStore();
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<number[]>([]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -34,13 +35,23 @@ export default function CreateProductSlide() {
       return;
     }
 
+    // Initialize progress for new uploads
+    setUploadProgress((prev) => [...prev, ...files.map(() => 0)]);
+
     // Compress images before uploading
     const compressedImages = await Promise.all(
-      files.map(async (file) => {
+      files.map(async (file, index) => {
         const options = {
           maxSizeMB: 1,
           maxWidthOrHeight: 1024,
           useWebWorker: true,
+          onProgress: (progress: number) => {
+            setUploadProgress((prev) => {
+              const newProgress = [...prev];
+              newProgress[images.length + index] = progress;
+              return newProgress;
+            });
+          },
         };
         return await imageCompression(file, options);
       })
@@ -56,6 +67,8 @@ export default function CreateProductSlide() {
 
   const removeImage = (index: number) => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setUploadProgress((prev) => prev.filter((_, i) => i !== index));
   };
 
   const submitAction = async (formData: FormData) => {
@@ -92,7 +105,7 @@ export default function CreateProductSlide() {
         ></div>
       )}
       <div
-        className={`max-w-[450px] p-6 w-full border fixed z-[99] right-0 h-full top-0 bg-white transform ${
+        className={`overflow-y-scroll max-w-[450px] p-6 w-full border fixed z-[99] right-0 h-full top-0 bg-white transform ${
           state === "create" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
@@ -165,29 +178,47 @@ export default function CreateProductSlide() {
           </div>
           <label htmlFor="product_description" className="space-y-3">
             <p>Please descibe your Product</p>
-            <div id="product_description">
-              <input
-                type="text"
+            <div>
+              <textarea
+                id="product_description"
                 name="description"
-                className=" border border-gray-400 p-3 text-lg w-full rounded-md"
+                className=" border border-gray-400 p-3 text-lg w-full rounded-md min-h-[100px]"
                 placeholder="Product Description"
               />
             </div>
           </label>
-          <label htmlFor="product_description" className="space-y-3">
-            <p>What is the price of the product</p>
-            <div id="product_description">
-              <input
-                type="text"
-                name="description"
-                className=" border border-gray-400 p-3 text-lg w-full rounded-md"
-                placeholder="Product Description"
-                defaultValue={`GHC `}
-              />
-            </div>
-          </label>
+          {/* stock and price */}
+          <div className="flex justify-center gap-3">
+            <label htmlFor="product_price" className="space-y-3">
+              <p>Product Price</p>
+              <div className="flex items-center gap-2 border border-gray-400 p-3 text-lg w-full rounded-md focus:outline-none focus:border-transparent">
+                <span>GHC</span>
+                <input
+                  id="product_price"
+                  type="number"
+                  name="price"
+                  className="text-lg w-full focus:outline-none focus:border-transparent "
+                  placeholder="Product Price"
+                  defaultValue={200}
+                />
+              </div>
+            </label>
+            <label htmlFor="stock" className="space-y-3">
+              <p>Available in Stock</p>
+              <div>
+                <input
+                  id="stock"
+                  type="number"
+                  name="stock"
+                  className=" border border-gray-400 p-3 text-lg w-full rounded-md"
+                  placeholder="Product Description"
+                  defaultValue={`100`}
+                />
+              </div>
+            </label>
+          </div>
           <label htmlFor="product_type" className="space-y-3">
-            <p>Select a category for your Product</p>
+            <p>Select Product Category</p>
             <div id="product_type">
               <select
                 name="category"

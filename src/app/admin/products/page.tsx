@@ -1,9 +1,8 @@
 "use client";
 
-import ProductDisplay from "@/components/admin-components/ProductDisplay";
-import ProductDisplaySlide from "@/components/admin-components/ProductDIsplaySLide";
-import CreateProductSlide from "@/components/admin-components/ProductSlide";
-import UpdateProductSlide from "@/components/admin-components/UpdateProductSlide";
+import ProductDisplay from "@/app/admin/products/components/ProductDisplay";
+import ProductDisplaySlide from "@/app/admin/products/components/ProductDIsplaySLide";
+import CreateProductSlide from "@/app/admin/products/components/ProductSlide";
 import { useProductStore, useSelectedState } from "@/store";
 import { useEffect } from "react";
 

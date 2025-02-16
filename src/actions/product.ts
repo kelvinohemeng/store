@@ -6,7 +6,8 @@ import { supabase } from "@/lib/utils/supabase";
 export const submitNewProduct = async (formData: FormData) => {
   const name = formData.get("name");
   const description = formData.get("description");
-  const type = formData.get("type");
+  const price = formData.get("price");
+  const quantity = formData.get("stock");
   const imageFiles = formData.getAll("images") as File[]; // Get multiple images
   const category = formData.get("category") as string; // Get the category value
 
@@ -64,6 +65,8 @@ export const submitNewProduct = async (formData: FormData) => {
           product_description: description,
           product_type: category,
           image_url: imageUrls, // Store array of image URLs
+          product_price: price,
+          quantity: quantity,
         },
       ])
       .select();
@@ -81,7 +84,52 @@ export const submitNewProduct = async (formData: FormData) => {
 
 // delete product from table
 export const deleteProduct = async (id: string | number | undefined) => {
-  const { error } = await supabase.from("Products").delete().eq("id", id);
+  try {
+    // First get the product to access its image URLs
+    const { data: product, error: fetchError } = await supabase
+      .from("Products")
+      .select("image_url")
+      .eq("id", id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // Delete images from storage bucket
+    if (product?.image_url?.length) {
+      for (const imageUrl of product.image_url) {
+        const path = imageUrl.split("/products/").pop(); // Get filename from URL
+        if (path) {
+          const { error: deleteStorageError } = await supabase.storage
+            .from("product_images")
+            .remove([`products/${path}`]);
+
+          if (deleteStorageError) {
+            console.error(
+              "Error deleting image from storage:",
+              deleteStorageError
+            );
+            throw deleteStorageError;
+          }
+        }
+      }
+    }
+
+    // Delete the product from the database
+    const { error: deleteError } = await supabase
+      .from("Products")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) throw deleteError;
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
 };
 
 //update product from table

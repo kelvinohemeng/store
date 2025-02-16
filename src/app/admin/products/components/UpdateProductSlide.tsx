@@ -8,7 +8,11 @@ import imageCompression from "browser-image-compression";
 import { Product } from "@/lib/types";
 import Image from "next/image";
 
-const UpdateProductSlide = ({ product }: { product: Product | null }) => {
+const UpdateProductSlide = ({
+  product,
+}: {
+  product: Product | undefined | null;
+}) => {
   const { state, setState } = useProductSlideState();
   const ref = useRef<HTMLFormElement>(null);
   const { fetchProducts, setisLoading } = useProductStore();
@@ -192,10 +196,9 @@ const UpdateProductSlide = ({ product }: { product: Product | null }) => {
                     key={`new-${index}`}
                     className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-lg overflow-hidden"
                   >
-                    <Image
+                    <img
                       src={URL.createObjectURL(file)}
                       alt={`New upload ${index + 1}`}
-                      fill
                       className="object-cover group-hover:opacity-80"
                     />
                     <button

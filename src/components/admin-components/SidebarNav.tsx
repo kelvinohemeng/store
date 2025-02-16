@@ -8,12 +8,18 @@ import {
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useMemo } from "react";
 
 const SidebarNav = () => {
   const currentPath = usePathname();
 
-  const path = currentPath.split("/").at(-1);
+  const isActive = useMemo(() => {
+    return {
+      dashboard: currentPath === "/admin/dashboard",
+      products: currentPath === "/admin/products",
+      orders: currentPath === "/admin/orders",
+    };
+  }, [currentPath]);
 
   return (
     <nav>
@@ -37,43 +43,43 @@ const SidebarNav = () => {
           </div>
         </div>
         <div className="links flex flex-col gap-y-3">
-          <Link href={"/admin/dashboard"}>
+          <Link href="/admin/dashboard" prefetch>
             <button
-              className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-100 flex gap-2  transition duration-300 ${
-                path === "dashboard" && "bg-slate-100"
+              className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-100 flex gap-2 transition duration-300 ${
+                isActive.dashboard && "bg-slate-100"
               }`}
             >
               <SquaresFour
                 size={22}
-                weight={`${path === "dashboard" ? "fill" : "regular"}`}
+                weight={isActive.dashboard ? "fill" : "regular"}
               />
-              <p> Dashboard</p>
+              <p>Dashboard</p>
             </button>
           </Link>
-          <Link href={"/admin/products"}>
+          <Link href="/admin/products" prefetch>
             <button
-              className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-100 flex gap-2  transition duration-300 ${
-                path === "products" && "bg-slate-100"
+              className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-100 flex gap-2 transition duration-300 ${
+                isActive.products && "bg-slate-100"
               }`}
             >
               <ShoppingBagOpen
                 size={22}
-                weight={`${path === "products" ? "fill" : "regular"}`}
+                weight={isActive.products ? "fill" : "regular"}
               />
-              <p> Products</p>
+              <p>Products</p>
             </button>
           </Link>
-          <Link href={"/admin/orders"}>
+          <Link href="/admin/orders" prefetch>
             <button
-              className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-100 flex gap-2  transition duration-300 ${
-                path === "orders" && "bg-slate-100"
+              className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-100 flex gap-2 transition duration-300 ${
+                isActive.orders && "bg-slate-100"
               }`}
             >
               <Invoice
                 size={22}
-                weight={`${path === "orders" ? "fill" : "regular"}`}
+                weight={isActive.orders ? "fill" : "regular"}
               />
-              <p> Orders</p>
+              <p>Orders</p>
             </button>
           </Link>
         </div>

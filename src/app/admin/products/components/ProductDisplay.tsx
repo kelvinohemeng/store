@@ -1,12 +1,41 @@
+"use client";
+
 import { Product } from "@/lib/types";
 import { useEffect, useState } from "react";
-import ProductCard from "./ProductCard";
 
 import { motion, AnimatePresence } from "motion/react";
 import { useSelectedState } from "@/store";
+import ProductCard from "./ProductCard";
 import CreateButton from "./CreateButton";
+import { createOrder } from "@/actions/order";
+
+const orderData = {
+  customerName: "John Doe",
+  email: "john@example.com",
+  items: [
+    {
+      productId: "0d3d2ba3-e0a4-471c-9760-d2bb13e74b94",
+      quantity: 2,
+      price: 29.99,
+    },
+    {
+      productId: "0d3d2ba3-e0a4-471c-9760-d2bb13e74b94",
+      quantity: 1,
+      price: 49.99,
+    },
+  ],
+  deliveryAddress: {
+    street: "123 Main St",
+    city: "New York",
+    state: "NY",
+    postalCode: "10001",
+    country: "USA",
+  },
+  paymentStatus: "pending" as const,
+};
 
 export default function ProductDisplay({ products }: { products: Product[] }) {
+  // Example usage in a component or form submission
   const { setSelectedProduct } = useSelectedState();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -17,6 +46,13 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
 
     return () => clearTimeout(timer); // Cleanup on unmount
   }, []);
+
+  // async function testingOrder() {
+  //   return await createOrder(orderData);
+  // }
+  // useEffect(() => {
+  //   testingOrder();
+  // }, []);
 
   return (
     <div className="grid grid-cols-4 gap-5 h-full justify-start">

@@ -52,17 +52,34 @@ export interface ProductState {
   fetchProducts: () => Promise<void>;
 }
 
+export type DeliveryAddress = {
+  city: string;
+  state: string;
+  street: string;
+  country: string;
+  postalCode: string;
+};
+export interface OrderItem<T> {
+  id: string | number;
+  created_at: string;
+  order_id: string | number;
+  product: T;
+  quantity: number;
+  price: number;
+}
 export type Order = {
   id: number | string;
-  total: number;
-  status: string;
+  customer_name: string;
+  email: string;
+  payment_status: string;
   created_at: string;
   quantity: number;
-  items: Product[];
+  delivery_address: DeliveryAddress;
+  order_items: OrderItem<Product>[];
 };
 
 export interface SelectedState {
-  selectedProduct: Product | null;
+  selectedProduct: Product | undefined | null;
   setSelectedProduct: (product: Product) => void;
 }
 
