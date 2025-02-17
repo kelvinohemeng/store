@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import ProductButton from "./ProductButton";
-import { useProductSlideState, useProductStore } from "@/store";
+import { useSlide } from "@/store";
 import { updateProduct } from "@/actions/product";
 import imageCompression from "browser-image-compression";
 import { Product } from "@/lib/types";
@@ -13,9 +13,8 @@ const UpdateProductSlide = ({
 }: {
   product: Product | undefined | null;
 }) => {
-  const { state, setState } = useProductSlideState();
+  const { state, setState } = useSlide();
   const ref = useRef<HTMLFormElement>(null);
-  const { fetchProducts, setisLoading } = useProductStore();
   const [newImages, setNewImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
@@ -85,8 +84,6 @@ const UpdateProductSlide = ({
 
   const updateAction = async (formData: FormData) => {
     try {
-      setisLoading(true);
-
       // Add images to be deleted
       imagesToDelete.forEach((url) => {
         formData.append("imagesToDelete", url);
@@ -112,7 +109,6 @@ const UpdateProductSlide = ({
         throw new Error(result.error);
       }
 
-      await fetchProducts();
       setState("");
 
       // Reset states
@@ -123,7 +119,6 @@ const UpdateProductSlide = ({
       console.error("Update error:", err);
       alert(`Failed to update product: ${err?.message}`);
     } finally {
-      setisLoading(false);
       ref?.current?.reset();
     }
   };
@@ -133,7 +128,7 @@ const UpdateProductSlide = ({
       {state === "update" && (
         <div
           onClick={() => setState("")}
-          className="fixed inset-0 bg-slate-800 opacity-70"
+          className="fixed inset-0 bg-slate-800 opacity-30"
         ></div>
       )}
       <div

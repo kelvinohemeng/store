@@ -1,7 +1,7 @@
 "use client";
 
 import { Product } from "@/lib/types";
-import { useProductSlideState } from "@/store";
+import { useSlide } from "@/store";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -16,7 +16,7 @@ const ProductCard = ({
   isLoading?: boolean;
   outOfStock?: boolean;
 }) => {
-  const { setState } = useProductSlideState();
+  const { setState } = useSlide();
 
   const [imageLoaded, setImageLoaded] = useState(false);
   const imageUrl: string | undefined = product?.image_url[0];

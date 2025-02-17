@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { fetchProducts } from "@/lib/utils/supabase";
-import { CartState, ProductState, SelectedState, Action } from "@/lib/types";
+import {
+  CartState,
+  ProductState,
+  Action,
+  SelectedProductState,
+  SelectedOrderState,
+} from "@/lib/types";
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
@@ -49,36 +55,41 @@ export const useCartStore = create<CartState>((set, get) => ({
   totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
 }));
 
-export const useProductStore = create<ProductState>((set, get) => ({
-  isLoading: true,
-  setisLoading: (loadingState) => set({ isLoading: loadingState }),
-  products: [],
-  setProducts: (product) =>
-    set((state) => ({ products: [...state.products, product] })),
-  fetchProducts: async () => {
-    try {
-      get().setisLoading(true);
-      const data = await fetchProducts(); // Fetch products from Supabase
-      set({ products: data }); // Update the state with fetched products
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      get().setisLoading(false);
-    }
-  },
-}));
+// export const useProductStore = create<ProductState>((set, get) => ({
+//   isLoading: true,
+//   setisLoading: (loadingState) => set({ isLoading: loadingState }),
+//   products: [],
+//   setProducts: (product) =>
+//     set((state) => ({ products: [...state.products, product] })),
+//   fetchProducts: async () => {
+//     try {
+//       get().setisLoading(true);
+//       const data = await fetchProducts(); // Fetch products from Supabase
+//       set({ products: data }); // Update the state with fetched products
+//     } catch (error) {
+//       console.error("Error fetching products:", error);
+//     } finally {
+//       get().setisLoading(false);
+//     }
+//   },
+// }));
 
-type State = {
+type SlideState = {
   state: Action;
   setState: (newState: Action) => void;
 };
 
-export const useProductSlideState = create<State>((set) => ({
+export const useSlide = create<SlideState>((set) => ({
   state: "",
   setState: (newState) => set({ state: newState }),
 }));
 
-export const useSelectedState = create<SelectedState>((set) => ({
+export const useSelectedState = create<SelectedProductState>((set) => ({
   selectedProduct: null,
   setSelectedProduct: (product) => set({ selectedProduct: product }),
+}));
+
+export const useSelectedOrder = create<SelectedOrderState>((set) => ({
+  selectedOrder: null,
+  setSelectedOrder: (order) => set({ selectedOrder: order }),
 }));

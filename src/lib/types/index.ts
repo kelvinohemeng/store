@@ -78,9 +78,13 @@ export type Order = {
   order_items: OrderItem<Product>[];
 };
 
-export interface SelectedState {
+export interface SelectedProductState {
   selectedProduct: Product | undefined | null;
   setSelectedProduct: (product: Product) => void;
 }
+export interface SelectedOrderState {
+  selectedOrder: Order | undefined | null;
+  setSelectedOrder: (order: Order) => void;
+}
 
-export type Action = "" | "view" | "update" | "create";
+export type Action = "" | "view" | "update" | "create" | "view-order";

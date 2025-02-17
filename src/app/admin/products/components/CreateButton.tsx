@@ -1,5 +1,5 @@
 import { Action } from "@/lib/types";
-import { useProductSlideState } from "@/store";
+import { useSlide } from "@/store";
 import { FolderSimplePlus } from "@phosphor-icons/react";
 import React from "react";
 
@@ -10,7 +10,7 @@ const CreateButton = ({
   action: Action;
   text: string;
 }) => {
-  const { setState } = useProductSlideState();
+  const { setState } = useSlide();
 
   return (
     <button

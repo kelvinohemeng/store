@@ -1,17 +1,14 @@
 "use client";
 
 import { Product } from "@/lib/types";
-import { useProductSlideState } from "@/store";
+import { useSlide } from "@/store";
 import { Swiper as SwiperType } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useState, useRef, useEffect } from "react";
 
 import "swiper/css";
 
-import {
-  NextButton,
-  PrevButton,
-} from "../../../../components/admin-components/SwiperBtn";
+import { NextButton, PrevButton } from "../../admin-components/SwiperBtn";
 import DefaultButton from "../../../../components/global-components/ProductButton";
 import { deleteProduct } from "@/actions/product";
 import UpdateProductSlide from "./UpdateProductSlide";
@@ -22,7 +19,7 @@ export default function ProductDisplaySlide({
   product: Product | undefined | null;
 }) {
   const swiperRef = useRef<SwiperType | null>(null);
-  const { state, setState } = useProductSlideState();
+  const { state, setState } = useSlide();
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(product && product.image_url.length <= 1);
 
@@ -49,7 +46,7 @@ export default function ProductDisplaySlide({
       {state == "view" && (
         <div
           onClick={() => setState("")}
-          className="fixed inset-0 bg-slate-800 opacity-70"
+          className="fixed inset-0 bg-slate-800 opacity-30"
         ></div>
       )}
       <div

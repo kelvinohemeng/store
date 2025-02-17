@@ -1,7 +1,7 @@
 "use client";
 
 import { submitNewProduct } from "@/actions/product";
-import { useProductSlideState, useProductStore } from "@/store";
+import { useSlide } from "@/store";
 import { useRef, useState } from "react";
 import ProductButton from "./ProductButton";
 import imageCompression from "browser-image-compression";
@@ -16,9 +16,9 @@ export default function CreateProductSlide() {
   //   setSelectedCategory(event.target.value);
   // };
 
-  const { state, setState } = useProductSlideState();
+  const { state, setState } = useSlide();
   const ref = useRef<HTMLFormElement>(null);
-  const { fetchProducts, setisLoading } = useProductStore();
+  // const { fetchProducts, setisLoading } = useProductStore();
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number[]>([]);
@@ -73,8 +73,6 @@ export default function CreateProductSlide() {
 
   const submitAction = async (formData: FormData) => {
     try {
-      setisLoading(true);
-
       // const category = formData.get("category") as string;
 
       // Append all selected images to the FormData
@@ -84,15 +82,12 @@ export default function CreateProductSlide() {
       // reset values
 
       await submitNewProduct(formData);
-
-      fetchProducts();
     } catch (err: any) {
       alert(`Failed to create product: ${err.message}`);
     } finally {
       setState("");
       setImages([]);
       setPreviewUrls([]);
-      setisLoading(false);
       ref?.current?.reset();
     }
   };
@@ -101,7 +96,7 @@ export default function CreateProductSlide() {
       {state == "create" && (
         <div
           onClick={() => setState("")}
-          className="fixed inset-0 bg-slate-800 opacity-70"
+          className="fixed inset-0 bg-slate-800 opacity-30"
         ></div>
       )}
       <div
