@@ -27,7 +27,7 @@ export const columns: ColumnDef<Product>[] = [
               <img
                 src={images[0]}
                 alt={`Image of ${productName}`}
-                className="max-w-[40px] w-full aspect-square rounded-md"
+                className="max-w-[40px] w-full aspect-square rounded-md object-cover object-center"
               />
             </div>
           ) : (

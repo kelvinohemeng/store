@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSelectedState, useSlide } from "@/store";
-import { Order, Product } from "@/lib/types";
+import { Product } from "@/lib/types";
 import ProductDisplaySlide from "./ProductDIsplaySLide";
 
 interface DataTableProps<TData, TValue> {
@@ -34,7 +34,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const { state, setState } = useSlide();
+  const { setState } = useSlide();
   const { selectedProduct, setSelectedProduct } = useSelectedState();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 

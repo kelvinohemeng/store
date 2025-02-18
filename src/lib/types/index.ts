@@ -16,7 +16,7 @@ export type file = {
     blobExtension: string;
   };
 };
-export interface PaystactProduct {
+export interface PaystackProduct {
   id: string | number;
   name: string;
   create_at: string;
