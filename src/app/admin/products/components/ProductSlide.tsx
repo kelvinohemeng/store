@@ -5,6 +5,7 @@ import { useSlide } from "@/store";
 import { useRef, useState } from "react";
 import ProductButton from "./ProductButton";
 import imageCompression from "browser-image-compression";
+import { Input } from "@/components/ui/input";
 
 export default function CreateProductSlide() {
   const categories = ["Dress", "Shoe", "Glasses"];
@@ -119,10 +120,16 @@ export default function CreateProductSlide() {
           <label htmlFor="product_name" className="space-y-3">
             <p>What is the name of this Product?</p>
             <div id="product_name">
-              <input
+              {/* <input
                 type="text"
                 name="name"
                 className=" border border-gray-400 p-3 text-lg w-full rounded-md"
+                placeholder="Product Name"
+              /> */}
+              <Input
+                type="text"
+                name="name"
+                className=""
                 placeholder="Product Name"
               />
             </div>

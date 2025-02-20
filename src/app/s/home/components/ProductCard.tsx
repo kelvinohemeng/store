@@ -5,8 +5,9 @@ import { useCartStore } from "@/store";
 
 type ProdcutCardT = {
   product: Product;
+  index: number;
 };
-const ProductCard = ({ product }: ProdcutCardT) => {
+const ProductCard = ({ product, index }: ProdcutCardT) => {
   const { addItem } = useCartStore();
 
   const handleAddToCart = () => {
@@ -18,7 +19,7 @@ const ProductCard = ({ product }: ProdcutCardT) => {
   //   };
 
   return (
-    <div className="product-card">
+    <div key={index} className="product-card">
       <img
         className="max-w-[250px]"
         src={product.image_url[0]}

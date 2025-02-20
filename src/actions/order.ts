@@ -1,3 +1,4 @@
+"use server";
 // Creating the orders
 
 import { Order } from "@/lib/types";
@@ -44,10 +45,12 @@ export async function createOrder(orderData: OrderData) {
         payment_status: orderData.paymentStatus,
         created_at: new Date().toISOString(),
       })
-      .select()
+      .select("*")
       .single();
 
-    if (orderError) throw orderError;
+    if (orderError)
+      throw new Error(`Order creation failed: ${orderError.message}`);
+    if (!order) throw new Error("Order creation failed: No order returned.");
 
     // Then, create order items for each product
     const orderItems = orderData.items.map((item) => ({
@@ -61,12 +64,16 @@ export async function createOrder(orderData: OrderData) {
       .from("order_items")
       .insert(orderItems);
 
-    if (itemsError) throw itemsError;
+    if (itemsError)
+      throw new Error(`Order items creation failed: ${itemsError.message}`);
 
     return { success: true, orderId: order.id };
   } catch (error) {
     console.error("Error creating order:", error);
-    return { success: false, error: "Failed to create order" };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create order",
+    };
   }
 }
 
@@ -111,11 +118,7 @@ export async function updateOrderStatus(
   }
 }
 
-export async function getAllOrders(): Promise<{
-  success: boolean;
-  orders?: Order[];
-  error?: string;
-}> {
+export async function getAllOrders() {
   try {
     const { data: orders, error } = await supabase.from("orders").select(
       `
@@ -128,9 +131,10 @@ export async function getAllOrders(): Promise<{
     );
 
     if (error) throw error;
-    return { success: true, orders: orders as Order[] };
+
+    return (orders as Order[]) || [];
   } catch (error) {
     console.error("Error fetching orders:", error);
-    return { success: false, error: "Failed to fetch orders" };
+    throw new Error("Failed to fetch orders");
   }
 }

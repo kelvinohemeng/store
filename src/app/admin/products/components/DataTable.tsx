@@ -35,7 +35,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const { setState } = useSlide();
-  const { selectedProduct, setSelectedProduct } = useSelectedState();
+  const { setSelectedProduct } = useSelectedState();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
@@ -154,7 +154,7 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       </div>
-      <ProductDisplaySlide product={selectedProduct} />
+      {/* <ProductDisplaySlide product={selectedProduct} /> */}
     </>
   );
 }

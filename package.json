@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^4.1.0",
     "@paystack/checkout-js": "^1.46.0",
     "@phosphor-icons/react": "^2.1.7",
+    "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@supabase/auth-ui-react": "^0.4.7",
@@ -30,11 +32,13 @@
     "posthog-js": "^1.218.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2",
     "react-paystack": "^6.0.0",
     "react-useanimations": "^2.10.0",
     "swiper": "^11.2.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.24.2",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

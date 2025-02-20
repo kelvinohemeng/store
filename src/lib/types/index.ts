@@ -43,13 +43,12 @@ export interface CartState {
   clearCart: () => void;
   updateQuantity: (productId: string | number, newQuantity: number) => void;
   totalPrice: () => number;
+  totalItems: () => number;
 }
 export interface ProductState {
-  isLoading: boolean;
-  setisLoading: (loadingState: boolean) => void;
   products: Product[];
   setProducts: (product: Product) => void;
-  fetchProducts: () => Promise<void>;
+  fetchProducts: () => Promise<Product[]>;
 }
 
 export type DeliveryAddress = {

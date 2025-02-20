@@ -8,7 +8,6 @@ import PayStackCheckout from "./PayStackCheckout";
 
 const Cart = () => {
   const { items, clearCart } = useCartStore();
-  const [cart, setCart] = useState<Product>();
 
   const totalPrice = useCartStore((state) => state.totalPrice());
   return (
@@ -18,17 +17,11 @@ const Cart = () => {
         <>
           <div className="flex flex-col gap-5">
             {items.map((item) => (
-              <>
-                <CartItem index={item.id} item={item} />
-              </>
+              <CartItem index={item.id} item={item} />
             ))}
           </div>
           <p>Total: ${totalPrice.toFixed(2)}</p>
           <button onClick={clearCart}>Clear Cart</button>
-          <PayStackCheckout
-            amount={totalPrice}
-            // cart={items}
-          />
         </>
       ) : (
         <p>Your cart is empty.</p>

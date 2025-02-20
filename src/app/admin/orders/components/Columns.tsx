@@ -64,7 +64,7 @@ export const columns: ColumnDef<Order>[] = [
               : ""
           }text-left flex gap-2 items-center font-medium  rounded-lg  tracking-normal px-3 py-2 w-max`}
         >
-          <p
+          <span
             className={`${
               status === "pending"
                 ? " text-orange-800"
@@ -74,7 +74,7 @@ export const columns: ColumnDef<Order>[] = [
             } font-medium`}
           >
             {status}
-          </p>
+          </span>
         </div>
       );
     },

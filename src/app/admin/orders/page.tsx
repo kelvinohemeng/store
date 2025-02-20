@@ -1,12 +1,25 @@
+"use client";
+
 import { getAllOrders } from "@/actions/order";
 import DisplayOrders from "./components/DisplayOrders";
 import { Order } from "@/lib/types";
 import { DataTable } from "./components/DataTable";
 import { Payment, columns } from "./components/Columns";
+import { useQuery } from "@tanstack/react-query";
 
-export default async function Orders() {
-  const allOrders = await getAllOrders();
-  const { orders } = await allOrders;
+export default function Orders() {
+  // const allOrders = await getAllOrders();
+  // const { orders } = await allOrders;
+
+  const {
+    data: orders,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<Order[]>({
+    queryKey: ["orders"],
+    queryFn: async () => await getAllOrders(),
+  });
 
   return (
     <div className="  pt-5 pb-20 min-h-full">
