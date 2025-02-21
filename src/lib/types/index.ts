@@ -86,4 +86,4 @@ export interface SelectedOrderState {
   setSelectedOrder: (order: Order) => void;
 }
 
-export type Action = "" | "view" | "update" | "create" | "view-order";
+export type Action = "" | "view" | "update" | "create" | "view-order" | "cart";

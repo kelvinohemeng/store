@@ -3,7 +3,6 @@
 import { useProductStore, useUserData } from "@/store";
 import React, { useEffect } from "react";
 import ProductCard from "./components/ProductCard";
-import Cart from "./components/Cart";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/lib/types";
 
@@ -47,7 +46,6 @@ const page = () => {
           <ProductCard index={index} product={product} />
         ))}
       </div>
-      <Cart />
     </div>
   );
 };

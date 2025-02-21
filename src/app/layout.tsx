@@ -4,6 +4,7 @@ import Provider from "@/lib/utils/Providers";
 import LogOutButton from "@/components/UserProfile";
 import { useUserData } from "@/store";
 import Navigation from "@/components/global-components/Navigation";
+import CartSlide from "./s/home/components/CartSlide";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,6 +24,7 @@ export default async function RootLayout({
       >
         <Provider>
           <Navigation />
+          <CartSlide />
           {children}
         </Provider>
       </body>
