@@ -1,13 +1,17 @@
 "use client";
 
 import { checkAdminAuth, logoutUser } from "@/actions/auth";
+import { useUserData } from "@/store";
 import { User } from "@supabase/supabase-js";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import React, { useEffect } from "react";
+import { set } from "react-hook-form";
 
 const UserProfile = ({ user }: { user: User }) => {
   const [triggerDD, setTriggerDD] = React.useState<boolean>(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+  const { setRole, setUser } = useUserData();
   async function checkAdmin() {
     const checkAdminAuthentication = await checkAdminAuth();
     setIsAdmin(checkAdminAuthentication.isAdmin);
@@ -17,15 +21,20 @@ const UserProfile = ({ user }: { user: User }) => {
     checkAdmin();
   }, [user]);
 
-  const logOut = () => logoutUser();
+  const logOut = async () => {
+    await logoutUser();
+    setRole("");
+    setUser(null);
+  };
+
   return (
-    <div className="relative overflow-visible">
+    <div className="relative">
       <div
         onClick={() => setTriggerDD(!triggerDD)}
         className="h-[30px] border-slate-400 border-[3px] aspect-square rounded-full bg-black"
       ></div>
       <div
-        className={`cursor-pointer absolute w-[150px] right-0 mt-8 bg-white border  rounded-lg shadow-sm flex flex-col z-[9] ${
+        className={`cursor-pointer absolute w-[150px] right-0 mt-8 bg-white border  rounded-lg shadow-sm flex flex-col z-[9] overflow-hidden ${
           triggerDD ? "visible" : "invisible"
         }`}
       >
@@ -35,7 +44,7 @@ const UserProfile = ({ user }: { user: User }) => {
           </Link>
         </div>
         <div className="px-5 py-3 w-full text-start hover:bg-slate-50">
-          <Link href={"/orders"} className=" text-nowrap text-xl">
+          <Link href={"/s/orders"} className=" text-nowrap text-xl">
             My Orders
           </Link>
         </div>

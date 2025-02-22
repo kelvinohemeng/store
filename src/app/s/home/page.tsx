@@ -20,24 +20,6 @@ const page = () => {
     initialData: products,
   });
 
-  async function getUser() {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data?.user) {
-      redirect("/login");
-    }
-    setUser(data.user);
-    return data.user;
-  }
-
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: getUser,
-  });
-
-  useEffect(() => {
-    console.log({ user, storeUser });
-  }, [user]);
-
   return (
     <div className="min-h-full flex">
       <div>

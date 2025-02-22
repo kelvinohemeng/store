@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Provider from "@/lib/utils/Providers";
-import LogOutButton from "@/components/UserProfile";
-import { useUserData } from "@/store";
 import Navigation from "@/components/global-components/Navigation";
 import CartSlide from "./s/home/components/CartSlide";
+import FixedBodyOnCartOpen from "./s/home/components/FixBodyOnCartOpen";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,11 +19,12 @@ export default async function RootLayout({
     <html lang="en">
       <body
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        className="w-screen min-h-screen h-full overflow-x-hidden"
+        className="w-screen min-h-screen h-full overflow-x-hidden  pt-[10vh]"
       >
         <Provider>
           <Navigation />
           <CartSlide />
+          <FixedBodyOnCartOpen />
           {children}
         </Provider>
       </body>

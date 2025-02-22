@@ -12,12 +12,16 @@ import { User } from "@supabase/supabase-js";
 
 type UserT = {
   user: User | null;
-  setUser: (newUser: User) => void;
+  setUser: (newUser: User | null) => void;
+  role: string;
+  setRole: (role: string) => void;
 };
 
 export const useUserData = create<UserT>((set) => ({
   user: null,
   setUser: (newUser) => set({ user: newUser }),
+  role: "user",
+  setRole: (newRole) => set({ role: newRole }),
 }));
 
 export const useCartStore = create<CartState>()(

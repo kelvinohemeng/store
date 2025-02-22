@@ -3,32 +3,43 @@ import { updateSession } from "./lib/utils/supabase/middleware";
 import { verifyAdmin } from "./lib/utils/supabase/adminMiddleware";
 
 export async function middleware(request: NextRequest) {
-  const userRoutes = ["/s"]; // Add more protected routes as needed
-  const adminRoutes = ["/admin/dashboard", "/admin/products", "/admin/orders"]; // Add more protected routes as needed
-
   const path = request.nextUrl.pathname;
 
-  const isUserRoutes = userRoutes.some((route) => path.startsWith(route));
-  const isAdminRoutes = adminRoutes.some((route) => path.startsWith(route));
+  const userRoutes = ["/s/orders"];
+  const adminRoutes = ["/admin/dashboard", "/admin/products", "/admin/orders"];
+  const authRoutes = ["/login", "/signup"]; // Add your authentication routes here
 
-  if (isUserRoutes) {
-    return await updateSession(request);
+  const isUserRoute = userRoutes.includes(path);
+  const isAdminRoute = adminRoutes.includes(path);
+  const isAuthRoute = authRoutes.includes(path);
+
+  //get user session
+  const response = await updateSession(request);
+
+  if (isAuthRoute) {
+    const user = await response;
+    // If user is logged in and tries to access login/signup, redirect to home (or dashboard)
+    if (user) {
+      return NextResponse.redirect(new URL("/s/home", request.url));
+    }
   }
-  if (isAdminRoutes) {
-    return await verifyAdmin(request);
+
+  if (isUserRoute) {
+    return response;
   }
+
+  if (isAdminRoute) {
+    const response = await verifyAdmin(request);
+    return (
+      response ?? NextResponse.redirect(new URL("/unauthorized", request.url))
+    );
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
