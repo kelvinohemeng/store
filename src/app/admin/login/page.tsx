@@ -13,13 +13,7 @@ export default function AdminLogin() {
 
   const handleSubmit = async (formData: FormData) => {
     try {
-      const response = await loginAdmin(formData);
-      if (response.success) {
-        setRole("admin");
-        redirect("/admin/dashboard");
-      } else {
-        setError(response.error);
-      }
+      await loginAdmin(formData);
     } catch (err) {
       setError((err as Error).message); // Set the error message
     }

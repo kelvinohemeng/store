@@ -55,8 +55,6 @@ export const checkUserAuth = async () => {
 
 // Function to log in admin
 export const loginAdmin = async (formData: FormData) => {
-  const supabaseSSR = await createClient();
-
   const loginData = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -64,7 +62,7 @@ export const loginAdmin = async (formData: FormData) => {
   const {
     data: { user },
     error,
-  } = await supabaseSSR.auth.signInWithPassword(loginData);
+  } = await supabase.auth.signInWithPassword(loginData);
 
   if (error) {
     throw new Error(error.message);
@@ -83,10 +81,10 @@ export const loginAdmin = async (formData: FormData) => {
     .single();
 
   if (roleError || !userData || userData.role !== "admin") {
-    return { success: true, user: userData, error: "Unauthorized access" };
+    redirect("/unauthorized");
   }
 
-  return { success: true, user: userData, error: "" };
+  redirect("/admin/dashboard");
 };
 
 //check if admin is authenticated

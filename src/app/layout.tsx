@@ -25,7 +25,7 @@ export default async function RootLayout({
         <Provider>
           <Navigation />
           <CartSlide />
-          <FixedBodyOnCartOpen />
+          {/* <FixedBodyOnCartOpen /> */}
           <Main>{children}</Main>
         </Provider>
       </body>

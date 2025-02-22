@@ -4,12 +4,13 @@ import { useCartStore, useSlide, useUserData } from "@/store";
 import { MagnifyingGlass, ShoppingBag } from "@phosphor-icons/react";
 import UserProfile from "../UserProfile";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/utils/supabase";
 import { usePathname } from "next/navigation";
 
 export default function Navigation() {
   const { user: storedUser, setUser, role } = useUserData();
+  const [cartItemsNO, setCartItemsNO] = useState<number>(0);
   const { setState } = useSlide();
   const { totalItems } = useCartStore();
   const path = usePathname();
@@ -28,8 +29,8 @@ export default function Navigation() {
   }, []);
 
   useEffect(() => {
-    console.log(storedUser);
-  }, []);
+    setCartItemsNO(totalCartItems);
+  }, [cartItemsNO]);
 
   if (!adminRoutes) {
     return (
@@ -52,7 +53,7 @@ export default function Navigation() {
             >
               <ShoppingBag size={20} weight="regular" />
               <div className="absolute top-0 right-0 -translate-y-[50%] translate-x-[50%] w-[20px] h-[20px] bg-red-500 border-white grid place-items-center text-white rounded-full border-[3px]">
-                <p className="text-xs leading-[100%]">{totalCartItems}</p>
+                <p className="text-xs leading-[100%]">{cartItemsNO}</p>
               </div>
             </div>
             {storedUser && <UserProfile user={storedUser} />}
