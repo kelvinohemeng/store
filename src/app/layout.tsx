@@ -4,6 +4,7 @@ import Provider from "@/lib/utils/Providers";
 import Navigation from "@/components/global-components/Navigation";
 import CartSlide from "./s/home/components/CartSlide";
 import FixedBodyOnCartOpen from "./s/home/components/FixBodyOnCartOpen";
+import Main from "@/components/global-components/Main";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,13 +20,13 @@ export default async function RootLayout({
     <html lang="en">
       <body
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        className="w-screen min-h-screen h-full overflow-x-hidden  pt-[10vh]"
+        className=" overflow-x-hidden"
       >
         <Provider>
           <Navigation />
           <CartSlide />
           <FixedBodyOnCartOpen />
-          {children}
+          <Main>{children}</Main>
         </Provider>
       </body>
     </html>

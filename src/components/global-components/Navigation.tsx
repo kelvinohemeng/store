@@ -6,11 +6,14 @@ import UserProfile from "../UserProfile";
 import Link from "next/link";
 import { useEffect } from "react";
 import { supabase } from "@/lib/utils/supabase";
+import { usePathname } from "next/navigation";
 
 export default function Navigation() {
-  const { user: storedUser } = useUserData();
+  const { user: storedUser, setUser, role } = useUserData();
   const { setState } = useSlide();
   const { totalItems } = useCartStore();
+  const path = usePathname();
+  const adminRoutes = path.startsWith("/admin");
 
   const totalCartItems = totalItems();
 
@@ -19,7 +22,6 @@ export default function Navigation() {
     setUser(data.user);
     return data;
   }
-  const { setUser } = useUserData();
 
   useEffect(() => {
     gUser();
@@ -29,40 +31,44 @@ export default function Navigation() {
     console.log(storedUser);
   }, []);
 
-  return (
-    <header className="fixed top-0 left-0 right-0 bg-white z-[999] ">
-      <nav className="flex justify-between p-5 pr-8 border-b">
-        <Link href={"/s/home"}>
-          <div className="flex items-center gap-2">
-            <ShoppingBag size={20} weight="fill" />
-            <h2 className="text-2xl font-['poppins']">ecomme</h2>
-          </div>
-        </Link>
-
-        <div className="flex items-center gap-3 ">
-          <div>
-            <MagnifyingGlass size={24} weight="regular" />
-          </div>
-          <div
-            onClick={() => setState("cart")}
-            className="activate-cart relative cursor-pointer"
-          >
-            <ShoppingBag size={20} weight="regular" />
-            <div className="absolute top-0 right-0 -translate-y-[50%] translate-x-[50%] w-[20px] h-[20px] bg-red-500 border-white grid place-items-center text-white rounded-full border-[3px]">
-              <p className="text-xs leading-[100%]">{totalCartItems}</p>
+  if (!adminRoutes) {
+    return (
+      <header className="fixed top-0 left-0 right-0 bg-white z-[999] ">
+        <nav className="flex justify-between p-5 pr-8 border-b">
+          <Link href={"/s/home"}>
+            <div className="flex items-center gap-2">
+              <ShoppingBag size={20} weight="fill" />
+              <h2 className="text-2xl font-['poppins']">ecomme</h2>
             </div>
-          </div>
-          {storedUser && <UserProfile user={storedUser} />}
-          {!storedUser && (
-            <Link
-              href={"/login"}
-              className=" px-4 py-2 bg-slate-100 rounded-lg"
+          </Link>
+
+          <div className="flex items-center gap-3 ">
+            <div>
+              <MagnifyingGlass size={24} weight="regular" />
+            </div>
+            <div
+              onClick={() => setState("cart")}
+              className="activate-cart relative cursor-pointer"
             >
-              Login
-            </Link>
-          )}
-        </div>
-      </nav>
-    </header>
-  );
+              <ShoppingBag size={20} weight="regular" />
+              <div className="absolute top-0 right-0 -translate-y-[50%] translate-x-[50%] w-[20px] h-[20px] bg-red-500 border-white grid place-items-center text-white rounded-full border-[3px]">
+                <p className="text-xs leading-[100%]">{totalCartItems}</p>
+              </div>
+            </div>
+            {storedUser && <UserProfile user={storedUser} />}
+            {!storedUser && (
+              <Link
+                href={"/login"}
+                className=" px-4 py-2 bg-slate-100 rounded-lg"
+              >
+                Login
+              </Link>
+            )}
+          </div>
+        </nav>
+      </header>
+    );
+  } else {
+    return null;
+  }
 }
