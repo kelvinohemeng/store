@@ -7,31 +7,45 @@ export async function middleware(request: NextRequest) {
 
   const userRoutes = ["/s/orders"];
   const adminRoutes = ["/admin/dashboard", "/admin/products", "/admin/orders"];
-  const authRoutes = ["/login", "/signup"]; // Add your authentication routes here
+  const adminAuthRoutes = ["/admin/login"]; // Admin authentication routes
+  const authRoutes = ["/login", "/signup"]; // Authentication routes
 
   const isUserRoute = userRoutes.includes(path);
   const isAdminRoute = adminRoutes.includes(path);
   const isAuthRoute = authRoutes.includes(path);
+  const isAdminAuthRoute = adminAuthRoutes.includes(path);
 
-  //get user session
-  const response = await updateSession(request);
+  // Fetch session & user from `updateSession`
+  const { response, user } = await updateSession(request);
+  const adminResponse = await verifyAdmin(request);
 
-  if (isAuthRoute) {
-    const user = await response;
-    // If user is logged in and tries to access login/signup, redirect to home (or dashboard)
-    if (user) {
-      return NextResponse.redirect(new URL("/s/home", request.url));
-    }
+  // const checkAdmin = await
+
+  // Redirect logged-in users away from login/signup
+  if (isAuthRoute && user) {
+    return NextResponse.redirect(new URL("/s/home", request.url));
   }
 
+  // // ✅ Prevent authenticated admin from accessing admin login page
+  // if (isAdminAuthRoute && user) {
+  //   return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+  // }
+
+  // ✅ Protect user routes: redirect if no user is found
+  if (isUserRoute && !user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Allow user routes
   if (isUserRoute) {
     return response;
   }
 
+  // Handle admin routes
   if (isAdminRoute) {
-    const response = await verifyAdmin(request);
     return (
-      response ?? NextResponse.redirect(new URL("/unauthorized", request.url))
+      adminResponse ??
+      NextResponse.redirect(new URL("/unauthorized", request.url))
     );
   }
 

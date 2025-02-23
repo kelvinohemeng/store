@@ -32,20 +32,24 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
+  // const path = request.nextUrl.pathname;
 
-  if (!user) {
-    // Redirect unauthenticated users away from protected routes
-    if (!path.startsWith("/signup") && !path.startsWith("/login")) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-  } else {
-    // Redirect logged-in users away from auth pages
-    if (path.startsWith("/login") || path.startsWith("/signup")) {
-      return NextResponse.redirect(new URL("/s/home", request.url)); // Change this to your actual homepage
-    }
-  }
-  console.log("Middleware User:", user);
+  // if (
+  //   !user &&
+  //   !path.startsWith("/signup") &&
+  //   !path.startsWith("/login") &&
+  //   !path.startsWith("/auth")
+  // ) {
+  //   // no user, potentially respond by redirecting the user to the login page
+  //   supabaseResponse.cookies.delete("sb-access-token");
+  //   supabaseResponse.cookies.delete("sb-refresh-token");
+  //   return NextResponse.redirect(new URL("/login", request.url));
+  // } else {
+  //   // Redirect logged-in users away from auth pages
+  //   if (path.startsWith("/login") || path.startsWith("/signup")) {
+  //     return NextResponse.redirect(new URL("/s/home", request.url)); // Change this to your actual homepage
+  //   }
+  // }
 
-  return supabaseResponse;
+  return { response: supabaseResponse, user };
 }

@@ -5,6 +5,7 @@ import Navigation from "@/components/global-components/Navigation";
 import CartSlide from "./s/home/components/CartSlide";
 import FixedBodyOnCartOpen from "./s/home/components/FixBodyOnCartOpen";
 import Main from "@/components/global-components/Main";
+import LoadZustandGloabalStore from "@/components/global-components/LoadZustandGloabalStore";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,7 +26,8 @@ export default async function RootLayout({
         <Provider>
           <Navigation />
           <CartSlide />
-          {/* <FixedBodyOnCartOpen /> */}
+          <LoadZustandGloabalStore />
+          <FixedBodyOnCartOpen />
           <Main>{children}</Main>
         </Provider>
       </body>

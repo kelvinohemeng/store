@@ -1,13 +1,13 @@
 "use server";
 
-import { supabase } from "@/lib/utils/supabase";
-import { createClient } from "@/lib/utils/supabase/server";
+// import { supabase } from "@/lib/utils/supabase";
+import { createSupabaseSSRClient } from "@/lib/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 // Function to log in a user
 export const loginUser = async (formData: FormData) => {
-  const supabaseSSR = await createClient();
+  const supabaseSSR = await createSupabaseSSRClient();
 
   const data = {
     email: formData.get("email") as string,
@@ -26,20 +26,22 @@ export const loginUser = async (formData: FormData) => {
 
 // Function to log out a user
 export const logoutUser = async () => {
-  const supabaseSSR = await createClient();
+  const supabaseSSR = await createSupabaseSSRClient();
 
   const { error } = await supabaseSSR.auth.signOut();
 
   if (error) {
     return { success: false, error: error.message };
   } else {
-    return { success: true, error: null };
+    revalidatePath("/s/home", "page");
+    redirect("/s/home");
+    // return { success: true, error: null };
   }
 };
 
 // Function to check if a user is authenticated
 export const checkUserAuth = async () => {
-  const supabaseSSR = await createClient();
+  const supabaseSSR = await createSupabaseSSRClient();
 
   const {
     data: { user },
@@ -55,6 +57,8 @@ export const checkUserAuth = async () => {
 
 // Function to log in admin
 export const loginAdmin = async (formData: FormData) => {
+  const supabaseSSR = await createSupabaseSSRClient();
+
   const loginData = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -62,7 +66,7 @@ export const loginAdmin = async (formData: FormData) => {
   const {
     data: { user },
     error,
-  } = await supabase.auth.signInWithPassword(loginData);
+  } = await supabaseSSR.auth.signInWithPassword(loginData);
 
   if (error) {
     throw new Error(error.message);
@@ -74,22 +78,22 @@ export const loginAdmin = async (formData: FormData) => {
   // }
 
   // Fetch the user's role
-  const { data: userData, error: roleError } = await supabase
+  const { data: userData, error: roleError } = await supabaseSSR
     .from("users")
     .select("role")
     .eq("id", user?.id)
     .single();
 
   if (roleError || !userData || userData.role !== "admin") {
-    redirect("/unauthorized");
+    return { success: false, error: "Unauthorized access" };
   }
 
-  redirect("/admin/dashboard");
+  return { success: true, user, error: null };
 };
 
 //check if admin is authenticated
 export async function checkAdminAuth() {
-  const supabase = await createClient();
+  const supabase = await createSupabaseSSRClient();
 
   // Get the current authenticated user
   const {
@@ -116,7 +120,7 @@ export async function checkAdminAuth() {
 
 // Function to sign up a user
 export const signupUser = async (formData: FormData) => {
-  const supabaseSSR = await createClient();
+  const supabaseSSR = await createSupabaseSSRClient();
 
   const data = {
     email: formData.get("email") as string,
@@ -152,7 +156,7 @@ export const signupUser = async (formData: FormData) => {
 
 // Function to log in with OAuth providers
 export const loginWithOAuth = async (provider: "google" | "github") => {
-  const supabaseSSR = await createClient();
+  const supabaseSSR = await createSupabaseSSRClient();
 
   const { data, error } = await supabaseSSR.auth.signInWithOAuth({
     provider,

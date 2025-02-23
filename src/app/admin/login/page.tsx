@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { loginAdmin } from "@/actions/auth"; // Import Supabase client
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import { useUserData } from "@/store";
 import { set } from "react-hook-form";
 
@@ -11,9 +11,17 @@ export default function AdminLogin() {
   const [error, setError] = useState<string | null>(null);
   const { setRole } = useUserData();
 
+  const router = useRouter();
+
   const handleSubmit = async (formData: FormData) => {
     try {
-      await loginAdmin(formData);
+      const response = await loginAdmin(formData);
+      if (response.success) {
+        setRole("admin");
+        router.push("/admin/dashboard");
+      } else {
+        setError(response.error);
+      }
     } catch (err) {
       setError((err as Error).message); // Set the error message
     }
