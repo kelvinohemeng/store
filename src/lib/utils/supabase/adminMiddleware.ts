@@ -31,22 +31,22 @@ export async function verifyAdmin(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin/login";
-    return NextResponse.redirect(url);
-  }
+  // if (!user) {
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = "/admin/login";
+  //   return NextResponse.redirect(url);
+  // }
 
   // Fetch user role from the database
   const { data: userData, error } = await supabase
     .from("user_profiles")
     .select("role")
-    .eq("id", user.id)
+    .eq("id", user?.id)
     .single();
 
-  if (error || !userData || userData.role !== "admin") {
-    return NextResponse.redirect(new URL("/admin/login", request.url)); // Redirect non-admins
-  }
+  // if (error || !userData || userData.role !== "admin") {
+  //   return NextResponse.redirect(new URL("/admin/login", request.url)); // Redirect non-admins
+  // }
 
-  return supabaseResponse;
+  return { adminResponse: supabaseResponse, adminUser: userData };
 }

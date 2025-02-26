@@ -11,8 +11,8 @@ import {
 import { User } from "@supabase/supabase-js";
 
 type UserT = {
-  user: User | null;
-  setUser: (newUser: User | null) => void;
+  user: User | undefined | null;
+  setUser: (newUser: User | undefined | null) => void;
   role: string;
   setRole: (role: string) => void;
 };

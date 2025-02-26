@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/actions/auth"; // Import Supabase client
 import Link from "next/link";
+import { useUserData } from "@/store";
 
 export default function LoginPage() {
+  const { setUser } = useUserData();
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -14,11 +16,11 @@ export default function LoginPage() {
 
     try {
       // Call the login function here
-
       const response = await loginUser(formData);
 
       if (response.success) {
         router.push("/s/home");
+        setUser(response.user);
       } else {
         setError(response.error);
       }

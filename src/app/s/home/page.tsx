@@ -12,7 +12,7 @@ import { supabase } from "@/lib/utils/supabase";
 
 const page = () => {
   const { products, setProducts, fetchProducts } = useProductStore();
-  const { user: storeUser, setUser } = useUserData();
+  const { user: storeUser } = useUserData();
 
   const { data } = useQuery<Product[]>({
     queryKey: ["product-view"],

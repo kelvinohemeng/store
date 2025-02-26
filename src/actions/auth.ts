@@ -14,14 +14,16 @@ export const loginUser = async (formData: FormData) => {
     password: formData.get("password") as string,
   };
 
-  const { data: loggedInUser, error } =
-    await supabaseSSR.auth.signInWithPassword(data);
+  const {
+    data: { user },
+    error,
+  } = await supabaseSSR.auth.signInWithPassword(data);
 
   if (error) {
     return { success: false, error: error.message };
   }
-  revalidatePath("/s/home", "page");
-  return { success: true, loggedInUser, error: null };
+  // revalidatePath("/s/home", "page");
+  return { success: true, user, error: null };
 };
 
 // Function to log out a user
@@ -84,11 +86,12 @@ export const loginAdmin = async (formData: FormData) => {
     .eq("id", user?.id)
     .single();
 
-  if (roleError || !userData || userData.role !== "admin") {
-    return { success: false, error: "Unauthorized access" };
+  if (userData) {
+    if (userData.role !== "admin") {
+      redirect("/unauthorized");
+    }
   }
-
-  return { success: true, user, error: null };
+  redirect("/admin/dashboard");
 };
 
 //check if admin is authenticated

@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
 
   // Fetch session & user from `updateSession`
   const { response, user } = await updateSession(request);
-  const adminResponse = await verifyAdmin(request);
+  const { adminResponse, adminUser } = await verifyAdmin(request);
 
   // const checkAdmin = await
 
@@ -26,10 +26,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/s/home", request.url));
   }
 
-  // // ✅ Prevent authenticated admin from accessing admin login page
-  // if (isAdminAuthRoute && user) {
-  //   return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-  // }
+  // ✅ Prevent authenticated admin from accessing admin login page
+  if (isAdminAuthRoute && adminUser?.role === "admin") {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+  }
+
+  // ✅ Prevent unauthenticated users from accessing admin routes
+  if (isAdminRoute && adminUser?.role !== "admin") {
+    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  }
 
   // ✅ Protect user routes: redirect if no user is found
   if (isUserRoute && !user) {
@@ -43,10 +48,7 @@ export async function middleware(request: NextRequest) {
 
   // Handle admin routes
   if (isAdminRoute) {
-    return (
-      adminResponse ??
-      NextResponse.redirect(new URL("/unauthorized", request.url))
-    );
+    return adminResponse;
   }
 
   return NextResponse.next();

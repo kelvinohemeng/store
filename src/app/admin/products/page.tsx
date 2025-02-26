@@ -12,26 +12,18 @@ import { useProductStore, useSelectedState } from "@/store";
 import ProductDisplaySlide from "./components/ProductDIsplaySLide";
 
 export default function Products() {
-  const { products, fetchProducts } = useProductStore();
+  const { fetchProducts } = useProductStore();
   const { selectedProduct } = useSelectedState();
 
-  const getAllProducts = async () => {
-    await fetchProducts();
-  };
-
-  useEffect(() => {
-    getAllProducts();
-  }, [products]);
-
-  // const {
-  //   data: product,
-  //   isLoading,
-  //   isError,
-  //   refetch,
-  // } = useQuery<Product[]>({
-  //   queryKey: ["products"],
-  //   queryFn: async () => await fetchProducts(),
-  // });
+  const {
+    data: products,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<Product[]>({
+    queryKey: ["products"],
+    queryFn: async () => await fetchProducts(),
+  });
 
   return (
     <div className=" p-5 h-full">

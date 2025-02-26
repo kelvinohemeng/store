@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Navigation() {
-  const { user: storedUser, setUser, role } = useUserData();
+  const { user: storedUser } = useUserData();
   const { setState } = useSlide();
   const { totalItems } = useCartStore();
   const path = usePathname();
