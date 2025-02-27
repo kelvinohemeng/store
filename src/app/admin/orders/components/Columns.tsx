@@ -31,22 +31,24 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    id: "time",
-    header: "Time",
-    cell: ({ row }) => {
-      const dateString: string = row.getValue("created_at");
-      const date = new Date(dateString);
-      const formattedTime = date.toLocaleString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
-      return <div>{formattedTime}</div>;
-    },
-  },
-  {
     accessorKey: "email",
     header: "Email",
+  },
+  {
+    accessorKey: "order_items",
+    // header: "Status",
+    header: () => <div className="">Items Ordered</div>,
+    cell: ({ row }) => {
+      const itemsOrdered = row.original.order_items as OrderItem<Product>[];
+
+      return (
+        <div
+          className={`text-left flex gap-2 items-center font-medium  rounded-lg  tracking-normal px-3 py-2 w-max`}
+        >
+          <span>{itemsOrdered.length}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "payment_status",

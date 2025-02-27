@@ -12,12 +12,15 @@ import { NextButton, PrevButton } from "../../admin-components/SwiperBtn";
 import DefaultButton from "../../../../components/global-components/ProductButton";
 import { deleteProduct } from "@/actions/product";
 import UpdateProductSlide from "./UpdateProductSlide";
+import ProductButton from "./ProductButton";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ProductDisplaySlide({
   product,
 }: {
   product: Product | undefined | null;
 }) {
+  const queryClient = useQueryClient();
   const swiperRef = useRef<SwiperType | null>(null);
   const { state, setState } = useSlide();
   const [isBeginning, setIsBeginning] = useState(true);
@@ -29,6 +32,7 @@ export default function ProductDisplaySlide({
   const deleteSelectedProduct = async () => {
     try {
       await deleteProduct(product?.id);
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     } finally {
       setState("");
     }
@@ -60,13 +64,15 @@ export default function ProductDisplaySlide({
           </button>
         </div>
         <div>
-          <h1 className="text-2xl mb-6">View Product</h1>
-          <hr />
+          <div className=" pb-3 space-y-2">
+            <p className="text-base">View Product</p>
+            <h2 className="text-3xl font-medium">{product?.product_name}</h2>
+          </div>
         </div>
-        <div className="mt-6 relative rounded-2xl overflow-hidden">
+        <div className="mt-6 relative overflow-hidden">
           <Swiper
             spaceBetween={5}
-            slidesPerView={1}
+            slidesPerView={1.5}
             onSwiper={(swiper: any) => {
               swiperRef.current = swiper;
               setIsBeginning(swiper.isBeginning);
@@ -82,8 +88,8 @@ export default function ProductDisplaySlide({
             }}
           >
             {product?.image_url?.map((imageFile, index) => (
-              <SwiperSlide key={index}>
-                <div className=" aspect-video">
+              <SwiperSlide key={index} className="w-auto h-auto">
+                <div className="overflow-hidden rounded-2xl max-w-[254px] w-full h-[320px]">
                   <img
                     className="w-full h-full object-cover"
                     src={imageFile}
@@ -106,37 +112,66 @@ export default function ProductDisplaySlide({
             )}
           </div>
         </div>
-        <div className="flex w-full gap-3 py-5">
-          <div className="w-full" onClick={updateSelectedProduct}>
-            <DefaultButton text="Update Product" />
-          </div>
-          <div className="w-full" onClick={deleteSelectedProduct}>
-            <DefaultButton variant="destructive" text="Delete Product" />
-          </div>
-        </div>
-        <div className="pt-4 space-y-4">
-          <span className=" text-slate-600">Product Name</span>
-          <p className="text-2xl font-medium">{product?.product_name}</p>
-        </div>
-        <div className="pt-4 space-y-4">
+
+        <div className="space-y-2 py-3 pt-10">
           <span className=" text-slate-600">Product Description</span>
           <p className="text-2xl font-medium">{product?.product_description}</p>
         </div>
-        <div className="pt-8 flex justify-between gap-3">
-          <div className="pt-4 space-y-2 w-full p-3 border border-slate-400 rounded-xl">
-            <span>Product Type</span>
-            <p className="text-2xl font-medium">{product?.product_type}</p>
+
+        <div className=" flex justify-between gap-3 py-3">
+          <div className="pt-4 space-y-2 w-full">
+            <span>Category</span>
+            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
+              <span className="text-xl font-medium">
+                {product?.product_type}
+              </span>
+            </div>
           </div>
-          <div className="pt-4 space-y-2 w-full p-3 border border-slate-400 rounded-xl">
+          <div className="pt-4 space-y-2 w-full">
             <span>Product Price</span>
-            <p className="text-2xl font-medium">GHC {product?.product_price}</p>
+            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
+              <span className="text-xl font-medium">
+                GHC {product?.product_price.toFixed(2)}
+              </span>
+            </div>
           </div>
-          <div className="pt-4 space-y-2 w-full p-3 border border-slate-400 rounded-xl">
-            <span>Product Quantity</span>
-            <p className="text-2xl font-medium">{product?.quantity}</p>
+          <div className="pt-4 space-y-2 w-full">
+            <span>In Stock</span>
+            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
+              <span className="text-xl font-medium">{product?.quantity}</span>
+            </div>
+          </div>
+          <div className="pt-4 space-y-2 w-full">
+            <span>Sizes</span>
+            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
+              <span className="text-xl font-medium">
+                {product?.sizes?.length ? (
+                  product?.sizes?.map((size, index) => (
+                    <span key={`alt${size}_${index}`} className="">
+                      {size}
+                    </span>
+                  ))
+                ) : (
+                  <span>None</span>
+                )}
+              </span>
+            </div>
           </div>
         </div>
+        <div className="flex w-full gap-3 py-5">
+          <div className="w-full" onClick={updateSelectedProduct}>
+            <ProductButton text="Update Product" type="primary" />
+          </div>
+          <form className="w-full" action={deleteSelectedProduct}>
+            <ProductButton
+              text="Delete Product"
+              pendingText="Deleting product.."
+              type="destructive"
+            />
+          </form>
+        </div>
       </div>
+
       <UpdateProductSlide product={product} />
     </div>
   );

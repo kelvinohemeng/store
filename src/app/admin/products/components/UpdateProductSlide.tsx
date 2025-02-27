@@ -13,17 +13,25 @@ const UpdateProductSlide = ({
 }: {
   product: Product | undefined | null;
 }) => {
+  const categories = ["Dress", "Shoe", "Glasses"];
   const { state, setState } = useSlide();
   const ref = useRef<HTMLFormElement>(null);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
+  const [sizes, setSizes] = useState<string[]>([]);
 
   useEffect(() => {
     if (product) {
       setExistingImages(product.image_url || []);
     }
   }, [product]);
+
+  // function to handle size changes
+  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const sizeArray = event.target.value.split(",").map((size) => size.trim());
+    setSizes(sizeArray);
+  };
 
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -103,6 +111,9 @@ const UpdateProductSlide = ({
         throw new Error("Product ID is missing");
       }
 
+      //add new sizes
+      formData.append("sizes", JSON.stringify(sizes));
+
       const result = await updateProduct(product.id, formData);
 
       if (!result.success) {
@@ -118,8 +129,6 @@ const UpdateProductSlide = ({
     } catch (err: any) {
       console.error("Update error:", err);
       alert(`Failed to update product: ${err?.message}`);
-    } finally {
-      ref?.current?.reset();
     }
   };
 
@@ -132,7 +141,7 @@ const UpdateProductSlide = ({
         ></div>
       )}
       <div
-        className={`max-w-[450px] p-6 w-full border absolute z-[99] right-0 h-full top-0 bg-white transform ${
+        className={`overflow-y-scroll max-w-[450px] p-6 w-full border absolute z-[99] right-0 h-full top-0 bg-white transform ${
           state === "update" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
@@ -148,7 +157,7 @@ const UpdateProductSlide = ({
           action={updateAction}
           className="mt-6 min-w-full flex flex-col gap-4 "
         >
-          <label htmlFor="product_name" className="space-y-3">
+          <label htmlFor="product_name" className="space-y-3 py-3">
             <p>What is the name of this Product?</p>
             <div id="product_name">
               <input
@@ -159,7 +168,8 @@ const UpdateProductSlide = ({
               />
             </div>
           </label>
-          <div className="space-y-3 h-full">
+
+          <div className="space-y-3 h-full py-3">
             <p>Product Images (Max 3)</p>
             <div id="product_image" className="flex gap-4">
               <div className="flex flex-wrap gap-3">
@@ -224,7 +234,8 @@ const UpdateProductSlide = ({
               </div>
             </div>
           </div>
-          <label htmlFor="product_description" className="space-y-3">
+
+          <label htmlFor="product_description" className="space-y-3 py-3">
             <p>Please descibe your Product</p>
             <div id="product_description">
               <input
@@ -236,7 +247,8 @@ const UpdateProductSlide = ({
               />
             </div>
           </label>
-          <label htmlFor="product_type" className="space-y-3">
+
+          <label htmlFor="product_type" className="space-y-3 py-3">
             <p>Select a category for your Product</p>
             <div id="product_type">
               <input
@@ -248,6 +260,68 @@ const UpdateProductSlide = ({
               />
             </div>
           </label>
+
+          <div className="flex justify-center gap-3 py-3">
+            <label htmlFor="product_price" className="space-y-3">
+              <p>Product Price</p>
+              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md focus:outline-none focus:border-transparent">
+                <span>GHC</span>
+                <input
+                  id="product_price"
+                  type="number"
+                  name="price"
+                  className="text-lg w-full focus:outline-none focus:border-transparent "
+                  placeholder="Product Price"
+                  defaultValue={200}
+                />
+              </div>
+            </label>
+            <label htmlFor="stock" className="space-y-3">
+              <p>Available in Stock</p>
+              <div>
+                <input
+                  id="stock"
+                  type="number"
+                  name="stock"
+                  className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
+                  placeholder="Product Description"
+                  defaultValue={`100`}
+                />
+              </div>
+            </label>
+          </div>
+
+          <label htmlFor="product_type" className="space-y-3 py-3">
+            <p>Select Product Category</p>
+            <div id="product_type">
+              <select
+                name="category"
+                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category.toLowerCase()}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </label>
+
+          <label htmlFor="product_sizes" className="space-y-3 py-3">
+            <p>Available Sizes (comma-separated)</p>
+            <div>
+              <input
+                id="product_sizes"
+                type="text"
+                name="sizes"
+                className="border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
+                placeholder="e.g., S, M, L, XL"
+                defaultValue={product?.sizes?.join(", ")}
+                onChange={handleSizeChange}
+              />
+            </div>
+          </label>
+
           <ProductButton
             text="Update Product"
             pendingText="Updating Product..."

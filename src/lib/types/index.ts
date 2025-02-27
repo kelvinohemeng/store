@@ -8,6 +8,7 @@ export interface Product {
   stock: number;
   quantity: number;
   image_url: string[];
+  sizes: string[];
 }
 
 export type file = {

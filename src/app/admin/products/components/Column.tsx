@@ -15,13 +15,13 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     id: "name_and_image",
-    header: "Name",
+    header: () => <div className=" p-2">Name</div>,
     cell: ({ row }) => {
       const productName: string = row.original.product_name;
       const images: string[] = row.original.image_url || [];
 
       return (
-        <div className="flex items-center justify-start max-w-max gap-2">
+        <div className="flex items-center justify-start gap-2 p-2">
           {images.length > 0 ? (
             <div className="flex gap-2">
               <img
@@ -54,10 +54,41 @@ export const columns: ColumnDef<Product>[] = [
       return <div className=" font-medium">{formatted}</div>;
     },
   },
-
   {
-    accessorKey: "product_description",
-    header: "Product Description",
+    accessorKey: "sizes",
+    header: () => <div className="">Sizes</div>,
+    cell: ({ row }) => {
+      const sizes: string[] = row.original.sizes || [];
+
+      return (
+        <div className=" font-medium space-x-2">
+          {sizes.length > 0 ? (
+            sizes.map((size, index) => (
+              <span
+                key={`${size}_${index}`}
+                className=" bg-slate-100 rounded-md text-xs px-2 py-1"
+              >
+                {size}
+              </span>
+            ))
+          ) : (
+            <span>-</span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "product_type",
+    header: "Category",
+    cell: ({ row }) => {
+      const cat: string = row.getValue("product_type");
+      return (
+        <div className="text-left flex gap-2 items-center font-medium bg-slate-50 rounded-lg text-green-800 tracking-normal px-3 py-2 w-max">
+          <span>{cat}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "product_status",
@@ -74,10 +105,10 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "quantity",
-    header: () => <div className="text-right">In Stock</div>,
+    header: () => <div className="text-right p-2">In Stock</div>,
     cell: ({ row }) => {
       const quantity: number = row.getValue("quantity");
-      return <div className="text-right font-medium">{quantity}</div>;
+      return <div className="text-right font-medium p-2">{quantity}</div>;
     },
   },
 

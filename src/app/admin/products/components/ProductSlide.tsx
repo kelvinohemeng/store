@@ -6,8 +6,11 @@ import { useRef, useState } from "react";
 import ProductButton from "./ProductButton";
 import imageCompression from "browser-image-compression";
 import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function CreateProductSlide() {
+  const queryClient = useQueryClient(); // Add this line
+
   const categories = ["Dress", "Shoe", "Glasses"];
   // const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -21,8 +24,16 @@ export default function CreateProductSlide() {
   const ref = useRef<HTMLFormElement>(null);
   // const { fetchProducts, setisLoading } = useProductStore();
   const [images, setImages] = useState<File[]>([]);
+  const [sizes, setSizes] = useState<string[]>([]);
+
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number[]>([]);
+
+  // function to handle size changes
+  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const sizeArray = event.target.value.split(",").map((size) => size.trim());
+    setSizes(sizeArray);
+  };
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -80,9 +91,11 @@ export default function CreateProductSlide() {
       images.forEach((image, index) => {
         formData.append(`images[${index}]`, image);
       });
-      // reset values
+
+      formData.append("sizes", JSON.stringify(sizes));
 
       await submitNewProduct(formData);
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     } catch (err: any) {
       alert(`Failed to create product: ${err.message}`);
     } finally {
@@ -117,7 +130,7 @@ export default function CreateProductSlide() {
           action={submitAction}
           className="mt-6 min-w-full flex flex-col gap-4 "
         >
-          <label htmlFor="product_name" className="space-y-3">
+          <label htmlFor="product_name" className="space-y-3 py-3">
             <p>What is the name of this Product?</p>
             <div id="product_name">
               {/* <input
@@ -129,12 +142,14 @@ export default function CreateProductSlide() {
               <Input
                 type="text"
                 name="name"
-                className=""
+                required
+                className="h-auto p-3"
                 placeholder="Product Name"
               />
             </div>
           </label>
-          <div className="space-y-3 h-full">
+
+          <div className="space-y-3 h-full py-3">
             <p>Select images for Products</p>
             <div id="product_image" className="flex gap-4">
               {/* Image Preview Section */}
@@ -166,6 +181,7 @@ export default function CreateProductSlide() {
                       type="file"
                       name="images"
                       multiple
+                      required
                       accept="image/*"
                       className=" w-full h-full opacity-0 pointer-events-none absolute"
                       onChange={handleFileChange}
@@ -178,27 +194,31 @@ export default function CreateProductSlide() {
               </div>
             </div>
           </div>
-          <label htmlFor="product_description" className="space-y-3">
+
+          <label htmlFor="product_description" className="space-y-3 py-3">
             <p>Please descibe your Product</p>
             <div>
               <textarea
                 id="product_description"
                 name="description"
-                className=" border border-gray-400 p-3 text-lg w-full rounded-md min-h-[100px]"
+                required
+                className=" border border-gray-200 p-3 text-lg w-full rounded-md min-h-[100px] shadow-sm"
                 placeholder="Product Description"
               />
             </div>
           </label>
+
           {/* stock and price */}
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-3 py-3">
             <label htmlFor="product_price" className="space-y-3">
               <p>Product Price</p>
-              <div className="flex items-center gap-2 border border-gray-400 p-3 text-lg w-full rounded-md focus:outline-none focus:border-transparent">
+              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md focus:outline-none focus:border-transparent">
                 <span>GHC</span>
                 <input
                   id="product_price"
                   type="number"
                   name="price"
+                  required
                   className="text-lg w-full focus:outline-none focus:border-transparent "
                   placeholder="Product Price"
                   defaultValue={200}
@@ -212,19 +232,22 @@ export default function CreateProductSlide() {
                   id="stock"
                   type="number"
                   name="stock"
-                  className=" border border-gray-400 p-3 text-lg w-full rounded-md"
+                  required
+                  className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
                   placeholder="Product Description"
                   defaultValue={`100`}
                 />
               </div>
             </label>
           </div>
-          <label htmlFor="product_type" className="space-y-3">
+
+          <label htmlFor="product_type" className="space-y-3 py-3">
             <p>Select Product Category</p>
             <div id="product_type">
               <select
                 name="category"
-                className=" border border-gray-400 p-3 text-lg w-full rounded-md"
+                required
+                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
               >
                 {categories.map((category) => (
                   <option key={category} value={category.toLowerCase()}>
@@ -234,6 +257,22 @@ export default function CreateProductSlide() {
               </select>
             </div>
           </label>
+
+          <label htmlFor="product_sizes" className="space-y-3 py-3">
+            <p>Available Sizes (comma-separated)</p>
+            <div>
+              <input
+                id="product_sizes"
+                type="text"
+                required
+                name="sizes"
+                className="border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
+                placeholder="e.g., S, M, L, XL"
+                onChange={handleSizeChange}
+              />
+            </div>
+          </label>
+
           <ProductButton />
         </form>
       </div>

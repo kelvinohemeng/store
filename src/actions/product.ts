@@ -10,6 +10,7 @@ export const submitNewProduct = async (formData: FormData) => {
   const quantity = formData.get("stock");
   const imageFiles = formData.getAll("images") as File[]; // Get multiple images
   const category = formData.get("category") as string; // Get the category value
+  const sizes = formData.get("sizes") as string;
 
   if (!imageFiles.length) {
     return { success: false, error: "At least one image is required" };
@@ -67,6 +68,7 @@ export const submitNewProduct = async (formData: FormData) => {
           image_url: imageUrls, // Store array of image URLs
           product_price: price,
           quantity: quantity,
+          sizes: sizes.split(","),
         },
       ])
       .select();

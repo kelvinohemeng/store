@@ -17,7 +17,6 @@ const Banner = () => {
             Add a ew products to your online store,{" "}
           </p>
         </div>
-        <CreateButton action="create" text="Add new products" />
       </div>
     </div>
   );

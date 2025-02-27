@@ -15,11 +15,11 @@ export default async function AdminRoot({ children }: { children: ReactNode }) {
       {/* Main Content */}
       <div className="w-full flex flex-col h-full">
         {/* Show Banner Only If Admin Is Authenticated */}
-        {isAuthenticated && isAdmin && <Banner />}
+        {/* {isAuthenticated && isAdmin && <Banner />} */}
 
         <div className="w-full h-[0.5px] bg-slate-600 opacity-50" />
 
-        <div className="bg-slate-50 bg-opacity-50 p-8 overflow-y-scroll h-full !overflow-x-hidden">
+        <div className="bg-[#F7F7F7] bg-opacity-50 p-8 overflow-y-scroll h-full !overflow-x-hidden">
           {children}
         </div>
       </div>

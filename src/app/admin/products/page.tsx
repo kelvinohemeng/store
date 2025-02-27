@@ -10,6 +10,7 @@ import { fetchProducts } from "@/lib/utils/supabase";
 import { useEffect } from "react";
 import { useProductStore, useSelectedState } from "@/store";
 import ProductDisplaySlide from "./components/ProductDIsplaySLide";
+import CreateButton from "./components/CreateButton";
 
 export default function Products() {
   const { fetchProducts } = useProductStore();
@@ -19,7 +20,6 @@ export default function Products() {
     data: products,
     isLoading,
     isError,
-    refetch,
   } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: async () => await fetchProducts(),
@@ -27,7 +27,10 @@ export default function Products() {
 
   return (
     <div className=" p-5 h-full">
-      <h1 className="text-4xl mb-6">All products</h1>
+      <div className="flex justify-between">
+        <h1 className="text-4xl mb-6">All products</h1>
+        <CreateButton action="create" text="Add new products" />
+      </div>
       {/* <ProductDisplay products={products} /> */}
       <DataTable columns={columns} data={products} />
       <CreateProductSlide />
