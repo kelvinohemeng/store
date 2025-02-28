@@ -59,15 +59,15 @@ export type DeliveryAddress = {
   country: string;
   postalCode: string;
 };
-export interface OrderItem<T> {
+export interface AdminOrderItemT {
   id: string | number;
   created_at: string;
   order_id: string | number;
-  product: T;
+  product: Product;
   quantity: number;
   price: number;
 }
-export type Order = {
+export type AdminOrderT = {
   id: number | string;
   customer_name: string;
   email: string;
@@ -75,7 +75,7 @@ export type Order = {
   created_at: string;
   quantity: number;
   delivery_address: DeliveryAddress;
-  order_items: OrderItem<Product>[];
+  order_items: AdminOrderItemT[];
 };
 
 export interface SelectedProductState {
@@ -83,8 +83,28 @@ export interface SelectedProductState {
   setSelectedProduct: (product: Product) => void;
 }
 export interface SelectedOrderState {
-  selectedOrder: Order | undefined | null;
-  setSelectedOrder: (order: Order) => void;
+  selectedOrder: AdminOrderT | undefined | null;
+  setSelectedOrder: (order: AdminOrderT) => void;
 }
 
 export type Action = "" | "view" | "update" | "create" | "view-order" | "cart";
+
+export interface OrderItem {
+  productId: string | number;
+  quantity: number;
+  price: number;
+}
+
+export interface OrderData {
+  customerName: string | undefined;
+  email: string | undefined;
+  items: OrderItem[];
+  deliveryAddress?: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  paymentStatus: "pending" | "completed" | "failed" | any;
+}

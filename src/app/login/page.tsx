@@ -20,7 +20,7 @@ export default function LoginPage() {
 
       if (response.success) {
         router.push("/s/home");
-        setUser(response.user);
+        setUser(response.userData);
       } else {
         setError(response.error);
       }

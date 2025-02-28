@@ -1,6 +1,6 @@
 "use client";
 
-import { Order, OrderItem, Product } from "@/lib/types";
+import { AdminOrderItemT, AdminOrderT, OrderItem, Product } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Check } from "lucide-react";
 
@@ -13,7 +13,7 @@ export type Payment = {
   email: string;
 };
 
-export const columns: ColumnDef<Order>[] = [
+export const columns: ColumnDef<AdminOrderT>[] = [
   {
     accessorKey: "customer_name",
     header: "Customer Name",
@@ -39,7 +39,7 @@ export const columns: ColumnDef<Order>[] = [
     // header: "Status",
     header: () => <div className="">Items Ordered</div>,
     cell: ({ row }) => {
-      const itemsOrdered = row.original.order_items as OrderItem<Product>[];
+      const itemsOrdered = row.original.order_items as AdminOrderItemT[];
 
       return (
         <div
@@ -85,7 +85,7 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: "order_items",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
-      const orderItems: OrderItem<Product>[] = row.getValue("order_items");
+      const orderItems: AdminOrderItemT[] = row.getValue("order_items");
       const totalAmount = orderItems.reduce((sum, item) => sum + item.price, 0); // Calculate total amount
 
       const formatted = new Intl.NumberFormat("en-US", {

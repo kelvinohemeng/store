@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSelectedOrder, useSlide } from "@/store";
-import { Order } from "@/lib/types";
+import { AdminOrderItemT, AdminOrderT } from "@/lib/types";
 import DisplayOrderSlide from "./DisplayOrderSlide";
 
 interface DataTableProps<TData, TValue> {
@@ -53,7 +53,7 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const handleRowClick = (row: Order | TData) => {
+  const handleRowClick = (row: AdminOrderItemT | TData) => {
     //@ts-ignore
     setSelectedOrder(row);
     setState("view-order");

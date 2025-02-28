@@ -1,17 +1,17 @@
 "use client";
 
 import { checkAdminAuth, logoutUser } from "@/actions/auth";
-import { useUserData } from "@/store";
+import { StoreUser, useUserData } from "@/store";
 import { User } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { set } from "react-hook-form";
 
-const UserProfile = ({ user }: { user: User }) => {
+const UserProfile = ({ user }: { user: StoreUser }) => {
   const [triggerDD, setTriggerDD] = React.useState<boolean>(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
-  const { setRole, setUser } = useUserData();
+  const { setUser } = useUserData();
   async function checkAdmin() {
     const checkAdminAuthentication = await checkAdminAuth();
     setIsAdmin(checkAdminAuthentication.isAdmin);
@@ -23,7 +23,6 @@ const UserProfile = ({ user }: { user: User }) => {
 
   const logOut = async () => {
     await logoutUser();
-    setRole("");
     setUser(null);
   };
 

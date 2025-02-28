@@ -1,5 +1,6 @@
 "use client";
 
+import { createOrder } from "@/actions/order";
 import { handlePaystackPurchase } from "@/actions/paystack";
 import { Input } from "@/components/ui/input";
 import { Product } from "@/lib/types";
@@ -9,6 +10,26 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { PaystackProps } from "react-paystack/dist/types";
 
+interface OrderItem {
+  productId: string | number;
+  quantity: number;
+  price: number;
+}
+
+interface OrderData {
+  customerName: string | undefined;
+  email: string | undefined;
+  items: OrderItem[];
+  deliveryAddress?: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  paymentStatus: "pending" | "completed" | "failed" | any;
+}
+
 const PayStackCheckout = ({
   amount,
   orderItems,
@@ -16,15 +37,14 @@ const PayStackCheckout = ({
   amount: number;
   orderItems: Product[];
 }) => {
-  // const [storeStuff, setStoreStuff] = useState<PaystackProps | null>();
   const { items } = useCartStore();
   const { user: storedUser, setUser } = useUserData();
 
-  //   const { data, isLoading, isError, isSuccess } = useQuery({
-  //     queryKey: ["paystack_initialization"],
-  //     queryFn: async () =>
-  //       handlePaystackPurchase({ amount, email, setStoreStuff }),
-  //   });
+  // const { data, isLoading, isError, isSuccess } = useQuery({
+  //   queryKey: ["paystack_initialization"],
+  //   queryFn: async () =>
+  //     handlePaystackPurchase({ amount, email: "test@example.com" }),
+  // });
 
   const handlePayment = async () => {
     const email = storedUser?.email;
@@ -32,25 +52,45 @@ const PayStackCheckout = ({
       alert("Please enter your email address.");
     }
 
-    const payStackResponse = await handlePaystackPurchase({ amount, email });
+    const payStackResponse = await handlePaystackPurchase({
+      amount,
+      email,
+      metadata: {
+        name: "John Doe",
+        phone: "+233123456789",
+      },
+    });
 
     if (payStackResponse.success) {
-      window.open(payStackResponse.authorizationUrl, "_blank");
+      // Store orderData in cookies (not in Zustand)
+      document.cookie = `pendingOrder=${JSON.stringify({
+        customerName: storedUser?.display_name,
+        email: storedUser?.email,
+        items: orderItems.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.product_price,
+        })),
+      })}; path=/; Secure`;
+
+      window.location.href = payStackResponse.authorizationUrl;
     } else {
       alert(payStackResponse.error);
     }
 
-    // const orderData = {
-    //   customerName: storedUser?.email,
-    //   email: storedUser?.email,
-    //   deliveryAddress: "123 Main St, City",
-    //   paymentStatus: data?.status, // Change this based on your logic
-    //   items: items.map((item) => ({
-    //     productId: item.id,
-    //     quantity: item.quantity,
-    //     price: item.product_price, // Ensure price is correct
-    //   })),
-    // };
+    const orderData: OrderData = {
+      customerName: storedUser?.email,
+      email: storedUser?.email,
+      paymentStatus: payStackResponse?.data?.status, // Change this based on your logic
+      items: orderItems.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+        price: item.product_price, // Ensure price is correct
+      })),
+    };
+
+    //function to create a new order
+    await createOrder(orderData);
   };
 
   useEffect(() => {

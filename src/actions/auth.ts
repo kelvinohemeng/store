@@ -22,8 +22,13 @@ export const loginUser = async (formData: FormData) => {
   if (error) {
     return { success: false, error: error.message };
   }
+  const { data: userData, error: roleError } = await supabaseSSR
+    .from("user_profiles")
+    .select("*")
+    .eq("id", user?.id)
+    .single();
   // revalidatePath("/s/home", "page");
-  return { success: true, user, error: null };
+  return { success: true, userData, error: null };
 };
 
 // Function to log out a user
@@ -81,7 +86,7 @@ export const loginAdmin = async (formData: FormData) => {
 
   // Fetch the user's role
   const { data: userData, error: roleError } = await supabaseSSR
-    .from("users")
+    .from("user_profiles")
     .select("role")
     .eq("id", user?.id)
     .single();

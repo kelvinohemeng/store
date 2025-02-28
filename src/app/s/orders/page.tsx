@@ -1,15 +1,74 @@
-import { createClient } from "@/lib/utils/supabase";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function page() {
-  // const supabase = createClient();
-  // const { data, error } = await supabase.auth.getUser();
+import { getOrdersByEmail } from "@/actions/order";
+import { AdminOrderT } from "@/lib/types";
+import { useUserData } from "@/store";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
-  // if (error || !data?.user) {
-  //   redirect("/login");
-  // }
+export default function Page() {
+  const [orders, setOrders] = useState<AdminOrderT[] | undefined>([]); // Use null for better state handling
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const { user: storedUser } = useUserData();
 
-  // console.log(error);
+  // Fetch orders for the logged-in user
+  async function fetchOrders() {
+    if (!storedUser?.email) return;
 
-  return <div>Orders displayed her</div>;
+    setLoading(true);
+    try {
+      const result = await getOrdersByEmail(storedUser.email);
+      setOrders(result?.orders); // Ensure orders is an array, even if no results
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchOrders();
+    console.log(storedUser?.email);
+  }, [storedUser?.email]); // Only fetch when email is available
+
+  return (
+    <div>
+      <h1>Your Orders</h1>
+
+      {loading ? (
+        <p>Loading orders...</p>
+      ) : orders && orders.length > 0 ? (
+        <div className=" flex flex-col gap-6">
+          {(orders as AdminOrderT[]).map((order) => (
+            // <Link href={`/s/product/${order.order_items[0].product.id}`}>
+            <div key={order.id} className=" flex gap-4">
+              <span>Order #{order.id.toString().slice(0, 5)}... - </span>
+              <span>{order.payment_status}</span>
+              <div>
+                {order.order_items.map((product) => (
+                  <div key={product.id}>
+                    <p>{product.id}</p>
+                    <p>Quantity: {product.quantity}</p>
+                    <p>Price: {product.price}</p>
+                    <p>Item: {product.product.product_name}</p>
+                    <Image
+                      src={product.product.image_url[0]}
+                      alt={product.product.product_name}
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            // </Link>
+          ))}
+        </div>
+      ) : (
+        <p>No orders found.</p>
+      )}
+    </div>
+  );
 }

@@ -1,9 +1,11 @@
 "use client";
 
+import { PaystackButton } from "react-paystack";
 import { Product } from "@/lib/types";
 import { useCartStore, useSlide } from "@/store";
 import { useState } from "react";
 import CartItem from "./CartItem";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PayStackCheckout from "./PayStackCheckout";
 
 const CartSlide = () => {
@@ -48,6 +50,7 @@ const CartSlide = () => {
             <p>Your cart is empty.</p>
           )}
         </div>
+        <PayStackCheckout amount={2000} orderItems={items} />
       </div>
     </div>
   );

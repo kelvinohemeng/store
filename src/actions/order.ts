@@ -1,8 +1,9 @@
 "use server";
 // Creating the orders
 
-import { Order } from "@/lib/types";
+import { AdminOrderItemT, AdminOrderT, OrderData } from "@/lib/types";
 import { supabase } from "@/lib/utils/supabase";
+import { cookies } from "next/headers";
 
 // fields required
 // Name
@@ -13,28 +14,16 @@ import { supabase } from "@/lib/utils/supabase";
 // Payment status
 
 // Define TypeScript interfaces for our order data
-interface OrderItem {
-  productId: string;
-  quantity: number;
-  price: number;
-}
-
-interface OrderData {
-  customerName: string;
-  email: string;
-  items: OrderItem[];
-  deliveryAddress: {
-    street: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-  };
-  paymentStatus: "pending" | "completed" | "failed";
-}
 
 export async function createOrder(orderData: OrderData) {
+  const cookieStore = await cookies();
   try {
+    cookieStore.set("pendingOrder", JSON.stringify(orderData), {
+      httpOnly: true, // Prevents client-side access
+      secure: process.env.NODE_ENV === "production", // Only use secure cookies in production
+      path: "/", // Makes cookie available site-wide
+    });
+
     // First, create the main order record
     const { data: order, error: orderError } = await supabase
       .from("orders")
@@ -86,7 +75,7 @@ export async function getOrdersByEmail(email: string) {
         *,
         order_items (
           *,
-          product:products (*)
+          product:Products (*)
         )
       `
       )
@@ -132,7 +121,7 @@ export async function getAllOrders() {
 
     if (error) throw error;
 
-    return (orders as Order[]) || [];
+    return (orders as AdminOrderT[]) || [];
   } catch (error) {
     console.error("Error fetching orders:", error);
     throw new Error("Failed to fetch orders");

@@ -10,18 +10,21 @@ import {
 } from "@/lib/types";
 import { User } from "@supabase/supabase-js";
 
-type UserT = {
-  user: User | undefined | null;
-  setUser: (newUser: User | undefined | null) => void;
+export type StoreUser = {
+  id: string | number;
+  created_at: string;
+  email: string;
   role: string;
-  setRole: (role: string) => void;
+  display_name: string;
+};
+type UserT = {
+  user: StoreUser | undefined | null;
+  setUser: (newUser: StoreUser | undefined | null) => void;
 };
 
 export const useUserData = create<UserT>((set) => ({
   user: null,
   setUser: (newUser) => set({ user: newUser }),
-  role: "user",
-  setRole: (newRole) => set({ role: newRole }),
 }));
 
 export const useCartStore = create<CartState>()(
