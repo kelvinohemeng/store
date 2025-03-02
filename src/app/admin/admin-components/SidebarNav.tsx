@@ -79,7 +79,7 @@ const SidebarNav = () => {
             </div>
             <div className="relative">
               <h3>Ecommerce Store</h3>
-              <Link href={`/s/home`}>
+              <Link href={`/home`}>
                 <span className="border-b border-slate-800">website.com</span>
               </Link>
             </div>

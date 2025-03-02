@@ -20,7 +20,7 @@ const ProductCard = ({ product, index }: ProdcutCardT) => {
   //   };
 
   return (
-    <Link href={`/s/product/${product.id}`}>
+    <Link href={`/product/${product.id}`}>
       <div key={index} className="product-card">
         <img
           className="max-w-[250px]"

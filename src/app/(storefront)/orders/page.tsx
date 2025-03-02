@@ -42,7 +42,7 @@ export default function Page() {
       ) : orders && orders.length > 0 ? (
         <div className=" flex flex-col gap-6">
           {(orders as AdminOrderT[]).map((order) => (
-            // <Link href={`/s/product/${order.order_items[0].product.id}`}>
+            // <Link href={`/product/${order.order_items[0].product.id}`}>
             <div key={order.id} className=" flex gap-4">
               <span>Order #{order.id.toString().slice(0, 5)}... - </span>
               <span>{order.payment_status}</span>

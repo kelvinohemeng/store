@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Provider from "@/lib/utils/Providers";
 import Navigation from "@/components/global-components/Navigation";
-import CartSlide from "./s/home/components/CartSlide";
-import FixedBodyOnCartOpen from "./s/home/components/FixBodyOnCartOpen";
 import Main from "@/components/global-components/Main";
 import LoadZustandGloabalStore from "@/components/global-components/LoadZustandGloabalStore";
+import CartSlide from "./(storefront)/home/components/CartSlide";
+import FixedBodyOnCartOpen from "./(storefront)/home/components/FixBodyOnCartOpen";
 
 export const metadata: Metadata = {
   title: "Create Next App",

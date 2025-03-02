@@ -36,7 +36,7 @@ export default function PaymentSuccess() {
   return (
     <div>
       <span>{loading ? "Verifying payment..." : message}</span>
-      <Link href={"/s/home"}>
+      <Link href={"/home"}>
         <button className=" px-4 py-2 border">Continue Shopping</button>
       </Link>
     </div>

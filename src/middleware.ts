@@ -5,7 +5,7 @@ import { verifyAdmin } from "./lib/utils/supabase/adminMiddleware";
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  const userRoutes = ["/s/orders"];
+  const userRoutes = ["/orders"];
   const adminRoutes = ["/admin/dashboard", "/admin/products", "/admin/orders"];
   const adminAuthRoutes = ["/admin/login"]; // Admin authentication routes
   const authRoutes = ["/login", "/signup"]; // Authentication routes
@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect logged-in users away from login/signup
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL("/s/home", request.url));
+    return NextResponse.redirect(new URL("/home", request.url));
   }
 
   // ✅ Prevent authenticated admin from accessing admin login page

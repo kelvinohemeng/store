@@ -33,7 +33,7 @@ export const handlePaystackPurchase = async ({
           email,
           amount: 1,
           currency: "GHS",
-          callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/s/payment-success`, // Redirect after payment
+          callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`, // Redirect after payment
         }),
       }
     );

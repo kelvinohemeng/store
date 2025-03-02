@@ -2,11 +2,8 @@
 
 import { checkAdminAuth, logoutUser } from "@/actions/auth";
 import { StoreUser, useUserData } from "@/store";
-import { User } from "@supabase/supabase-js";
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { set } from "react-hook-form";
 
 const UserProfile = ({ user }: { user: StoreUser }) => {
   const [triggerDD, setTriggerDD] = React.useState<boolean>(false);
@@ -43,7 +40,7 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
           </Link>
         </div>
         <div className="px-5 py-3 w-full text-start hover:bg-slate-50">
-          <Link href={"/s/orders"} className=" text-nowrap text-xl">
+          <Link href={"/orders"} className=" text-nowrap text-xl">
             My Orders
           </Link>
         </div>

@@ -47,7 +47,7 @@ export async function updateSession(request: NextRequest) {
   // } else {
   //   // Redirect logged-in users away from auth pages
   //   if (path.startsWith("/login") || path.startsWith("/signup")) {
-  //     return NextResponse.redirect(new URL("/s/home", request.url)); // Change this to your actual homepage
+  //     return NextResponse.redirect(new URL("/home", request.url)); // Change this to your actual homepage
   //   }
   // }
 

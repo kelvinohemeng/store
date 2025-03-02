@@ -27,7 +27,7 @@ export const loginUser = async (formData: FormData) => {
     .select("*")
     .eq("id", user?.id)
     .single();
-  // revalidatePath("/s/home", "page");
+  // revalidatePath("/home", "page");
   return { success: true, userData, error: null };
 };
 
@@ -40,8 +40,8 @@ export const logoutUser = async () => {
   if (error) {
     return { success: false, error: error.message };
   } else {
-    revalidatePath("/s/home", "page");
-    redirect("/s/home");
+    revalidatePath("/home", "page");
+    redirect("/home");
     // return { success: true, error: null };
   }
 };
@@ -158,8 +158,8 @@ export const signupUser = async (formData: FormData) => {
   //   }
   // }
 
-  revalidatePath("/s/orders", "page");
-  redirect("/s/orders");
+  revalidatePath("/orders", "page");
+  redirect("/orders");
 };
 
 // Function to log in with OAuth providers

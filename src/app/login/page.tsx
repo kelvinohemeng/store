@@ -19,7 +19,7 @@ export default function LoginPage() {
       const response = await loginUser(formData);
 
       if (response.success) {
-        router.push("/s/home");
+        router.push("/home");
         setUser(response.userData);
       } else {
         setError(response.error);
