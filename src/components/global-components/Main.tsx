@@ -16,7 +16,7 @@ export default function Main({
     <main
       className={cn(
         `${className} w-screen min-h-screen h-full overflow-x-hidden  ${
-          adminRoutes ? "" : "pt-[10vh]"
+          adminRoutes ? "" : "pt-[120px]"
         }`
       )}
     >

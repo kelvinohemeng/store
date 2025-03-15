@@ -23,7 +23,7 @@ const page = () => {
   return (
     <div className="min-h-full flex">
       <div>
-        <h1>This is your storefront, {storeUser?.email}</h1>
+        <h3>This is your storefront, {storeUser?.email}</h3>
         {products.map((product, index) => (
           <ProductCard index={index} product={product} />
         ))}
