@@ -8,7 +8,7 @@ import { useState, useRef, useEffect } from "react";
 
 import "swiper/css";
 
-import { NextButton, PrevButton } from "../../admin-components/SwiperBtn";
+import { NextButton, PrevButton } from "../../_admin-components/SwiperBtn";
 import DefaultButton from "../../../../components/global-components/ProductButton";
 import { deleteProduct } from "@/actions/product";
 import UpdateProductSlide from "./UpdateProductSlide";
@@ -115,39 +115,43 @@ export default function ProductDisplaySlide({
 
         <div className="space-y-2 py-3 pt-10">
           <span className=" text-slate-600">Product Description</span>
-          <p className="text-2xl font-medium">{product?.product_description}</p>
+          <p className="font-medium">{product?.product_description}</p>
         </div>
 
-        <div className=" flex justify-between gap-3 py-3">
+        <div className=" flex flex-col justify-between gap-3 py-3">
           <div className="pt-4 space-y-2 w-full">
             <span>Category</span>
-            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
-              <span className="text-xl font-medium">
-                {product?.product_type}
-              </span>
+            <div className="p-2 px-3 bg-black/10 rounded-[4px] w-max">
+              <span className="font-medium">{product?.product_type}</span>
             </div>
           </div>
           <div className="pt-4 space-y-2 w-full">
             <span>Product Price</span>
-            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
-              <span className="text-xl font-medium">
-                GHC {product?.product_price.toFixed(2)}
-              </span>
+            <div className="p-2 px-3 bg-black/10 font-semibold rounded-[4px] w-max space-x-4">
+              <span className="">GHC {product?.product_price.toFixed(2)}</span>
+              {product?.compare_price && (
+                <span className=" line-through text-black/70">
+                  {product?.compare_price.toFixed(2)}
+                </span>
+              )}
             </div>
           </div>
           <div className="pt-4 space-y-2 w-full">
             <span>In Stock</span>
-            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
-              <span className="text-xl font-medium">{product?.quantity}</span>
+            <div className="p-2 px-3 bg-black/10 rounded-[4px] w-max">
+              <span className="font-medium">{product?.quantity}</span>
             </div>
           </div>
           <div className="pt-4 space-y-2 w-full">
             <span>Sizes</span>
-            <div className="p-2 px-3 bg-[#F2F2F2] rounded-lg w-max">
-              <span className="text-xl font-medium">
+            <div className=" w-max">
+              <span className="font-medium flex gap-2">
                 {product?.sizes?.length ? (
                   product?.sizes?.map((size, index) => (
-                    <span key={`alt${size}_${index}`} className="">
+                    <span
+                      key={`alt${size}_${index}`}
+                      className="p-2 px-3 bg-black/10 rounded-[4px]"
+                    >
                       {size}
                     </span>
                   ))

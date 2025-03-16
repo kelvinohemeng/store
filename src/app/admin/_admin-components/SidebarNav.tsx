@@ -78,7 +78,7 @@ const SidebarNav = () => {
               <div className="bg-slate-400 aspect-square h-full rounded-full"></div>
             </div>
             <div className="relative">
-              <h3>Ecommerce Store</h3>
+              <p>Ecommerce Store</p>
               <Link href={`/home`}>
                 <span className="border-b border-slate-800">website.com</span>
               </Link>

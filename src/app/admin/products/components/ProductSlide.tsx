@@ -103,6 +103,7 @@ export default function CreateProductSlide() {
       setImages([]);
       setPreviewUrls([]);
       ref?.current?.reset();
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     }
   };
   return (
@@ -273,7 +274,7 @@ export default function CreateProductSlide() {
             </div>
           </label>
 
-          <ProductButton />
+          <ProductButton type="primary" />
         </form>
       </div>
     </>

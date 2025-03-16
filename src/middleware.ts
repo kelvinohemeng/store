@@ -5,11 +5,13 @@ import { verifyAdmin } from "./lib/utils/supabase/adminMiddleware";
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
+  const homeRoute = ["/"];
   const userRoutes = ["/orders"];
   const adminRoutes = ["/admin/dashboard", "/admin/products", "/admin/orders"];
   const adminAuthRoutes = ["/admin/login"]; // Admin authentication routes
   const authRoutes = ["/login", "/signup"]; // Authentication routes
 
+  const isHomeRoute = homeRoute.includes(path);
   const isUserRoute = userRoutes.includes(path);
   const isAdminRoute = adminRoutes.includes(path);
   const isAuthRoute = authRoutes.includes(path);
@@ -19,6 +21,9 @@ export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request);
   const { adminResponse, adminUser } = await verifyAdmin(request);
 
+  if (isHomeRoute) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
   // const checkAdmin = await
 
   // Redirect logged-in users away from login/signup

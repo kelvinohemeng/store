@@ -7,13 +7,16 @@ import { updateProduct } from "@/actions/product";
 import imageCompression from "browser-image-compression";
 import { Product } from "@/lib/types";
 import Image from "next/image";
+import { useQueryClient } from "@tanstack/react-query";
 
 const UpdateProductSlide = ({
   product,
 }: {
   product: Product | undefined | null;
 }) => {
-  const categories = ["Dress", "Shoe", "Glasses"];
+  const queryClient = useQueryClient();
+
+  const categories = ["Shoe", "Dress", "Glasses"];
   const { state, setState } = useSlide();
   const ref = useRef<HTMLFormElement>(null);
   const [newImages, setNewImages] = useState<File[]>([]);
@@ -112,7 +115,7 @@ const UpdateProductSlide = ({
       }
 
       //add new sizes
-      formData.append("sizes", JSON.stringify(sizes));
+      formData.append("sizes", sizes.join(", "));
 
       const result = await updateProduct(product.id, formData);
 
@@ -129,6 +132,9 @@ const UpdateProductSlide = ({
     } catch (err: any) {
       console.error("Update error:", err);
       alert(`Failed to update product: ${err?.message}`);
+    } finally {
+      ref.current?.reset();
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     }
   };
 
@@ -164,20 +170,23 @@ const UpdateProductSlide = ({
                 type="text"
                 name="name"
                 defaultValue={product?.product_name}
-                className=" border border-gray-400 p-3 text-lg w-full rounded-md"
+                className=" border border-gray-400/30 focus:border-gray-900/60 outline-none p-3 text-lg w-full rounded-[4px]"
               />
             </div>
           </label>
 
           <div className="space-y-3 h-full py-3">
             <p>Product Images (Max 3)</p>
-            <div id="product_image" className="flex gap-4">
+            <div
+              id="product_image"
+              className=" p-4 border rounded-[4px] flex gap-4"
+            >
               <div className="flex flex-wrap gap-3">
                 {/* Existing Images */}
                 {existingImages.map((url, index) => (
                   <div
                     key={`existing-${index}`}
-                    className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-lg overflow-hidden"
+                    className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-[4px] overflow-hidden"
                   >
                     <Image
                       src={url}
@@ -199,7 +208,7 @@ const UpdateProductSlide = ({
                 {newImages.map((file, index) => (
                   <div
                     key={`new-${index}`}
-                    className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-lg overflow-hidden"
+                    className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-[4px] overflow-hidden"
                   >
                     <img
                       src={URL.createObjectURL(file)}
@@ -219,7 +228,7 @@ const UpdateProductSlide = ({
                 {/* Upload Button */}
                 {existingImages.length + newImages.length < 3 && (
                   <label className="flex flex-col gap-4 cursor-pointer">
-                    <div className="flex items-center justify-center relative h-[90px] aspect-square border border-slate-400 rounded-lg">
+                    <div className="flex items-center justify-center relative h-[90px] aspect-square border border-slate-400 rounded-[4px]">
                       <input
                         type="file"
                         accept="image/*"
@@ -238,25 +247,10 @@ const UpdateProductSlide = ({
           <label htmlFor="product_description" className="space-y-3 py-3">
             <p>Please descibe your Product</p>
             <div id="product_description">
-              <input
-                type="text"
+              <textarea
                 name="description"
                 defaultValue={product?.product_description}
-                className=" border border-gray-400 p-3 text-lg w-full rounded-md"
-                placeholder="Product Description"
-              />
-            </div>
-          </label>
-
-          <label htmlFor="product_type" className="space-y-3 py-3">
-            <p>Select a category for your Product</p>
-            <div id="product_type">
-              <input
-                type="text"
-                name="type"
-                defaultValue={product?.product_type}
-                className=" border border-gray-400 p-3 text-lg w-full rounded-md"
-                placeholder="Product Type"
+                className=" border border-gray-400/50 focus:border-gray-900/50 outline-none p-3 text-lg w-full min-h-[150px] rounded-[4px] h-auto resize-none"
               />
             </div>
           </label>
@@ -264,7 +258,7 @@ const UpdateProductSlide = ({
           <div className="flex justify-center gap-3 py-3">
             <label htmlFor="product_price" className="space-y-3">
               <p>Product Price</p>
-              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md focus:outline-none focus:border-transparent">
+              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] focus:border-gray-900/50">
                 <span>GHC</span>
                 <input
                   id="product_price"
@@ -272,31 +266,47 @@ const UpdateProductSlide = ({
                   name="price"
                   className="text-lg w-full focus:outline-none focus:border-transparent "
                   placeholder="Product Price"
-                  defaultValue={200}
+                  defaultValue={product?.product_price?.toString()}
                 />
               </div>
             </label>
-            <label htmlFor="stock" className="space-y-3">
-              <p>Available in Stock</p>
-              <div>
+            <label htmlFor="compare_price" className="space-y-3">
+              <p>Compare Price</p>
+              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] focus:outline-none focus:border-gray-900/50">
+                <span>GHC</span>
                 <input
-                  id="stock"
+                  id="compare_price"
                   type="number"
-                  name="stock"
-                  className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
-                  placeholder="Product Description"
-                  defaultValue={`100`}
+                  name="compare_price"
+                  className="text-lg w-full focus:outline-none focus:border-transparent "
+                  placeholder="Compare Price"
+                  defaultValue={product?.compare_price?.toString()}
                 />
               </div>
             </label>
           </div>
 
+          <label htmlFor="stock" className="space-y-3">
+            <p>Available in Stock</p>
+            <div>
+              <input
+                id="stock"
+                type="number"
+                name="stock"
+                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] outline-none focus:outline-none focus:border-gray-900/50"
+                placeholder="How many products are available"
+                defaultValue={product?.quantity?.toString()}
+              />
+            </div>
+          </label>
+
           <label htmlFor="product_type" className="space-y-3 py-3">
-            <p>Select Product Category</p>
+            <p>Select Product Type</p>
             <div id="product_type">
               <select
-                name="category"
-                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
+                name="type"
+                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] outline-none focus:outline-none focus:border-gray-900/50"
+                defaultValue={product?.product_type}
               >
                 {categories.map((category) => (
                   <option key={category} value={category.toLowerCase()}>
@@ -314,7 +324,7 @@ const UpdateProductSlide = ({
                 id="product_sizes"
                 type="text"
                 name="sizes"
-                className="border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
+                className="border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px]"
                 placeholder="e.g., S, M, L, XL"
                 defaultValue={product?.sizes?.join(", ")}
                 onChange={handleSizeChange}
@@ -325,6 +335,7 @@ const UpdateProductSlide = ({
           <ProductButton
             text="Update Product"
             pendingText="Updating Product..."
+            type="primary"
           />
         </form>
       </div>

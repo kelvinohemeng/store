@@ -195,6 +195,18 @@ export async function updateProduct(
 
     // Combine existing and new image URLs
     const finalImageUrls = [...existingImages, ...newImageUrls];
+    const sizes = formData.get("sizes") as string;
+    const sizesArray = sizes
+      .split(",")
+      .map((size) => size.trim())
+      .filter((size) => size !== "");
+
+    // Parse numeric values
+    const price = formData.get("price") ? Number(formData.get("price")) : null;
+    const comparePrice = formData.get("compare_price")
+      ? Number(formData.get("compare_price"))
+      : null;
+    const quantity = formData.get("stock") ? Number(formData.get("stock")) : 0;
 
     // Update product in database
     const { error: updateError } = await supabase
@@ -204,6 +216,10 @@ export async function updateProduct(
         product_description: formData.get("description"),
         product_type: formData.get("type"),
         image_url: finalImageUrls,
+        product_price: price,
+        quantity: quantity,
+        sizes: sizesArray,
+        compare_price: comparePrice,
       })
       .eq("id", productId);
 

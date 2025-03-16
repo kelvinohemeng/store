@@ -1,6 +1,6 @@
 import { checkAdminAuth } from "@/actions/auth";
-import Banner from "@/app/admin/admin-components/Banner";
-import SidebarNav from "@/app/admin/admin-components/SidebarNav";
+import Banner from "@/app/admin/_admin-components/Banner";
+import SidebarNav from "@/app/admin/_admin-components/SidebarNav";
 import { redirect } from "next/navigation";
 import React, { ReactNode } from "react";
 

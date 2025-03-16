@@ -25,7 +25,7 @@ export default function ProductButton({
     <button
       className={`w-full ${
         states[type]
-      } text-white py-4 rounded-md flex items-center justify-center gap-2 transition-all duration-200 ${
+      } text-white py-4 rounded-[4px] flex items-center justify-center gap-2 transition-all duration-200 ${
         pending ? "opacity-80" : ""
       }`}
       type="submit"

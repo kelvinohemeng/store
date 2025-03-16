@@ -5,10 +5,10 @@ export interface Product {
   product_description: string;
   product_price: number;
   product_type: string;
-  stock: number;
   quantity: number;
   image_url: string[];
   sizes: string[];
+  compare_price: number;
 }
 
 export type file = {
