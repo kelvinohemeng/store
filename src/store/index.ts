@@ -7,6 +7,7 @@ import {
   Action,
   SelectedProductState,
   SelectedOrderState,
+  Product,
 } from "@/lib/types";
 import { User } from "@supabase/supabase-js";
 
@@ -32,17 +33,39 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
 
-      // Add item with quantity handling
-      addItem: (product) =>
+      // Remove the global variant selection state
+      // selectedVariants: { size: '', color: '' },
+      // setSelectedSize: (size: string) => ...,
+      // setSelectedColor: (color: string) => ...,
+      // resetVariants: () => ...,
+
+      // Modify addItem to accept variants directly
+      addItem: (
+        product: Product,
+        selectedVariants?: { size?: string; color?: string }
+      ) =>
         set((state) => {
+          // Create product with provided variants
+          const productWithVariants = {
+            ...product,
+            selectedSize: selectedVariants?.size || product.selectedSize,
+            selectedColor: selectedVariants?.color || product.selectedColor,
+          };
+
           const existingItem = state.items.find(
-            (item) => item.id === product.id
+            (item) =>
+              item.id === productWithVariants.id &&
+              item.selectedSize === productWithVariants.selectedSize &&
+              item.selectedColor === productWithVariants.selectedColor
           );
 
           if (existingItem) {
             return {
+              ...state,
               items: state.items.map((item) =>
-                item.id === product.id
+                item.id === productWithVariants.id &&
+                item.selectedSize === productWithVariants.selectedSize &&
+                item.selectedColor === productWithVariants.selectedColor
                   ? { ...item, quantity: item.quantity + 1 }
                   : item
               ),
@@ -50,11 +73,13 @@ export const useCartStore = create<CartState>()(
           }
 
           return {
-            items: [...state.items, { ...product, quantity: 1 }],
+            ...state,
+            items: [...state.items, { ...productWithVariants, quantity: 1 }],
           };
         }),
 
       // ✅ Fixed removeItem: Decrease quantity first, remove only when quantity is 1
+      // Modify removeItem to account for variants
       removeItem: (productId) =>
         set((state) => {
           const existingItem = state.items.find(
@@ -81,6 +106,15 @@ export const useCartStore = create<CartState>()(
 
           return state; // If item doesn't exist, return current state
         }),
+
+      // Remove item by ID should also consider variants
+      // Remove item by ID and variant
+      removeItemById: (productId, size) =>
+        set((state) => ({
+          items: state.items.filter(
+            (item) => !(item.id === productId && item.selectedSize === size)
+          ),
+        })),
 
       // Update quantity for a specific item
       updateQuantity: (productId, newQuantity) =>

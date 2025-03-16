@@ -2,51 +2,155 @@
 
 import { Product } from "@/lib/types";
 import { useCartStore } from "@/store";
-import { Minus, Plus } from "@phosphor-icons/react";
-import React, { ReactNode } from "react";
+import { Minus, Plus, X } from "@phosphor-icons/react";
+import { useState, useEffect } from "react";
 
-const CartItem = ({
-  index,
-  item,
-}: {
-  index: string | number;
-  item: Product;
-}) => {
-  const { addItem, removeItem } = useCartStore();
+function CartItem({ item, index }: { item: Product; index: number | string }) {
+  const { addItem, removeItem, removeItemById, items } = useCartStore();
+
+  // Local state for variant selection in cart
+  const [isSelectingSize, setIsSelectingSize] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(item.selectedSize || "");
+
+  // Update local state when item changes
+  useEffect(() => {
+    setSelectedSize(item.selectedSize || "");
+  }, [item.selectedSize]);
+
+  const getVariantKey = (item: Product, size: string) =>
+    `${item.id}-${size}-${item.selectedColor || ""}`;
+
+  // Handle size selection
+  const handleSizeSelect = (size: string) => {
+    // Compute the variant key for the new size
+    const variantKey = getVariantKey(item, size);
+
+    // Find an existing cart item that matches this variant
+    const existingVariant = items.find((cartItem) => {
+      const cartItemKey = `${cartItem.id}-${cartItem.selectedSize}-${
+        cartItem.selectedColor || ""
+      }`;
+      return cartItemKey === variantKey;
+    });
+
+    if (existingVariant) {
+      // If a matching variant exists, merge quantities
+      const newQuantity = existingVariant.quantity + item.quantity;
+      const updatedVariant = { ...existingVariant, quantity: newQuantity };
+
+      // Remove the current quick add item (which might have no size) and update the existing variant
+      // Pass the current item's selectedSize to properly identify the variant
+      removeItemById(item.id, item.selectedSize);
+      addItem(updatedVariant, { size });
+
+      console.log("Merged quantities. New quantity:", newQuantity);
+    } else {
+      // No matching variant exists: treat it as a new variant
+      const updatedItem = { ...item, selectedSize: size };
+      // Pass the current item's selectedSize to properly identify the variant
+      removeItemById(item.id, item.selectedSize);
+      addItem(updatedItem, { size });
+
+      console.log("Created new variant:", size);
+    }
+
+    setIsSelectingSize(false);
+  };
 
   return (
-    <div
-      key={index}
-      className="flex justify-between items-center border border-slate-400 p-4 rounded-lg"
-    >
-      <div className="flex items-center gap-4">
+    <div key={index} className="flex gap-3 py-3 p-8 rounded-xl">
+      <div className="flex items-center gap-4 rounded-[6px] overflow-hidden">
         <img
-          className="max-w-[80px] w-full rounded-md object-cover object-center aspect-square"
+          className="max-w-[120px] aspect-[1/1.6] w-full object-cover object-center"
           src={item.image_url[0]}
           alt=""
         />
-        <div>
-          <p>{item.product_name}</p>
-          <p>{((item.product_price * 100) / 100).toFixed(2)}</p>
-        </div>
       </div>
-      <div className="flex items-center gap-3">
-        <button title="add" onClick={() => addItem(item)}>
-          <Plus size={18} />
-        </button>
-        <p>{item.quantity}</p>
-        <button
-          title="minus"
-          onClick={() => {
-            console.log("Remove button clicked for ID:", item.id);
-            removeItem(item.id);
-          }}
-        >
-          <Minus size={18} />
-        </button>
+
+      <div className="flex flex-col justify-between w-full min-h-full">
+        <div className="flex justify-between">
+          <p>{item.product_name}</p>
+          <p>GHC {item.product_price.toFixed(2)}</p>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {/* Size selector */}
+          <div className="flex flex-col">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-500">Size</span>
+              {!isSelectingSize && (
+                <button
+                  onClick={() => setIsSelectingSize(true)}
+                  className="text-xs text-blue-500 underline"
+                >
+                  Change
+                </button>
+              )}
+            </div>
+
+            {isSelectingSize ? (
+              <div className="flex flex-wrap gap-2 mt-1">
+                {item.sizes &&
+                  item.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => handleSizeSelect(size)}
+                      className={`px-2 py-1 text-xs border rounded ${
+                        size === selectedSize
+                          ? "bg-black text-white"
+                          : "bg-gray-100"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+              </div>
+            ) : (
+              <span className="font-medium">
+                {item.selectedSize || "Select a size"}
+              </span>
+            )}
+          </div>
+
+          {/* Color display */}
+          {item.selectedColor && (
+            <div className="flex flex-col">
+              <span className="text-sm text-gray-500">Color</span>
+              <span className="font-medium">{item.selectedColor}</span>
+            </div>
+          )}
+
+          {/* Quantity controls */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3 bg-black/5 rounded-[4px] px-2 py-1">
+              <button
+                title="add"
+                onClick={() =>
+                  addItem(item, {
+                    size: item.selectedSize,
+                    color: item.selectedColor,
+                  })
+                }
+              >
+                <Plus size={12} />
+              </button>
+              <p>{item.quantity}</p>
+              <button title="minus" onClick={() => removeItem(item.id)}>
+                <Minus size={12} />
+              </button>
+            </div>
+            <button
+              title="remove_item"
+              className="bg-black/5 rounded-[4px] p-2"
+              onClick={() => removeItemById(item.id, item.selectedSize)}
+            >
+              <X size={12} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default CartItem;

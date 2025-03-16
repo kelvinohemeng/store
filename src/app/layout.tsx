@@ -21,7 +21,7 @@ export default async function RootLayout({
     <html lang="en">
       <body
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        className=" overflow-x-hidden"
+        className=" overflow-x-hidden minh-full"
       >
         <Provider>
           <Navigation />

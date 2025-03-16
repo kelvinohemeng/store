@@ -5,7 +5,7 @@ import { useUserData } from "@/store";
 import { useEffect } from "react";
 
 export default function LoadZustandGloabalStore() {
-  const { user: storedUser, setUser, setRole } = useUserData();
+  const { user: storedUser, setUser } = useUserData();
   async function gUser() {
     const { data, error } = await supabase.auth.getUser();
     setUser(data.user);

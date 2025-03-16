@@ -10,11 +10,11 @@ import PayStackCheckout from "./PayStackCheckout";
 
 const CartSlide = () => {
   const { state, setState } = useSlide();
-  const { items, clearCart } = useCartStore();
-
+  const { items, totalItems } = useCartStore();
   const totalPrice = useCartStore((state) => state.totalPrice());
+
   return (
-    <div className="relative z-[999]" tabIndex={-1}>
+    <div className="fixed z-[999] h-dvh" tabIndex={-1}>
       {state == "cart" && (
         <div
           onClick={() => setState("")}
@@ -22,35 +22,52 @@ const CartSlide = () => {
         ></div>
       )}
       <div
-        className={`overflow-y-scroll max-w-[450px] w-full border fixed z-[9] right-0 h-full top-0 bg-white transform ${
+        className={`max-w-[450px] w-full h-full border fixed flex flex-col z-[9] right-0 top-0 bg-white transform ${
           state === "cart" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
-        <div className="cart max-w-[500px] px-8 py-8 w-full right-0 min-h-dvh bg-[#fefefe]">
-          <div className="flex justify-between py-3 mb-5 border-b">
-            <h2 className="text-2xl">Cart</h2>
-            <button
-              className="p-4 py-3 font-medium text-base bg-slate-50 rounded-lg"
-              onClick={() => setState("")}
-            >
-              Close
-            </button>
-          </div>
+        <div className="flex justify-between items-center py-3 mb-5 border-b p-8 pt-12">
+          <h5 className="text-xl">{totalItems()} Items in Cart</h5>
+          <button
+            className="p-4 py-3 font-medium text-base bg-slate-50 rounded-lg"
+            onClick={() => setState("")}
+          >
+            Close
+          </button>
+        </div>
+        <div className=" overflow-y-scroll min-h-[400px] max-h-full cart max-w-[500px] bg-[#fefefe]">
           {items.length > 0 ? (
             <>
               <div className="flex flex-col gap-5">
                 {items.map((item) => (
-                  <CartItem index={item.id} item={item} />
+                  <CartItem
+                    key={`${item.id}-${item.selectedSize}-${
+                      item.selectedColor || ""
+                    }`}
+                    index={item.id}
+                    item={item}
+                  />
                 ))}
               </div>
-              <p>Total: ${totalPrice.toFixed(2)}</p>
-              <button onClick={clearCart}>Clear Cart</button>
             </>
           ) : (
-            <p>Your cart is empty.</p>
+            <div className="p-8 h-full w-full">
+              <p>Your cart is empty.</p>
+            </div>
           )}
         </div>
-        <PayStackCheckout amount={2000} orderItems={items} />
+
+        <div className="p-6 border-t h-fit">
+          <PayStackCheckout amount={totalPrice} orderItems={items} />
+          <div className="flex items-center justify-center gap-3 h-fit">
+            <p>Powered with</p>
+            <img
+              className="max-w-[120px]"
+              src="/assets/paystack_logo.png"
+              alt=""
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

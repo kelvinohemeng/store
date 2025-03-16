@@ -19,9 +19,9 @@ export async function createOrder(orderData: OrderData) {
   const cookieStore = await cookies();
   try {
     cookieStore.set("pendingOrder", JSON.stringify(orderData), {
-      httpOnly: true, // Prevents client-side access
-      secure: process.env.NODE_ENV === "production", // Only use secure cookies in production
-      path: "/", // Makes cookie available site-wide
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
 
     // First, create the main order record
@@ -32,7 +32,9 @@ export async function createOrder(orderData: OrderData) {
         email: orderData.email,
         delivery_address: orderData.deliveryAddress,
         payment_status: orderData.paymentStatus,
+        total_amount: orderData.totalAmount,
         created_at: new Date().toISOString(),
+        order_notes: orderData.orderNotes,
       })
       .select("*")
       .single();
@@ -41,12 +43,15 @@ export async function createOrder(orderData: OrderData) {
       throw new Error(`Order creation failed: ${orderError.message}`);
     if (!order) throw new Error("Order creation failed: No order returned.");
 
-    // Then, create order items for each product
+    // Then, create order items with variant information
     const orderItems = orderData.items.map((item) => ({
       order_id: order.id,
       product_id: item.productId,
       quantity: item.quantity,
       price: item.price,
+      product_name: item.productName,
+      product_image: item.productImage,
+      variants: item.selectedVariants, // Store as JSONB in PostgreSQL
     }));
 
     const { error: itemsError } = await supabase

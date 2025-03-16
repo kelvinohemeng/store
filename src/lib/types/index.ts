@@ -9,6 +9,8 @@ export interface Product {
   image_url: string[];
   sizes: string[];
   compare_price: number;
+  selectedSize?: string;
+  selectedColor?: string;
 }
 
 export type file = {
@@ -36,11 +38,24 @@ export interface PaystackFile {
   key: string;
   path: string;
 }
+export type CartItemT = {
+  id: string | number;
+};
 
 export interface CartState {
   items: Product[];
-  addItem: (product: Product) => void;
+  addItem: (
+    product: Product,
+    selectedVariants?: {
+      size?: string;
+      color?: string;
+    }
+  ) => void;
   removeItem: (productId: string | number) => void;
+  removeItemById: (
+    productId: string | number,
+    size?: string | undefined
+  ) => void;
   clearCart: () => void;
   updateQuantity: (productId: string | number, newQuantity: number) => void;
   totalPrice: () => number;
@@ -89,10 +104,20 @@ export interface SelectedOrderState {
 
 export type Action = "" | "view" | "update" | "create" | "view-order" | "cart";
 
+export interface ProductVariant {
+  size?: string;
+  color?: string;
+  style?: string;
+  // Add other variant types as needed
+}
+
 export interface OrderItem {
   productId: string | number;
   quantity: number;
   price: number;
+  selectedVariants: ProductVariant;
+  productName: string; // Adding product name for better order tracking
+  productImage?: string; // Optional: store the image URL of the selected product
 }
 
 export interface OrderData {
@@ -107,4 +132,6 @@ export interface OrderData {
     country: string;
   };
   paymentStatus: "pending" | "completed" | "failed" | any;
+  orderNotes?: string; // Optional notes from customer
+  totalAmount: number; // Total order amount
 }

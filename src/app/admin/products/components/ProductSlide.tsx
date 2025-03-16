@@ -95,7 +95,6 @@ export default function CreateProductSlide() {
       formData.append("sizes", JSON.stringify(sizes));
 
       await submitNewProduct(formData);
-      await queryClient.invalidateQueries({ queryKey: ["products"] });
     } catch (err: any) {
       alert(`Failed to create product: ${err.message}`);
     } finally {
@@ -103,7 +102,7 @@ export default function CreateProductSlide() {
       setImages([]);
       setPreviewUrls([]);
       ref?.current?.reset();
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     }
   };
   return (
@@ -222,25 +221,37 @@ export default function CreateProductSlide() {
                   required
                   className="text-lg w-full focus:outline-none focus:border-transparent "
                   placeholder="Product Price"
-                  defaultValue={200}
                 />
               </div>
             </label>
-            <label htmlFor="stock" className="space-y-3">
-              <p>Available in Stock</p>
-              <div>
+            <label htmlFor="compare_price" className="space-y-3">
+              <p>Compare Price</p>
+              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] focus:outline-none focus:border-gray-900/50">
+                <span>GHC</span>
                 <input
-                  id="stock"
+                  id="compare_price"
                   type="number"
-                  name="stock"
-                  required
-                  className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
-                  placeholder="Product Description"
-                  defaultValue={`100`}
+                  name="compare_price"
+                  className="text-lg w-full focus:outline-none focus:border-transparent "
+                  placeholder="Compare Price"
                 />
               </div>
             </label>
           </div>
+          <label htmlFor="stock" className="space-y-3">
+            <p>Available in Stock</p>
+            <div>
+              <input
+                id="stock"
+                type="number"
+                name="stock"
+                required
+                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-md"
+                placeholder="Product Description"
+                defaultValue={`100`}
+              />
+            </div>
+          </label>
 
           <label htmlFor="product_type" className="space-y-3 py-3">
             <p>Select Product Category</p>

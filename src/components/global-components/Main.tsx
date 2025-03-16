@@ -11,16 +11,10 @@ export default function Main({
   className?: string;
 }) {
   const path = usePathname();
-  const adminRoutes = path.startsWith("/admin");
+  // const adminRoutes = path.startsWith("/admin");
   return (
-    <main
-      className={cn(
-        `${className} w-screen min-h-screen h-full overflow-x-hidden  ${
-          adminRoutes ? "" : "pt-[120px]"
-        }`
-      )}
-    >
-      {children}
-    </main>
+    <>
+      <main className={cn(`${className} h-full`)}>{children}</main>
+    </>
   );
 }

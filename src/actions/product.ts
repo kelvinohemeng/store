@@ -7,6 +7,7 @@ export const submitNewProduct = async (formData: FormData) => {
   const name = formData.get("name");
   const description = formData.get("description");
   const price = formData.get("price");
+  const compare_price = formData.get("compare_price");
   const quantity = formData.get("stock");
   const imageFiles = formData.getAll("images") as File[]; // Get multiple images
   const category = formData.get("category") as string; // Get the category value
@@ -69,6 +70,7 @@ export const submitNewProduct = async (formData: FormData) => {
           product_price: price,
           quantity: quantity,
           sizes: sizes.split(","),
+          compare_price,
         },
       ])
       .select();
