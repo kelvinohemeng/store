@@ -39,7 +39,7 @@ const ProductCard = ({ product, index }: ProdcutCardT) => {
           <span className="text-nowrap">Add to Cart</span>
         </div>
       </button>
-      <Link href={`/product/${product.id}`} className="  w-full group/card">
+      <Link href={`/products/${product.id}`} className="  w-full group/card">
         <div key={index} className="relative flex flex-col h-full">
           <img
             className="flex h-full object-cover"

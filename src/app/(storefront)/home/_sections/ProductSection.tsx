@@ -1,10 +1,14 @@
-import { Product } from "@/lib/types";
-import ProductCard from "../components/ProductCard";
+"use client";
 
-export default function ProductSection({ products }: { products: Product[] }) {
+import ProductCard from "../components/ProductCard";
+import { useProductStore } from "@/store";
+
+export default function ProductSection() {
+  const { products, setProducts, fetchProducts } = useProductStore();
+
   return (
     <section className=" w-full min-h-screen py-[64px] px-5 space-y-6">
-      <h4 className="">New Arrivals</h4>
+      <h2 className="test-lg tracking-tighter font-semibold">New Arrivals</h2>
       <div className=" grid grid-cols-3 gap-4">
         {products.map((product, index) => (
           <ProductCard index={index} product={product} />

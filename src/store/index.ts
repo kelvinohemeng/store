@@ -149,8 +149,8 @@ export const useCartStore = create<CartState>()(
 
 export const useProductStore = create<ProductState>((set, get) => ({
   products: [],
-  setProducts: (product) =>
-    set((state) => ({ products: [...state.products, product] })),
+  // Replace the current setProducts function
+  setProducts: (products) => set({ products }),
   fetchProducts: async () => {
     try {
       const data = await fetchProducts(); // Fetch products from Supabase
@@ -181,3 +181,24 @@ export const useSelectedOrder = create<SelectedOrderState>((set) => ({
   selectedOrder: null,
   setSelectedOrder: (order) => set({ selectedOrder: order }),
 }));
+
+// Add this to your existing store/index.ts file
+
+// Store for product variant selection
+type VariantSelectionState = {
+  selectedSize: string;
+  selectedColor?: string;
+  setSelectedSize: (size: string) => void;
+  setSelectedColor: (color: string) => void;
+  resetVariantSelection: () => void;
+};
+
+export const useVariantSelectionStore = create<VariantSelectionState>(
+  (set) => ({
+    selectedSize: "",
+    selectedColor: "",
+    setSelectedSize: (size) => set({ selectedSize: size }),
+    setSelectedColor: (color) => set({ selectedColor: color }),
+    resetVariantSelection: () => set({ selectedSize: "", selectedColor: "" }),
+  })
+);
