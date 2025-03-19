@@ -24,7 +24,25 @@ export const storePendingOrder = async (orderData: any) => {
   return { success: true };
 };
 
-// Define TypeScript interfaces for our order data
+export const checkExistingOrder = async (paystackReference: string) => {
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("paystack_reference", paystackReference)
+      .single(); // Fetch a single order
+
+    if (error) {
+      console.error("Error fetching existing order:", error.message);
+      return null;
+    }
+
+    return data; // Return the existing order if found
+  } catch (error) {
+    console.error("Unexpected error checking existing order:", error);
+    return null;
+  }
+};
 
 export async function createOrder(orderData: OrderData) {
   try {

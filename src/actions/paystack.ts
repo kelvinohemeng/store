@@ -1,7 +1,7 @@
 "use server";
 
 import { OrderData } from "@/lib/types";
-import { createOrder } from "./order";
+import { checkExistingOrder, createOrder } from "./order";
 import { cookies } from "next/headers";
 import { channel } from "diagnostics_channel";
 
@@ -83,7 +83,6 @@ export const verifyPayment = async (reference: string) => {
     const data = await response.json();
     console.log("Paystack verification response:", data);
 
-    // Check if the API response itself was successful
     if (!data.status) {
       console.error("Paystack API error:", data.message);
       return {
@@ -92,19 +91,25 @@ export const verifyPayment = async (reference: string) => {
       };
     }
 
-    // Important: Check the actual transaction status from Paystack
-    // Paystack uses 'success' for successful transactions
+    // Get the transaction status and reference
     const transactionStatus = data.data?.status;
-    console.log("Transaction status from Paystack:", transactionStatus);
-
-    // Determine payment status based on Paystack's response
-    // Paystack transaction statuses: 'success', 'failed', 'abandoned', etc.
+    const paystack_reference = data.data?.reference ?? reference;
     const paymentStatus = transactionStatus === "success" ? "paid" : "failed";
 
-    // Get the reference from Paystack response
-    const paystack_reference = data.data?.reference ?? reference;
+    // ✅ Step 1: Check if the order already exists in the database
+    const existingOrder = await checkExistingOrder(paystack_reference);
 
-    // Create the order regardless of payment status
+    if (existingOrder) {
+      console.log("Order already exists:", existingOrder);
+      return {
+        success: existingOrder.paymentStatus === "paid",
+        status: existingOrder.paymentStatus,
+        message: "Order already exists and has been processed",
+        orderId: existingOrder.orderId,
+      };
+    }
+
+    // ✅ Step 2: If no existing order, proceed with order creation
     const orderResponse = await createOrder({
       ...orderData,
       paystack_reference,
@@ -119,7 +124,6 @@ export const verifyPayment = async (reference: string) => {
       };
     }
 
-    // Return success based on the actual transaction status from Paystack
     return {
       success: transactionStatus === "success",
       status: transactionStatus,

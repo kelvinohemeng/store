@@ -63,10 +63,11 @@ export default function PaymentSuccess() {
     }
   }
   useEffect(() => {
-    if (!reference) return;
+    if (!reference || hasVerified.current) return;
 
+    hasVerified.current = true;
     checkPayment();
-  }, [searchParams, clearCart]);
+  }, [reference]);
 
   return (
     <div className="pt-[120px] flex flex-col items-center justify-center max-w-md mx-auto p-6 space-y-6">
