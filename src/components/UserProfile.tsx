@@ -2,10 +2,13 @@
 
 import { checkAdminAuth, logoutUser } from "@/actions/auth";
 import { StoreUser, useUserData } from "@/store";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 const UserProfile = ({ user }: { user: StoreUser }) => {
+  const router = useRouter();
   const [triggerDD, setTriggerDD] = React.useState<boolean>(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
   const { setUser } = useUserData();
@@ -19,8 +22,13 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
   }, [user]);
 
   const logOut = async () => {
-    await logoutUser();
-    setUser(null);
+    const response = await logoutUser();
+    if (response.success) {
+      setUser(null); // Clears Zustand state
+      router.push("/home"); // Redirects client-side
+    } else {
+      console.error("Logout failed:", response.error);
+    }
   };
 
   return (
@@ -34,12 +42,18 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
           triggerDD ? "visible" : "invisible"
         }`}
       >
-        <div className="px-5 py-3 w-full text-start hover:bg-slate-50">
+        <div
+          onClick={() => setTriggerDD(!triggerDD)}
+          className="px-5 py-3 w-full text-start hover:bg-slate-50"
+        >
           <Link href={"/profile"} className=" text-nowrap text-xl">
             Profile
           </Link>
         </div>
-        <div className="px-5 py-3 w-full text-start hover:bg-slate-50">
+        <div
+          onClick={() => setTriggerDD(!triggerDD)}
+          className="px-5 py-3 w-full text-start hover:bg-slate-50"
+        >
           <Link href={"/orders"} className=" text-nowrap text-xl">
             My Orders
           </Link>
@@ -51,14 +65,13 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
             </Link>
           </div>
         )}
-        <form action={logOut}>
-          <button
-            className="px-5 py-3 w-full text-nowrap text-xl text-start hover:bg-slate-50"
-            type="submit"
-          >
-            Log out
-          </button>
-        </form>
+        <button
+          onClick={logOut}
+          className="px-5 py-3 w-full text-nowrap text-xl text-start hover:bg-slate-50"
+          type="submit"
+        >
+          Log out
+        </button>
       </div>
     </div>
   );

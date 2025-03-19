@@ -2,11 +2,14 @@
 
 // import { supabase } from "@/lib/utils/supabase";
 import { createSupabaseSSRClient } from "@/lib/utils/supabase/server";
+import { StoreUser } from "@/store";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 // Function to log in a user
 export const loginUser = async (formData: FormData) => {
+  "use server";
+
   const supabaseSSR = await createSupabaseSSRClient();
 
   const data = {
@@ -27,23 +30,22 @@ export const loginUser = async (formData: FormData) => {
     .select("*")
     .eq("id", user?.id)
     .single();
-  // revalidatePath("/home", "page");
+
   return { success: true, userData, error: null };
 };
 
 // Function to log out a user
 export const logoutUser = async () => {
+  "use server";
+
   const supabaseSSR = await createSupabaseSSRClient();
 
   const { error } = await supabaseSSR.auth.signOut();
 
   if (error) {
     return { success: false, error: error.message };
-  } else {
-    revalidatePath("/home", "page");
-    redirect("/home");
-    // return { success: true, error: null };
   }
+  return { success: true };
 };
 
 // Function to check if a user is authenticated

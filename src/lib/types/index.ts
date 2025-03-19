@@ -139,5 +139,6 @@ export interface OrderData {
   };
   payment_status: "pending" | "completed" | "failed" | any;
   orderNotes?: string; // Optional notes from customer
-  totalAmount: number; // Total order amount
+  total_amount: number; // Total order amount
+  order_status?: "pending" | "delivered";
 }

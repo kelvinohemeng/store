@@ -48,12 +48,22 @@ export default function Page() {
               className=" flex flex-col border p-4 w-full gap-4 rounded-[12px] shadow-sm"
             >
               <div className="flex justify-between">
-                <p className=" text-xl font-semibold">
-                  Order #{order.id.toString().slice(0, 5)}...{" "}
-                </p>
-                <span className=" px-3 py-1 text-white text-sm rounded-full bg-green-500 w-fit">
-                  {order.payment_status}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className=" rounded-[6px] border px-2 py-1 text-base bg-black/10 font-semibold">
+                    Order #{order.id.toString().slice(0, 5)}...{" "}
+                  </span>
+                  <p className="font-semibold">
+                    <span>Cost</span>: GHC {order.total_amount}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className=" rounded-[6px] px-2 py-1 text-base bg-green-50 text-black/70 border-green-500/40 border-[2px] font-semibold">
+                    {order.order_status ?? "Pending Delivery"}
+                  </span>
+                  <span className=" px-3 py-1 text-white text-base rounded-[6px] border-green-300 border-[3px] bg-green-700 capitalize w-fit">
+                    {order.payment_status}
+                  </span>
+                </div>
               </div>
               <div className="flex gap-5">
                 {order.order_items.map((item) => (
@@ -66,13 +76,13 @@ export default function Page() {
                         width={50}
                         height={50}
                       />
-                      <div>
+                      <div className="space-y-1">
                         {/* <p>{item.id}</p> */}
                         <p>
                           <span className="font-semibold">Item Name:</span>{" "}
                           <span>{item.product?.product_name}</span>
                         </p>
-                        <p>Quantity: {item.quantity ?? "12"}</p>
+
                         <p>
                           <span className="font-semibold">Price: </span>
                           GHC {item.price}{" "}
@@ -82,6 +92,19 @@ export default function Page() {
                             </span>
                           )}
                         </p>
+
+                        <div className="flex items-center gap-x-2 ">
+                          <p>
+                            <span className="font-semibold">Quantity:</span>
+                            {item.quantity}
+                          </p>
+                          <span className="">
+                            Size:
+                            <span className="border px-2 py-1 ">
+                              {item.variants?.size}
+                            </span>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </Link>

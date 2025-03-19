@@ -11,8 +11,8 @@ export default function ProductSection() {
       <h2 className="test-lg tracking-tighter font-semibold">New Arrivals</h2>
       <div className=" grid grid-cols-3 gap-4">
         {products.slice(0, 3).map((product, index) => (
-          <div className=" max-h-[550px]">
-            <ProductCard index={index} product={product} />
+          <div key={index} className=" max-h-[550px]">
+            <ProductCard product={product} />
           </div>
         ))}
       </div>

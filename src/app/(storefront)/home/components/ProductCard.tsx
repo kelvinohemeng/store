@@ -7,7 +7,7 @@ import Link from "next/link";
 
 type ProdutCardT = {
   product: Product;
-  index: number | string;
+  index?: number | string;
 };
 const ProductCard = ({ product, index }: ProdutCardT) => {
   const { addItem } = useCartStore();
