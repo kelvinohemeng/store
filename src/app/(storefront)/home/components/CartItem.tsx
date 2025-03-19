@@ -4,6 +4,7 @@ import { Product } from "@/lib/types";
 import { useCartStore } from "@/store";
 import { Minus, Plus, X } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 
 function CartItem({ item, index }: { item: Product; index: number | string }) {
   const { addItem, removeItem, removeItemById, items } = useCartStore();
@@ -48,6 +49,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
       // No matching variant exists: treat it as a new variant
       const updatedItem = { ...item, selectedSize: size };
       // Pass the current item's selectedSize to properly identify the variant
+
       removeItemById(item.id, item.selectedSize);
       addItem(updatedItem, { size });
 
@@ -58,7 +60,15 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
   };
 
   return (
-    <div key={index} className="flex gap-3 py-3 p-8 rounded-xl">
+    <motion.div
+      layout
+      key={index}
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }} // Animate out when removed
+      transition={{ duration: 0.3 }}
+      className="flex gap-3 py-3 p-8 rounded-xl"
+    >
       <div className="flex items-center gap-4 rounded-[6px] overflow-hidden">
         <img
           className="max-w-[120px] aspect-[1/1.6] w-full object-cover object-center"
@@ -149,7 +159,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -5,11 +5,11 @@ import { useCartStore, useSlide } from "@/store";
 import { Plus } from "@phosphor-icons/react";
 import Link from "next/link";
 
-type ProdcutCardT = {
+type ProdutCardT = {
   product: Product;
   index: number | string;
 };
-const ProductCard = ({ product, index }: ProdcutCardT) => {
+const ProductCard = ({ product, index }: ProdutCardT) => {
   const { addItem } = useCartStore();
   const { setState } = useSlide();
 
@@ -27,31 +27,42 @@ const ProductCard = ({ product, index }: ProdcutCardT) => {
   // };
 
   return (
-    <div className="relative aspect-[3.2/4] ">
+    <div className="relative flex flex-col h-full">
+      {/* Add to Cart Button */}
       <button
         onClick={handleAddToCart}
-        className="z-10 group/cart  flex items-center gap-2 absolute top-2 right-2 "
+        className="z-10 group/cart absolute top-2 right-2 flex items-center gap-2"
       >
-        <div className="relative flex items-center gap-3 w-[28px] h-[26px] overflow-hidden rounded-full bg-black/20 p-2 text-white text-sm transition-all duration-300  group-hover/cart:w-[110px]">
+        <div className="relative flex items-center gap-3 w-[28px] h-[26px] overflow-hidden rounded-full bg-black/20 p-2 text-white text-sm transition-all duration-300 group-hover/cart:w-[110px]">
           <div className="aspect-square border bg-white grid place-items-center rounded-full">
             <Plus size={12} color="black" weight="bold" />
           </div>
-          <span className="text-nowrap">Add to Cart</span>
+          <span className="whitespace-nowrap">Add to Cart</span>
         </div>
       </button>
-      <Link href={`/products/${product.id}`} className="  w-full group/card">
-        <div key={index} className="relative flex flex-col h-full">
+
+      {/* Product Content */}
+      <Link
+        href={`/products/${product.id}`}
+        className="group/card flex flex-col h-full"
+      >
+        {/* Product Image */}
+        <div className="relative w-full h-full overflow-hidden">
           <img
-            className="flex h-full object-cover"
+            className="w-full h-full object-cover"
             src={product.image_url[0]}
-            alt={"product Image"}
+            alt="Product Image"
           />
-          <h6>{product.product_name}</h6>
-          <div className="flex gap-2">
-            <p>$ {((product.product_price * 100) / 100).toFixed(2)}</p>
+        </div>
+
+        {/* Product Information */}
+        <div className="flex flex-col gap-2 p-2">
+          <h6 className="font-semibold text-lg">{product.product_name}</h6>
+          <div className="flex items-center gap-2">
+            <p className="font-medium">$ {product.product_price.toFixed(2)}</p>
             {product?.compare_price > 0 && (
-              <p className=" line-through">
-                {((product.compare_price * 100) / 100).toFixed(2)}
+              <p className="line-through text-gray-500">
+                $ {product.compare_price.toFixed(2)}
               </p>
             )}
           </div>

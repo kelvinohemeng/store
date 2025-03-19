@@ -7,6 +7,7 @@ import { useState } from "react";
 import CartItem from "./CartItem";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PayStackCheckout from "./PayStackCheckout";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 
 const CartSlide = () => {
   const { state, setState } = useSlide();
@@ -34,27 +35,31 @@ const CartSlide = () => {
             Close
           </button>
         </div>
-        <div className=" overflow-y-scroll h-full max-h-full cart max-w-[500px] bg-[#fefefe]">
-          {items.length > 0 ? (
-            <>
-              <div className="flex flex-col gap-5">
-                {items.map((item) => (
-                  <CartItem
-                    key={`${item.id}-${item.selectedSize}-${
-                      item.selectedColor || ""
-                    }`}
-                    index={item.id}
-                    item={item}
-                  />
-                ))}
+        <LayoutGroup>
+          <div className=" overflow-y-scroll overflow-x-hidden h-full max-h-full cart max-w-[500px] bg-[#fefefe]">
+            {items.length > 0 ? (
+              <>
+                <div className="flex flex-col gap-5">
+                  <AnimatePresence>
+                    {items.map((item) => (
+                      <CartItem
+                        key={`${item.id}-${item.selectedSize}-${
+                          item.selectedColor || ""
+                        }`}
+                        index={item.id}
+                        item={item}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </>
+            ) : (
+              <div className="p-8 h-full w-full">
+                <p>Your cart is empty.</p>
               </div>
-            </>
-          ) : (
-            <div className="p-8 h-full w-full">
-              <p>Your cart is empty.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </LayoutGroup>
 
         <div className="p-6 border-t space-y-2 h-fit">
           <PayStackCheckout amount={totalPrice()} orderItems={items} />
