@@ -58,12 +58,8 @@ export default function Page() {
                     <p>Price: {item.price}</p>
                     <p>Item: {item.product?.product_name}</p>
                     <Image
-                      src={
-                        item.product
-                          ? item.product.image_url[0]
-                          : "/assets/h.jpg"
-                      }
-                      alt={item.product_name}
+                      src={item.product?.image_url[0] ?? "/assets/h.jpg"}
+                      alt={item.product?.product_name ?? "Product Image"}
                       width={50}
                       height={50}
                     />
