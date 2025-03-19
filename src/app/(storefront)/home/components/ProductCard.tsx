@@ -59,10 +59,12 @@ const ProductCard = ({ product, index }: ProdutCardT) => {
         <div className="flex flex-col gap-2 p-2">
           <h6 className="font-semibold text-lg">{product.product_name}</h6>
           <div className="flex items-center gap-2">
-            <p className="font-medium">$ {product.product_price.toFixed(2)}</p>
+            <p className="font-medium">
+              GHC {product.product_price.toFixed(2)}
+            </p>
             {product?.compare_price > 0 && (
               <p className="line-through text-gray-500">
-                $ {product.compare_price.toFixed(2)}
+                GHC {product.compare_price.toFixed(2)}
               </p>
             )}
           </div>

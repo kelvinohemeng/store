@@ -63,7 +63,7 @@ export interface CartState {
 }
 export interface ProductState {
   products: Product[];
-  setProducts: (products: Product[]) => void;
+  setProducts?: (products: Product[]) => void;
   fetchProducts: () => Promise<Product[]>;
 }
 

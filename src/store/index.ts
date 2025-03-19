@@ -150,7 +150,7 @@ export const useCartStore = create<CartState>()(
 export const useProductStore = create<ProductState>((set, get) => ({
   products: [],
   // Replace the current setProducts function
-  setProducts: (products) => set({ products }),
+  // setProducts: (products) => set({ products }),
   fetchProducts: async () => {
     try {
       const data = await fetchProducts(); // Fetch products from Supabase

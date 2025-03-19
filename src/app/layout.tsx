@@ -23,13 +23,7 @@ export default async function RootLayout({
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         className=" overflow-x-hidden minh-full"
       >
-        <Provider>
-          <Navigation />
-          <CartSlide />
-          <LoadZustandGloabalStore />
-          <FixedBodyOnCartOpen />
-          <Main>{children}</Main>
-        </Provider>
+        <Provider>{children}</Provider>
       </body>
     </html>
   );

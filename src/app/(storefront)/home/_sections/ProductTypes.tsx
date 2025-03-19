@@ -6,14 +6,9 @@ import ProductCard from "../components/ProductCard";
 import { useProductStore } from "@/store";
 
 export default function ProductTypes() {
-  const { products, fetchProducts } = useProductStore();
+  const { products } = useProductStore();
 
   // Fetch products on component mount
-  useEffect(() => {
-    if (!products || products.length === 0) {
-      fetchProducts();
-    }
-  }, [fetchProducts, products]);
 
   if (!products || products.length === 0) {
     return <div className="py-20 text-center">Loading products...</div>;
