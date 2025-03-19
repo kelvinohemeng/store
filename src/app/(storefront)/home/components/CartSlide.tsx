@@ -10,8 +10,7 @@ import PayStackCheckout from "./PayStackCheckout";
 
 const CartSlide = () => {
   const { state, setState } = useSlide();
-  const { items, totalItems } = useCartStore();
-  const totalPrice = useCartStore((state) => state.totalPrice());
+  const { items, totalItems, totalPrice } = useCartStore();
 
   return (
     <div className="fixed z-[999] h-dvh" tabIndex={-1}>
@@ -35,7 +34,7 @@ const CartSlide = () => {
             Close
           </button>
         </div>
-        <div className=" overflow-y-scroll min-h-[400px] max-h-full cart max-w-[500px] bg-[#fefefe]">
+        <div className=" overflow-y-scroll h-full max-h-full cart max-w-[500px] bg-[#fefefe]">
           {items.length > 0 ? (
             <>
               <div className="flex flex-col gap-5">
@@ -57,8 +56,8 @@ const CartSlide = () => {
           )}
         </div>
 
-        <div className="p-6 border-t h-fit">
-          <PayStackCheckout amount={totalPrice} orderItems={items} />
+        <div className="p-6 border-t space-y-2 h-fit">
+          <PayStackCheckout amount={totalPrice()} orderItems={items} />
           <div className="flex items-center justify-center gap-3 h-fit">
             <p>Powered with</p>
             <img

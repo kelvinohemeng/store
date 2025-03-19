@@ -1,14 +1,14 @@
 "use client";
 
 import { getOrdersByEmail } from "@/actions/order";
-import { AdminOrderT } from "@/lib/types";
+import { AdminOrderT, OrderData } from "@/lib/types";
 import { useUserData } from "@/store";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [orders, setOrders] = useState<AdminOrderT[] | undefined>([]); // Use null for better state handling
+  const [orders, setOrders] = useState<OrderData[] | undefined>([]); // Use null for better state handling
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   const { user: storedUser } = useUserData();
 
@@ -30,32 +30,40 @@ export default function Page() {
 
   useEffect(() => {
     fetchOrders();
-    console.log(storedUser?.email);
+    console.log([storedUser?.email, orders]);
   }, [storedUser?.email]); // Only fetch when email is available
 
   return (
-    <div>
+    <div className=" pt-[120px] px-10">
       <h1>Your Orders</h1>
 
       {loading ? (
         <p>Loading orders...</p>
       ) : orders && orders.length > 0 ? (
         <div className=" flex flex-col gap-6">
-          {(orders as AdminOrderT[]).map((order) => (
+          {orders.map((order) => (
             // <Link href={`/product/${order.order_items[0].product.id}`}>
-            <div key={order.id} className=" flex gap-4">
+            <div
+              key={order.id}
+              className=" flex flex-col border p-4 w-full gap-4"
+            >
               <span>Order #{order.id.toString().slice(0, 5)}... - </span>
-              <span>{order.payment_status}</span>
-              <div>
-                {order.order_items.map((product) => (
-                  <div key={product.id}>
-                    <p>{product.id}</p>
-                    <p>Quantity: {product.quantity}</p>
-                    <p>Price: {product.price}</p>
-                    <p>Item: {product.product.product_name}</p>
+              <span>{order.paymentStatus}</span>
+              <span>{order.paystack_reference}</span>
+              <div className="flex gap-3">
+                {order.order_items.map((item) => (
+                  <div key={item.id}>
+                    <p>{item.id}</p>
+                    <p>Quantity: {item.quantity}</p>
+                    <p>Price: {item.price}</p>
+                    <p>Item: {item.product?.product_name}</p>
                     <Image
-                      src={product.product.image_url[0]}
-                      alt={product.product.product_name}
+                      src={
+                        item.product
+                          ? item.product.image_url[0]
+                          : "/assets/h.jpg"
+                      }
+                      alt={item.product_name}
                       width={50}
                       height={50}
                     />

@@ -13,28 +13,33 @@ import { cookies } from "next/headers";
 // Delivery location Details
 // Payment status
 
+export const storePendingOrder = async (orderData: any) => {
+  const cookieStore = await cookies();
+  cookieStore.set("pendingOrder", JSON.stringify(orderData), {
+    httpOnly: true, // Server-only access
+    secure: process.env.NODE_ENV === "production", // Use secure in production
+    path: "/",
+  });
+
+  return { success: true };
+};
+
 // Define TypeScript interfaces for our order data
 
 export async function createOrder(orderData: OrderData) {
-  const cookieStore = await cookies();
   try {
-    cookieStore.set("pendingOrder", JSON.stringify(orderData), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-    });
-
     // First, create the main order record
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
-        customer_name: orderData.customerName,
+        customer_name: orderData.customer_name,
         email: orderData.email,
+        paystack_reference: orderData.paystack_reference,
         delivery_address: orderData.deliveryAddress,
         payment_status: orderData.paymentStatus,
         total_amount: orderData.totalAmount,
         created_at: new Date().toISOString(),
-        order_notes: orderData.orderNotes,
+        order_note: orderData.orderNotes ?? "Order Note from Customer",
       })
       .select("*")
       .single();
@@ -43,15 +48,13 @@ export async function createOrder(orderData: OrderData) {
       throw new Error(`Order creation failed: ${orderError.message}`);
     if (!order) throw new Error("Order creation failed: No order returned.");
 
-    // Then, create order items with variant information
-    const orderItems = orderData.items.map((item) => ({
+    console.log("Order created:", order);
+
+    const orderItems = orderData.order_items.map((item) => ({
       order_id: order.id,
-      product_id: item.productId,
-      quantity: item.quantity,
+      product_id: item.product_id,
       price: item.price,
-      product_name: item.productName,
-      product_image: item.productImage,
-      variants: item.selectedVariants, // Store as JSONB in PostgreSQL
+      variants: item.variants,
     }));
 
     const { error: itemsError } = await supabase

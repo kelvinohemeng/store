@@ -112,18 +112,24 @@ export interface ProductVariant {
 }
 
 export interface OrderItem {
-  productId: string | number;
+  id: string | number;
+  created_ay: string;
+  order_id: string | number;
+  product_id: string | number;
+  product_name: string;
   quantity: number;
   price: number;
-  selectedVariants: ProductVariant;
-  productName: string; // Adding product name for better order tracking
-  productImage?: string; // Optional: store the image URL of the selected product
+  product_images?: string[]; // Optional: store the image URL of the selected product
+  variants?: Record<string, any>;
+  product?: Product;
 }
 
 export interface OrderData {
-  customerName: string | undefined;
+  id: number | string;
+  customer_name: string | undefined;
   email: string | undefined;
-  items: OrderItem[];
+  paystack_reference?: string;
+  order_items: OrderItem[];
   deliveryAddress?: {
     street: string;
     city: string;

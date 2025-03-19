@@ -14,6 +14,7 @@ import { deleteProduct } from "@/actions/product";
 import UpdateProductSlide from "./UpdateProductSlide";
 import ProductButton from "./ProductButton";
 import { useQueryClient } from "@tanstack/react-query";
+import { invalidateQueryKey } from "@/Helpers";
 
 export default function ProductDisplaySlide({
   product,
@@ -32,7 +33,7 @@ export default function ProductDisplaySlide({
   const deleteSelectedProduct = async () => {
     try {
       await deleteProduct(product?.id);
-      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      await invalidateQueryKey(queryClient, "products");
     } finally {
       setState("");
     }

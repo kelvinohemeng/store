@@ -7,6 +7,7 @@ import ProductButton from "./ProductButton";
 import imageCompression from "browser-image-compression";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
+import { invalidateQueryKey } from "@/Helpers";
 
 export default function CreateProductSlide() {
   const queryClient = useQueryClient(); // Add this line
@@ -102,7 +103,7 @@ export default function CreateProductSlide() {
       setImages([]);
       setPreviewUrls([]);
       ref?.current?.reset();
-      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      await invalidateQueryKey(queryClient, "products");
     }
   };
   return (

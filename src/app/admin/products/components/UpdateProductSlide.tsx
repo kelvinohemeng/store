@@ -8,6 +8,7 @@ import imageCompression from "browser-image-compression";
 import { Product } from "@/lib/types";
 import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
+import { invalidateQueryKey } from "@/Helpers";
 
 const UpdateProductSlide = ({
   product,
@@ -134,7 +135,7 @@ const UpdateProductSlide = ({
       alert(`Failed to update product: ${err?.message}`);
     } finally {
       ref.current?.reset();
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      await invalidateQueryKey(queryClient, "products");
     }
   };
 
