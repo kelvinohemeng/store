@@ -54,7 +54,7 @@ export async function createOrder(orderData: OrderData) {
         email: orderData.email,
         paystack_reference: orderData.paystack_reference,
         delivery_address: orderData.deliveryAddress,
-        payment_status: orderData.paymentStatus,
+        payment_status: orderData.payment_status,
         total_amount: orderData.totalAmount,
         created_at: new Date().toISOString(),
         order_note: orderData.orderNotes ?? "Order Note from Customer",
@@ -72,6 +72,7 @@ export async function createOrder(orderData: OrderData) {
       order_id: order.id,
       product_id: item.product_id,
       price: item.price,
+      quantity: item.quantity,
       variants: item.variants,
     }));
 

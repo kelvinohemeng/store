@@ -137,7 +137,7 @@ export interface OrderData {
     postalCode: string;
     country: string;
   };
-  paymentStatus: "pending" | "completed" | "failed" | any;
+  payment_status: "pending" | "completed" | "failed" | any;
   orderNotes?: string; // Optional notes from customer
   totalAmount: number; // Total order amount
 }

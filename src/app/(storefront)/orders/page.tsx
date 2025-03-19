@@ -35,7 +35,7 @@ export default function Page() {
 
   return (
     <div className=" pt-[120px] px-10">
-      <h1>Your Orders</h1>
+      <h3>Your Orders</h3>
 
       {loading ? (
         <p>Loading orders...</p>
@@ -45,25 +45,46 @@ export default function Page() {
             // <Link href={`/product/${order.order_items[0].product.id}`}>
             <div
               key={order.id}
-              className=" flex flex-col border p-4 w-full gap-4"
+              className=" flex flex-col border p-4 w-full gap-4 rounded-[12px] shadow-sm"
             >
-              <span>Order #{order.id.toString().slice(0, 5)}... - </span>
-              <span>{order.paymentStatus}</span>
-              <span>{order.paystack_reference}</span>
-              <div className="flex gap-3">
+              <div className="flex justify-between">
+                <p className=" text-xl font-semibold">
+                  Order #{order.id.toString().slice(0, 5)}...{" "}
+                </p>
+                <span className=" px-3 py-1 text-white text-sm rounded-full bg-green-500 w-fit">
+                  {order.payment_status}
+                </span>
+              </div>
+              <div className="flex gap-5">
                 {order.order_items.map((item) => (
-                  <div key={item.id}>
-                    <p>{item.id}</p>
-                    <p>Quantity: {item.quantity}</p>
-                    <p>Price: {item.price}</p>
-                    <p>Item: {item.product?.product_name}</p>
-                    <Image
-                      src={item.product?.image_url[0] ?? "/assets/h.jpg"}
-                      alt={item.product?.product_name ?? "Product Image"}
-                      width={50}
-                      height={50}
-                    />
-                  </div>
+                  <Link key={item.id} href={`/products/${item.product?.id}`}>
+                    <div className="flex gap-3 items-center p-4 pr-6 border border-black/10 rounded-[6px] shadow-sm hover:bg-black/[2%]">
+                      <Image
+                        className="object-cover object-top rounded-[4px] aspect-square w-[80px]"
+                        src={item.product?.image_url[0] ?? "/assets/h.jpg"}
+                        alt={item.product?.product_name ?? "Product Image"}
+                        width={50}
+                        height={50}
+                      />
+                      <div>
+                        {/* <p>{item.id}</p> */}
+                        <p>
+                          <span className="font-semibold">Item Name:</span>{" "}
+                          <span>{item.product?.product_name}</span>
+                        </p>
+                        <p>Quantity: {item.quantity ?? "12"}</p>
+                        <p>
+                          <span className="font-semibold">Price: </span>
+                          GHC {item.price}{" "}
+                          {item.product?.compare_price && (
+                            <span className="line-through font-semibold opacity-50">
+                              GHC {item.product?.compare_price}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>

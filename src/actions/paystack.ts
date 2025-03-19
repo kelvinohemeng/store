@@ -94,7 +94,7 @@ export const verifyPayment = async (reference: string) => {
     // Get the transaction status and reference
     const transactionStatus = data.data?.status;
     const paystack_reference = data.data?.reference ?? reference;
-    const paymentStatus = transactionStatus === "success" ? "paid" : "failed";
+    const payment_status = transactionStatus === "success" ? "paid" : "failed";
 
     // ✅ Step 1: Check if the order already exists in the database
     const existingOrder = await checkExistingOrder(paystack_reference);
@@ -113,7 +113,7 @@ export const verifyPayment = async (reference: string) => {
     const orderResponse = await createOrder({
       ...orderData,
       paystack_reference,
-      paymentStatus,
+      payment_status,
     });
 
     if (!orderResponse.success) {
