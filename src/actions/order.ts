@@ -55,7 +55,7 @@ export async function createOrder(orderData: OrderData) {
         paystack_reference: orderData.paystack_reference,
         delivery_address: orderData.deliveryAddress,
         payment_status: orderData.payment_status,
-        total_amount: orderData.totalAmount,
+        total_amount: orderData.total_amount,
         created_at: new Date().toISOString(),
         order_note: orderData.orderNotes ?? "Order Note from Customer",
       })

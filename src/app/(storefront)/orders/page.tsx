@@ -57,8 +57,10 @@ export default function Page() {
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className=" rounded-[6px] px-2 py-1 text-base bg-green-50 text-black/70 border-green-500/40 border-[2px] font-semibold">
-                    {order.order_status ?? "Pending Delivery"}
+                  <span className=" rounded-[6px] px-2 py-1 text-base bg-green-50 text-black/70 border-green-500/40 border-[2px] capitalize font-semibold">
+                    {order.order_status == "pending"
+                      ? "Pending Delivery"
+                      : "Delivered"}
                   </span>
                   <span className=" px-3 py-1 text-white text-base rounded-[6px] border-green-300 border-[3px] bg-green-700 capitalize w-fit">
                     {order.payment_status}

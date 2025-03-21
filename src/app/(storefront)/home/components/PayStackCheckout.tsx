@@ -37,7 +37,7 @@ const PayStackCheckout = ({
         customer_name: storedUser?.email,
         email: storedUser?.email,
         payment_status: payStackResponse?.data?.status,
-        totalAmount: amount,
+        total_amount: amount,
         paystack_reference: payStackResponse?.data?.reference,
         order_items: orderItems.map((item) => ({
           product_id: item.id,
