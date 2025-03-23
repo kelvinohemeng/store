@@ -2,7 +2,7 @@
 
 import { getAllOrders } from "@/actions/order";
 import DisplayOrders from "./components/DisplayOrders";
-import { AdminOrderT } from "@/lib/types";
+import { AdminOrderT, OrderData } from "@/lib/types";
 import { DataTable } from "./components/DataTable";
 import { Payment, columns } from "./components/Columns";
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +16,7 @@ export default function Orders() {
     isLoading,
     isError,
     refetch,
-  } = useQuery<AdminOrderT[]>({
+  } = useQuery<OrderData[]>({
     queryKey: ["orders"],
     queryFn: async () => await getAllOrders(),
   });

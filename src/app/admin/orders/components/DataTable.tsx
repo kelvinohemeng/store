@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Cell,
   ColumnDef,
   ColumnFiltersState,
   flexRender,
@@ -22,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSelectedOrder, useSlide } from "@/store";
-import { AdminOrderItemT, AdminOrderT } from "@/lib/types";
+import { OrderItem } from "@/lib/types";
 import DisplayOrderSlide from "./DisplayOrderSlide";
 
 interface DataTableProps<TData, TValue> {
@@ -53,7 +54,7 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const handleRowClick = (row: AdminOrderItemT | TData) => {
+  const handleRowClick = (row: OrderItem | TData) => {
     //@ts-ignore
     setSelectedOrder(row);
     setState("view-order");
@@ -63,6 +64,26 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     console.log(data);
   }, []);
+
+  // Add this function before the return statement
+  const shouldCellBeNonClickable = (cell: Cell<TData, unknown>): boolean => {
+    // You can customize this logic based on your requirements
+    // For example, to disable clicking on cells in a specific column:
+    if (
+      cell.column.id === "order_status_admin" ||
+      cell.column.id.includes("status")
+    ) {
+      return true;
+    }
+
+    // Or to disable clicking on cells with specific content:
+    // const cellValue = cell.getValue();
+    // if (cellValue === "some-specific-value") {
+    //   return true;
+    // }
+
+    return false;
+  };
 
   return (
     <>
@@ -106,14 +127,27 @@ export function DataTable<TData, TValue>({
                     onClick={() => handleRowClick(row.original)}
                     className="cursor-pointer"
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
+                    {row.getVisibleCells().map((cell) => {
+                      // Check if this cell should be non-clickable
+                      const isNonClickableCell = shouldCellBeNonClickable(cell);
+
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          onClick={
+                            isNonClickableCell
+                              ? (e) => e.stopPropagation()
+                              : undefined
+                          }
+                          className={isNonClickableCell ? "cursor-default" : ""}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
                 ))
               ) : (

@@ -1,8 +1,27 @@
 "use client";
 
-import { AdminOrderItemT, AdminOrderT, OrderItem, Product } from "@/lib/types";
-import { ColumnDef } from "@tanstack/react-table";
-import { Check } from "lucide-react";
+import { updateOrderStatus } from "@/actions/order";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { formatDate } from "@/Helpers";
+import {
+  AdminOrderItemT,
+  AdminOrderT,
+  OrderData,
+  OrderItem,
+  Product,
+} from "@/lib/types";
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { Check, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { OrderStatusButton } from "./OrderStatusButton";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -13,7 +32,9 @@ export type Payment = {
   email: string;
 };
 
-export const columns: ColumnDef<AdminOrderT>[] = [
+type Checked = DropdownMenuCheckboxItemProps["checked"];
+
+export const columns: ColumnDef<OrderData>[] = [
   {
     accessorKey: "customer_name",
     header: "Customer Name",
@@ -24,9 +45,7 @@ export const columns: ColumnDef<AdminOrderT>[] = [
     cell: ({ row }) => {
       const dateString: string = row.getValue("created_at");
       const date = new Date(dateString);
-      const formattedDate = `${date.getDate()} ${date.toLocaleString("en-US", {
-        month: "short",
-      })}, ${date.getFullYear()}`;
+      const formattedDate = formatDate(date);
       return <div>{formattedDate}</div>;
     },
   },
@@ -35,25 +54,51 @@ export const columns: ColumnDef<AdminOrderT>[] = [
     header: "Email",
   },
   {
-    accessorKey: "order_items",
+    accessorKey: "order_items_admin",
     // header: "Status",
     header: () => <div className="">Items Ordered</div>,
     cell: ({ row }) => {
-      const itemsOrdered = row.original.order_items as AdminOrderItemT[];
+      const itemsOrdered = row.original.order_items as OrderItem[];
 
       return (
         <div
-          className={`text-left flex gap-2 items-center font-medium  rounded-lg  tracking-normal px-3 py-2 w-max`}
+          className={`text-left flex gap-2 items-center font-medium  rounded-lg  tracking-normal py-2 w-max`}
         >
-          <span>{itemsOrdered.length}</span>
+          <div className="flex gap-1 border border-black/20 p-0.5 rounded-[8px]">
+            {itemsOrdered.map((item, index) => (
+              <img
+                className="w-[25px] aspect-square rounded-[6px] border border-slate-300"
+                src={item.product?.image_url[0]}
+                alt=""
+              />
+            ))}
+          </div>
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: "order_status",
+    // header: "Status",
+    header: () => <div className="">Order Status</div>,
+    cell: ({ row }) => {
+      const status: string = row.original.order_status;
+      // Add a key with the status to force re-render when status changes
+      // Also pass the id explicitly to ensure proper updating
+      return (
+        <OrderStatusButton
+          row={row}
+          initialStatus={status}
+          id={row.original.id}
+          key={`order-status-${row.original.id}-${status}`}
+        />
       );
     },
   },
   {
     accessorKey: "payment_status",
     // header: "Status",
-    header: () => <div className="">Status</div>,
+    header: () => <div className="">Payment Status</div>,
     cell: ({ row }) => {
       const status: string = row.getValue("payment_status");
       return (

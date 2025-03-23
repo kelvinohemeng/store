@@ -117,13 +117,13 @@ export async function getOrdersByEmail(email: string) {
 }
 
 export async function updateOrderStatus(
-  orderId: string,
-  paymentStatus: "pending" | "completed" | "failed"
+  orderId: string | number,
+  order_status: "pending" | "delivered" | any
 ) {
   try {
     const { error } = await supabase
       .from("orders")
-      .update({ payment_status: paymentStatus })
+      .update({ order_status: order_status })
       .eq("id", orderId);
 
     if (error) throw error;
@@ -148,7 +148,7 @@ export async function getAllOrders() {
 
     if (error) throw error;
 
-    return (orders as AdminOrderT[]) || [];
+    return (orders as OrderData[]) || [];
   } catch (error) {
     console.error("Error fetching orders:", error);
     throw new Error("Failed to fetch orders");

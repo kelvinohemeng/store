@@ -98,8 +98,8 @@ export interface SelectedProductState {
   setSelectedProduct: (product: Product) => void;
 }
 export interface SelectedOrderState {
-  selectedOrder: AdminOrderT | undefined | null;
-  setSelectedOrder: (order: AdminOrderT) => void;
+  selectedOrder: OrderData | undefined | null;
+  setSelectedOrder: (order: OrderData) => void;
 }
 
 export type Action = "" | "view" | "update" | "create" | "view-order" | "cart";
@@ -126,6 +126,7 @@ export interface OrderItem {
 
 export interface OrderData {
   id: number | string;
+  created_at: string;
   customer_name: string | undefined;
   email: string | undefined;
   paystack_reference?: string;

@@ -9,11 +9,21 @@ export const formatCurrency = (amount: number): string => {
   });
 };
 
-export const invalidateQueryKey = async (queryClient: QueryClient, key: string) => {
+export const invalidateQueryKey = async (
+  queryClient: QueryClient,
+  key: string
+) => {
   await queryClient.invalidateQueries({ queryKey: [key] });
 
   return {
     queryKey: [key],
     refetchInterval: 1000,
   };
+};
+
+export const formatDate = (dateString: Date): string => {
+  const date = new Date(dateString);
+  return `${date.getDate()} ${date.toLocaleString("en-US", {
+    month: "short",
+  })}, ${date.getFullYear()}`;
 };

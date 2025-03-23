@@ -3,6 +3,7 @@ import Banner from "@/app/admin/_admin-components/Banner";
 import SidebarNav from "@/app/admin/_admin-components/SidebarNav";
 import { redirect } from "next/navigation";
 import React, { ReactNode } from "react";
+import ToastProvider from "./_admin-components/ToastProvider";
 
 export default async function AdminRoot({ children }: { children: ReactNode }) {
   const { isAuthenticated, isAdmin } = await checkAdminAuth();
@@ -20,7 +21,7 @@ export default async function AdminRoot({ children }: { children: ReactNode }) {
         <div className="w-full h-[0.5px] bg-slate-600 opacity-50" />
 
         <div className="bg-[#F7F7F7] bg-opacity-50 p-8 overflow-y-scroll h-full !overflow-x-hidden">
-          {children}
+          <ToastProvider>{children}</ToastProvider>
         </div>
       </div>
     </div>

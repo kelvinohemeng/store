@@ -1,18 +1,18 @@
 "use client";
 
-import { submitNewProduct } from "@/actions/product";
 import { useSlide } from "@/store";
-import { useRef, useState } from "react";
-import imageCompression from "browser-image-compression";
-import DefaultButton from "@/components/global-components/ProductButton";
-import { Order, OrderItem, Product } from "@/lib/types";
-import ProductCard from "../../products/components/archieves/ProductCard";
+import { OrderData, OrderItem, Product } from "@/lib/types";
+import OrderProduct from "./OrderProduct";
+import { formatDate } from "@/Helpers";
+import { OrderStatusButton } from "./OrderStatusButton";
 
 export default function DisplayOrderSlide({
   order,
 }: {
-  order: Order | null | undefined;
+  order: OrderData | null | undefined;
 }) {
+  const orderDate = new Date(order?.created_at ?? "");
+
   const { state, setState } = useSlide();
 
   return (
@@ -28,58 +28,97 @@ export default function DisplayOrderSlide({
           state === "view-order" ? "translate-x-[0%]" : "translate-x-[100%]"
         }`}
       >
-        <div className="py-4 flex justify-end">
+        {/* Card Name */}
+        <div className="flex items-center my-6">
+          <div className="w-full">
+            <h1 className="text-2xl">Order Details</h1>
+          </div>
           <button onClick={() => setState("")}>
-            <p>close menu</p>
+            <p className="text-nowrap leading-[100%]">close menu</p>
           </button>
         </div>
-        <div>
-          <h1 className="text-2xl mb-6">View Order Details</h1>
-          <hr />
-        </div>
-        {/* <div className="flex w-full gap-3 py-5">
-          <div className="w-full">
-            <DefaultButton text="Update Product" />
+
+        {/* header */}
+        <main className=" space-y-6">
+          <div className=" flex items-center gap-2 p-6 rounded-[16px] bg-black/5">
+            <div className=" w-[50px] aspect-square bg-red-500 rounded-full capitalize text-2xl font-bold text-white flex items-center justify-center">
+              {order?.email?.split("")[0]}
+            </div>
+            <p className="text-xl font-medium">{order?.email}</p>
           </div>
-          <div className="w-full">
-            <DefaultButton variant="destructive" text="Delete Product" />
-          </div>
-        </div> */}
-        <div className="pt-4">
-          <span className=" text-slate-600">Customer Name</span>
-          <p className="text-2xl font-medium">{order?.customer_name}</p>
-        </div>
-        <div className="pt-4">
-          <span className=" text-slate-600">Customer Email</span>
-          <p className="text-2xl font-medium">{order?.email}</p>
-        </div>
-        <div className="pt-4">
-          <span className=" text-slate-600">Order Status</span>
-          <p className="text-2xl font-medium">{order?.payment_status}</p>
-        </div>
-        <div className="flex flex-col gap-2 w-full">
-          <span>Total Amount</span>
-          <span>
-            ${" "}
-            {order?.order_items
-              ?.reduce((total, item) => {
-                return total + (item.price * item.quantity || 0); // Ensure price and quantity are defined
-              }, 0)
-              .toFixed(2)}
-          </span>
-        </div>
-        <div className="flex flex-col gap-4 pt-4">
-          <span className=" text-slate-600">Ordered Product</span>
-          <div className="flex gap-4">
-            {order?.order_items?.map((orderItem, index) => (
-              <div className="flex flex-col gap-2 p-3 rounded-xl max-w-[250px] border border-slate-400">
-                <span>{orderItem.product.product_name}</span>
-                <span>{orderItem.product.product_price}</span>
-                <span>{orderItem.product.product_description}</span>
+
+          <div className="space-y-3  rounded-2xl shadow-sm border">
+            <div className="flex items-center p-4">
+              <div className=" w-full">
+                <span className=" text-slate-600">Customer Name</span>
+                <p className="text-xl font-medium">
+                  {order?.email?.split("@")[0]}
+                  {/* {order?.customer_name ?? order?.email?.split("@")[0]} */}
+                </p>
               </div>
-            ))}
+              <div className=" flex flex-col items-end">
+                <p className="text-base text-nowrap">{formatDate(orderDate)}</p>
+                <p className="flex gap-2 text-base font-semibold">
+                  {order?.order_items?.length}{" "}
+                  <span className=" text-nowrap">Items Ordered</span>
+                </p>
+              </div>
+            </div>
+
+            <hr />
+
+            <div className="p-4 flex flex-col items-center gap-4">
+              <div className="w-full flex items-center gap-2">
+                <p className="w-full text-slate-600 text-sm">Payment Status</p>
+                <p className="text-base px-4 py-1 rounded-[8px] bg-green-500 border-[3px] text-white w-fit border-green-300 font-medium capitalize">
+                  {order?.payment_status}
+                </p>
+              </div>
+              <div className="w-full flex items-center gap-2">
+                <p className="w-full text-slate-600 text-sm">Order Status</p>
+                <div>
+                  {order && (
+                    <OrderStatusButton
+                      initialStatus={order.order_status}
+                      id={order.id}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <hr />
+
+            <div className="p-4">
+              <div className="flex gap-3">
+                <p className="w-full">Total Amount</p>
+                <p className="text-nowrap font-semibold">
+                  GHC {order?.total_amount}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 flex flex-col gap-2 w-full">
+              <span>Total Amount</span>
+              <p className="text-xl">
+                ${" "}
+                {order?.order_items
+                  ?.reduce((total, item) => {
+                    return total + (item.price * item.quantity || 0); // Ensure price and quantity are defined
+                  }, 0)
+                  .toFixed(2)}
+              </p>
+            </div>
+            <div className="p-4 flex flex-col gap-4">
+              <span className=" text-slate-600">Ordered Product</span>
+              <div className="flex gap-4">
+                {order?.order_items?.map((orderItem, index) => (
+                  <OrderProduct orderItem={orderItem} />
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
