@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { formatDate } from "@/Helpers";
+import { formatCurrencyGHC, formatDate } from "@/Helpers";
 import {
   AdminOrderItemT,
   AdminOrderT,
@@ -87,7 +87,6 @@ export const columns: ColumnDef<OrderData>[] = [
       // Also pass the id explicitly to ensure proper updating
       return (
         <OrderStatusButton
-          row={row}
           initialStatus={status}
           id={row.original.id}
           key={`order-status-${row.original.id}-${status}`}
@@ -130,13 +129,9 @@ export const columns: ColumnDef<OrderData>[] = [
     accessorKey: "order_items",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
-      const orderItems: AdminOrderItemT[] = row.getValue("order_items");
-      const totalAmount = orderItems.reduce((sum, item) => sum + item.price, 0); // Calculate total amount
+      const totalAmount = row.original.total_amount;
 
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(totalAmount);
+      const formatted = formatCurrencyGHC(totalAmount);
 
       return <div className="text-right font-medium">{formatted}</div>;
     },

@@ -9,6 +9,13 @@ export const formatCurrency = (amount: number): string => {
   });
 };
 
+export const formatCurrencyGHC = (amount: number): string => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "GHC",
+  }).format(amount);
+};
+
 export const invalidateQueryKey = async (
   queryClient: QueryClient,
   key: string

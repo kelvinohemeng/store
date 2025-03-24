@@ -1,5 +1,5 @@
 "use client";
-import { updateOrderStatus } from "@/actions/order";
+import { updateOrderStatus as updateOrderAPI } from "@/actions/order";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -7,91 +7,45 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { OrderData, OrderItem } from "@/lib/types";
-import { showError, showSuccess } from "@/lib/utils/toastUtils";
-import { useQueryClient } from "@tanstack/react-query";
+import { useOrderStore } from "@/store/orders";
 import { Row } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import UseAnimations from "react-useanimations";
 import loading from "react-useanimations/lib/loading";
 
 export function OrderStatusButton({
-  initialStatus,
   id,
-  row,
+  initialStatus,
 }: {
+  id: string | undefined;
   initialStatus: string;
-  id?: string | number | undefined;
-  row?: Row<OrderData> | undefined;
 }) {
-  const queryClient = useQueryClient();
-  const [status, setStatus] = useState(initialStatus);
+  const { orders, updateOrderStatus } = useOrderStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Update local state when initialStatus prop changes
-  useEffect(() => {
-    setStatus(initialStatus);
-  }, [initialStatus]);
+  // Use Zustand's state if updated, otherwise use initial status
+  const status = id ? orders[id] ?? initialStatus : initialStatus;
 
   const handleStatusChange = async (newStatus: string) => {
     if (!id) return;
 
     try {
       setIsLoading(true);
-      const Id = id ?? row?.original?.id;
 
-      // Update local state first for immediate UI feedback
-      setStatus(newStatus);
+      // Call API to update order status
+      await updateOrderAPI(id, newStatus);
 
-      // Call the API to update the status
-      await updateOrderStatus(Id, newStatus);
+      // Update Zustand state (this will trigger a re-render in the table)
+      updateOrderStatus(id, newStatus);
 
-      // Update the cache directly instead of invalidating
-      if (row && row.original) {
-        // Create a copy of the original data
-        const updatedOrder = { ...row.original, order_status: newStatus };
-
-        // Update the row data directly in the cache
-        queryClient.setQueryData(["orders"], (oldData: any) => {
-          if (!oldData) return oldData;
-
-          // If the data is an array, find and update the specific order
-          if (Array.isArray(oldData)) {
-            return oldData.map((item) =>
-              item.id === Id ? { ...item, order_status: newStatus } : item
-            );
-          }
-
-          // If the data has a pages structure (for infinite queries)
-          if (oldData.pages) {
-            return {
-              ...oldData,
-              pages: oldData.pages.map((page: any) => ({
-                ...page,
-                data: Array.isArray(page.data)
-                  ? page.data.map((item: any) =>
-                      item.id === Id
-                        ? { ...item, order_status: newStatus }
-                        : item
-                    )
-                  : page.data,
-              })),
-            };
-          }
-
-          return oldData;
-        });
-      }
+      toast.success("Order Status Updated Successfully");
     } catch (error) {
       console.error("Failed to update order status:", error);
-      // Revert to original status on error
-      setStatus(initialStatus);
-      showError("Failed to update order status");
+      toast.error("Failed to update order status");
     } finally {
       setIsLoading(false);
-      showSuccess("Order Status Updated Successfully");
     }
   };
 
@@ -110,7 +64,7 @@ export function OrderStatusButton({
               : status === "delivered"
               ? "bg-blue-100 bg-blue-800/20"
               : ""
-          }text-left flex gap-1 items-center font-medium rounded-[8px] border tracking-normal px-2 py-1 w-max ${
+          } text-left flex gap-1 items-center font-medium rounded-[8px] border px-2 py-1 w-max ${
             isLoading ? "opacity-70" : ""
           }`}
         >
@@ -120,17 +74,15 @@ export function OrderStatusButton({
                 ? "text-yellow-800"
                 : status === "paid"
                 ? "text-green-800"
-                : status === "delivered"
-                ? "text-blue-800 "
-                : ""
-            } font-medium`}
+                : "text-blue-800"
+            } font-medium capitalize`}
           >
             {isLoading ? (
-              <div className="px-2 py-1 w-max flex items-center justify-center">
-                <p>Updating</p>
+              <div className="px-2 w-max flex items-center justify-center">
+                <p className="text-sm">Updating</p>
                 <UseAnimations
                   animation={loading}
-                  size={18}
+                  size={16}
                   strokeColor="black"
                   autoplay={true}
                 />
@@ -156,7 +108,6 @@ export function OrderStatusButton({
           Pending
         </DropdownMenuCheckboxItem>
         <DropdownMenuSeparator />
-
         <DropdownMenuCheckboxItem
           checked={status === "delivered"}
           className="hover:bg-black/5 cursor-pointer"

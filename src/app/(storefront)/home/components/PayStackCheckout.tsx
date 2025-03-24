@@ -16,6 +16,7 @@ const PayStackCheckout = ({
   amount: number;
   orderItems: Product[];
 }) => {
+  const [orderNoteLocal, setOrderNoteLocal] = useState("");
   const formatedAmount = formatCurrency(amount);
   const { clearCart } = useCartStore();
   const { user: storedUser, setUser } = useUserData();
@@ -39,6 +40,14 @@ const PayStackCheckout = ({
         payment_status: payStackResponse?.data?.status,
         total_amount: amount,
         paystack_reference: payStackResponse?.data?.reference,
+        order_note: orderNoteLocal,
+        delivery_address: {
+          city: "",
+          state: "",
+          country: "",
+          street: "",
+          postalCode: "",
+        },
         order_items: orderItems.map((item) => ({
           product_id: item.id,
           quantity: item.quantity,

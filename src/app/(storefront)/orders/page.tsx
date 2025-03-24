@@ -50,7 +50,7 @@ export default function Page() {
               <div className="flex justify-between">
                 <div className="flex items-center gap-3">
                   <span className=" rounded-[6px] border px-2 py-1 text-base bg-black/10 font-semibold">
-                    Order #{order.id.toString().slice(0, 5)}...{" "}
+                    Order #{order.id?.toString().slice(0, 5)}...{" "}
                   </span>
                   <p className="font-semibold">
                     <span>Cost</span>: GHC {order.total_amount}

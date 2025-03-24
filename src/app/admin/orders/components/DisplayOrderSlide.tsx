@@ -5,6 +5,7 @@ import { OrderData, OrderItem, Product } from "@/lib/types";
 import OrderProduct from "./OrderProduct";
 import { formatDate } from "@/Helpers";
 import { OrderStatusButton } from "./OrderStatusButton";
+import { X } from "@phosphor-icons/react";
 
 export default function DisplayOrderSlide({
   order,
@@ -33,8 +34,13 @@ export default function DisplayOrderSlide({
           <div className="w-full">
             <h1 className="text-2xl">Order Details</h1>
           </div>
-          <button onClick={() => setState("")}>
-            <p className="text-nowrap leading-[100%]">close menu</p>
+          <button
+            type="button"
+            title="Close order details"
+            onClick={() => setState("")}
+            className="p-3 border shadow-md rounded-[8px] hover:opacity-70 hover:scale-[95%] transition-all duration-300"
+          >
+            <X size={16} color="black" />
           </button>
         </div>
 
@@ -60,7 +66,10 @@ export default function DisplayOrderSlide({
                 <p className="text-base text-nowrap">{formatDate(orderDate)}</p>
                 <p className="flex gap-2 text-base font-semibold">
                   {order?.order_items?.length}{" "}
-                  <span className=" text-nowrap">Items Ordered</span>
+                  <span className=" text-nowrap">
+                    {(order?.order_items?.length ?? 0) > 1 ? "Items" : "Item"}{" "}
+                    Ordered
+                  </span>
                 </p>
               </div>
             </div>
@@ -69,13 +78,13 @@ export default function DisplayOrderSlide({
 
             <div className="p-4 flex flex-col items-center gap-4">
               <div className="w-full flex items-center gap-2">
-                <p className="w-full text-slate-600 text-sm">Payment Status</p>
-                <p className="text-base px-4 py-1 rounded-[8px] bg-green-500 border-[3px] text-white w-fit border-green-300 font-medium capitalize">
+                <p className="w-full text-slate-600 text-lg">Payment Status</p>
+                <p className="text-sm px-4 py-1 rounded-[8px] bg-green-500 border-[3px] text-white w-fit border-green-300 font-medium capitalize">
                   {order?.payment_status}
                 </p>
               </div>
               <div className="w-full flex items-center gap-2">
-                <p className="w-full text-slate-600 text-sm">Order Status</p>
+                <p className="w-full text-slate-600 text-lg">Order Status</p>
                 <div>
                   {order && (
                     <OrderStatusButton
@@ -98,20 +107,26 @@ export default function DisplayOrderSlide({
               </div>
             </div>
 
-            <div className="p-4 flex flex-col gap-2 w-full">
-              <span>Total Amount</span>
-              <p className="text-xl">
-                ${" "}
-                {order?.order_items
-                  ?.reduce((total, item) => {
-                    return total + (item.price * item.quantity || 0); // Ensure price and quantity are defined
-                  }, 0)
-                  .toFixed(2)}
-              </p>
+            <hr />
+
+            <div className="p-4">
+              <div className="flex flex-col gap-3">
+                <p className="w-full font-semibold text-black/70 tracking-tight text-base">
+                  Order Note
+                </p>
+                <p className="text-nowrap font-medium text-base">
+                  {order?.order_note}
+                </p>
+              </div>
             </div>
+
+            <hr />
+
             <div className="p-4 flex flex-col gap-4">
-              <span className=" text-slate-600">Ordered Product</span>
-              <div className="flex gap-4">
+              <p className="w-full font-semibold text-black/70 tracking-tight text-base">
+                Ordered items
+              </p>{" "}
+              <div className="flex flex-col gap-3">
                 {order?.order_items?.map((orderItem, index) => (
                   <OrderProduct orderItem={orderItem} />
                 ))}

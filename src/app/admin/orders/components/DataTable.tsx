@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { useSelectedOrder, useSlide } from "@/store";
 import { OrderItem } from "@/lib/types";
 import DisplayOrderSlide from "./DisplayOrderSlide";
+import { useOrderStore } from "@/store/orders";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,7 +36,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const { state, setState } = useSlide();
+  const { setState } = useSlide();
   const { selectedOrder, setSelectedOrder } = useSelectedOrder();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -67,7 +68,6 @@ export function DataTable<TData, TValue>({
 
   // Add this function before the return statement
   const shouldCellBeNonClickable = (cell: Cell<TData, unknown>): boolean => {
-    // You can customize this logic based on your requirements
     // For example, to disable clicking on cells in a specific column:
     if (
       cell.column.id === "order_status_admin" ||
@@ -75,12 +75,6 @@ export function DataTable<TData, TValue>({
     ) {
       return true;
     }
-
-    // Or to disable clicking on cells with specific content:
-    // const cellValue = cell.getValue();
-    // if (cellValue === "some-specific-value") {
-    //   return true;
-    // }
 
     return false;
   };

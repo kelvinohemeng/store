@@ -13,7 +13,7 @@ import { cookies } from "next/headers";
 // Delivery location Details
 // Payment status
 
-export const storePendingOrder = async (orderData: any) => {
+export const storePendingOrder = async (orderData: OrderData) => {
   const cookieStore = await cookies();
   cookieStore.set("pendingOrder", JSON.stringify(orderData), {
     httpOnly: true, // Server-only access
@@ -53,11 +53,11 @@ export async function createOrder(orderData: OrderData) {
         customer_name: orderData.customer_name,
         email: orderData.email,
         paystack_reference: orderData.paystack_reference,
-        delivery_address: orderData.deliveryAddress,
+        delivery_address: orderData.delivery_address,
         payment_status: orderData.payment_status,
         total_amount: orderData.total_amount,
         created_at: new Date().toISOString(),
-        order_note: orderData.orderNotes ?? "Order Note from Customer",
+        order_note: orderData.order_note ?? "Order Note from Customer",
       })
       .select("*")
       .single();

@@ -112,26 +112,24 @@ export interface ProductVariant {
 }
 
 export interface OrderItem {
-  id: string | number;
-  created_ay: string;
-  order_id: string | number;
-  product_id: string | number;
-  product_name: string;
+  id?: string;
+  created_ay?: string;
+  order_id?: string | number;
+  product_id?: string | number;
   quantity: number;
   price: number;
-  product_images?: string[]; // Optional: store the image URL of the selected product
   variants?: Record<string, any>;
   product?: Product;
 }
 
 export interface OrderData {
-  id: number | string;
-  created_at: string;
+  id?: string;
+  created_at?: string;
   customer_name: string | undefined;
   email: string | undefined;
   paystack_reference?: string;
   order_items: OrderItem[];
-  deliveryAddress?: {
+  delivery_address: {
     street: string;
     city: string;
     state: string;
@@ -139,7 +137,7 @@ export interface OrderData {
     country: string;
   };
   payment_status: "pending" | "completed" | "failed" | any;
-  orderNotes?: string; // Optional notes from customer
+  order_note?: string; // Optional notes from customer
   total_amount: number; // Total order amount
   order_status?: "pending" | "delivered" | any;
 }
