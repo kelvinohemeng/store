@@ -2,7 +2,6 @@
 
 import { checkAdminAuth, logoutUser } from "@/actions/auth";
 import { StoreUser, useUserData } from "@/store";
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";

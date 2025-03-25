@@ -1,6 +1,7 @@
 // Helper function to format amount
 
 import { QueryClient } from "@tanstack/react-query";
+import { RefObject } from "react";
 
 export const formatCurrency = (amount: number): string => {
   return amount.toLocaleString("en-US", {
@@ -34,3 +35,13 @@ export const formatDate = (dateString: Date): string => {
     month: "short",
   })}, ${date.getFullYear()}`;
 };
+
+export function useScrollToTopOnView(
+  state: string,
+  containerRef: RefObject<HTMLDivElement | null>
+) {
+  const scrollToTopStates = ["view", "update", "view-order", "create"];
+  if (scrollToTopStates.includes(state) && containerRef.current) {
+    containerRef.current.scrollTop = 0; // Scroll to top when component becomes active
+  }
+}

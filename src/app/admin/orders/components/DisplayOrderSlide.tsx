@@ -3,9 +3,10 @@
 import { useSlide } from "@/store";
 import { OrderData, OrderItem, Product } from "@/lib/types";
 import OrderProduct from "./OrderProduct";
-import { formatDate } from "@/Helpers";
+import { formatDate, useScrollToTopOnView } from "@/Helpers";
 import { OrderStatusButton } from "./OrderStatusButton";
 import { X } from "@phosphor-icons/react";
+import { useEffect, useRef } from "react";
 
 export default function DisplayOrderSlide({
   order,
@@ -13,8 +14,13 @@ export default function DisplayOrderSlide({
   order: OrderData | null | undefined;
 }) {
   const orderDate = new Date(order?.created_at ?? "");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { state, setState } = useSlide();
+
+  useEffect(() => {
+    useScrollToTopOnView(state, containerRef);
+  }, [state]);
 
   return (
     <div>
@@ -25,6 +31,7 @@ export default function DisplayOrderSlide({
         ></div>
       )}
       <div
+        ref={containerRef}
         className={`max-w-[450px] p-6 w-full border fixed z-[99] right-0 h-full top-0 bg-white transform overflow-y-scroll transition-all duration-300 ${
           state === "view-order" ? "translate-x-[0%]" : "translate-x-[100%]"
         }`}

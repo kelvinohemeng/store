@@ -127,7 +127,7 @@ export function DataTable<TData, TValue>({
 
                       return (
                         <TableCell
-                          key={cell.id}
+                          key={`${row.id}-${cell.id}`}
                           onClick={
                             isNonClickableCell
                               ? (e) => e.stopPropagation()
@@ -147,6 +147,7 @@ export function DataTable<TData, TValue>({
               ) : (
                 <TableRow>
                   <TableCell
+                    key={`No Data Yet`}
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >

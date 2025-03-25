@@ -48,8 +48,8 @@ export default function Navigation() {
             className="activate-cart relative cursor-pointer"
           >
             <ShoppingBag size={20} weight="regular" />
-            <div className="absolute top-0 right-0 -translate-y-[50%] translate-x-[50%] w-[20px] h-[20px] bg-red-500 border-white grid place-items-center text-white rounded-full border-[3px]">
-              <p className="text-xs leading-[100%]">{totalCartItems}</p>
+            <div className="absolute top-0 right-0 -translate-y-[50%] translate-x-[50%] w-[20px] h-[20px] bg-red-500 border-white grid place-items-center text-white rounded-full border-[3px] text-xs leading-[100%]">
+              {totalCartItems}
             </div>
           </div>
 
