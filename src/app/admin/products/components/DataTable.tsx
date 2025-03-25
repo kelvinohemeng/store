@@ -23,7 +23,6 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSelectedState, useSlide } from "@/store";
 import { Product } from "@/lib/types";
-import ProductDisplaySlide from "./ProductDIsplaySLide";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -70,7 +69,7 @@ export function DataTable<TData, TValue>({
       <div className="">
         <div className="flex items-center py-4">
           <Input
-            placeholder="Filter emails..."
+            placeholder="Filter via product name"
             value={
               (table.getColumn("product_name")?.getFilterValue() as string) ??
               ""
@@ -83,7 +82,7 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
           />
         </div>
-        <div className="rounded-lg border bg-[#ffffff]">
+        <div className=" rounded-md border">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

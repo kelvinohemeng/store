@@ -82,7 +82,7 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const cat: string = row.getValue("product_type");
       return (
-        <div className="text-left flex gap-2 items-center font-medium bg-black text-white rounded-[4px] tracking-normal px-2 py-1 w-max">
+        <div className="text-left flex gap-2 items-center font-medium bg-black text-white rounded-[4px] tracking-normal capitalize px-2 py-1 w-max">
           <span>{cat}</span>
         </div>
       );

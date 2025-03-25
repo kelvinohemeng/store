@@ -48,8 +48,8 @@ export default async function AdminRoot({ children }: { children: ReactNode }) {
           <div className="w-full h-[0.5px] bg-slate-600 opacity-50" />
 
           <div className="bg-[#F7F7F7] bg-opacity-50 p-8 overflow-y-scroll h-full !overflow-x-hidden">
-            {/* <ToastProvider>{children}</ToastProvider> */}
-            {children}
+            <ToastProvider>{children}</ToastProvider>
+            {/* {children} */}
           </div>
         </div>
       </div>

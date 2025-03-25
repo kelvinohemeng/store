@@ -91,7 +91,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
               {!isSelectingSize && (
                 <button
                   onClick={() => setIsSelectingSize(true)}
-                  className="text-xs text-blue-500 underline"
+                  className="text-xs text-blue-500 underline cursor-pointer hover:text-blue-700 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 >
                   Change
                 </button>
@@ -105,7 +105,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
                     <button
                       key={size}
                       onClick={() => handleSizeSelect(size)}
-                      className={`px-2 py-1 text-xs border rounded ${
+                      className={`px-2 py-1 text-xs border-black/50 rounded cursor-pointer ${
                         size === selectedSize
                           ? "bg-black text-white"
                           : "bg-gray-100"
@@ -132,8 +132,9 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
 
           {/* Quantity controls */}
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3 bg-black/5 rounded-[4px] px-2 py-1">
+            <div className="flex items-center gap-3 bg-black/5 rounded-[4px] px-2 py-1 ">
               <button
+                className="cursor-pointer"
                 title="add"
                 onClick={() =>
                   addItem(item, {
@@ -145,13 +146,17 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
                 <Plus size={12} />
               </button>
               <p>{item.quantity}</p>
-              <button title="minus" onClick={() => removeItem(item.id)}>
+              <button
+                className="cursor-pointer"
+                title="minus"
+                onClick={() => removeItem(item.id)}
+              >
                 <Minus size={12} />
               </button>
             </div>
             <button
               title="remove_item"
-              className="bg-black/5 rounded-[4px] p-2"
+              className="bg-black/5 rounded-[4px] p-2 cursor-pointer"
               onClick={() => removeItemById(item.id, item.selectedSize)}
             >
               <X size={12} />

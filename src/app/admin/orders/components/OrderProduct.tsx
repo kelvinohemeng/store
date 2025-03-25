@@ -7,17 +7,17 @@ export default function OrderProduct({ orderItem }: { orderItem: OrderItem }) {
 
   const formattedPrice = formatCurrencyGHC(product_price);
   return (
-    <div className="flex gap-2 w-full h-full border p-2 items-center rounded-[8px] hover:bg-black/5">
+    <div className="flex gap-2 w-full h-full border border-black/10 p-2 items-center rounded-[8px] hover:bg-black/5">
       <div className="flex flex-col gap-2 w-full">
         <span>{product_name}</span>
         <div className="flex gap-2">
-          <span className=" p-2 py-1 border rounded-[4px] bg-white">
+          <span className=" p-2 py-1 border border-black/10 rounded-[4px] bg-white">
             {formattedPrice}
           </span>
-          <span className=" p-2 py-1 border rounded-[4px] bg-white">
+          <span className=" p-2 py-1 border border-black/10 rounded-[4px] bg-white">
             {orderItem.quantity} {orderItem.quantity >= 0 ? "piece" : "pieces"}
           </span>
-          <span className=" p-2 py-1 border rounded-[4px] bg-white">
+          <span className=" p-2 py-1 border border-black/10 rounded-[4px] bg-white">
             {orderItem.variants?.size}
           </span>
         </div>

@@ -19,7 +19,7 @@ export default function Navigation() {
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white z-[999] ">
-      <nav className="flex justify-between p-5 pr-8 border-b">
+      <nav className="flex justify-between p-5 pr-8 border-b border-black/30">
         <div className="flex items-center gap-3">
           <Link href={"/home"}>
             <span className="">Home</span>

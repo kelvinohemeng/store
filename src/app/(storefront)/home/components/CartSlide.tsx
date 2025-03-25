@@ -22,11 +22,11 @@ const CartSlide = () => {
         ></div>
       )}
       <div
-        className={`max-w-[450px] w-full h-full border fixed flex flex-col z-[9] right-0 top-0 bg-white transform ${
+        className={`max-w-[450px] w-full h-full border border-black/30 fixed flex flex-col z-[9] right-0 top-0 bg-white transform ${
           state === "cart" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
-        <div className="flex justify-between items-center py-3 mb-5 border-b p-8 pt-12">
+        <div className="flex justify-between items-center py-3 mb-5 border-b border-black/30 p-8 pt-12">
           <h5 className="text-xl">{totalItems()} Items in Cart</h5>
           <button
             className="p-4 py-3 font-medium text-base bg-slate-50 rounded-lg"
@@ -61,7 +61,7 @@ const CartSlide = () => {
           </div>
         </LayoutGroup>
 
-        <div className="p-6 border-t space-y-2 h-fit">
+        <div className="p-6 border-t border-black/30 space-y-2 h-fit">
           <PayStackCheckout amount={totalPrice()} orderItems={items} />
           <div className="flex items-center justify-center gap-3 h-fit">
             <p>Powered with</p>

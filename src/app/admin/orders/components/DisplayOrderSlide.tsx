@@ -7,6 +7,7 @@ import { formatDate, useScrollToTopOnView } from "@/Helpers";
 import { OrderStatusButton } from "./OrderStatusButton";
 import { X } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
+import { SlideHeading } from "../../../../components/_slideComponents/index";
 
 export default function DisplayOrderSlide({
   order,
@@ -32,24 +33,12 @@ export default function DisplayOrderSlide({
       )}
       <div
         ref={containerRef}
-        className={`max-w-[450px] p-6 w-full border fixed z-[99] right-0 h-full top-0 bg-white transform overflow-y-scroll transition-all duration-300 ${
+        className={`max-w-[450px] p-6 w-full border border-black/30 fixed z-[99] right-0 h-full top-0 bg-white transform overflow-y-scroll transition-all duration-300 ${
           state === "view-order" ? "translate-x-[0%]" : "translate-x-[100%]"
         }`}
       >
         {/* Card Name */}
-        <div className="flex items-center my-6">
-          <div className="w-full">
-            <h1 className="text-2xl">Order Details</h1>
-          </div>
-          <button
-            type="button"
-            title="Close order details"
-            onClick={() => setState("")}
-            className="p-3 border shadow-md rounded-[8px] hover:opacity-70 hover:scale-[95%] transition-all duration-300"
-          >
-            <X size={16} color="black" />
-          </button>
-        </div>
+        <SlideHeading title="Order Details" action="" />
 
         {/* header */}
         <main className=" space-y-6">
@@ -60,7 +49,7 @@ export default function DisplayOrderSlide({
             <p className="text-xl font-medium">{order?.email}</p>
           </div>
 
-          <div className="space-y-3  rounded-2xl shadow-sm border">
+          <div className="space-y-3  rounded-2xl shadow-sm border border-black/10">
             <div className="flex items-center p-4">
               <div className=" w-full">
                 <span className=" text-slate-600">Customer Name</span>
@@ -81,7 +70,7 @@ export default function DisplayOrderSlide({
               </div>
             </div>
 
-            <hr />
+            <hr className=" opacity-30" />
 
             <div className="p-4 flex flex-col items-center gap-4">
               <div className="w-full flex items-center gap-2">
@@ -103,7 +92,7 @@ export default function DisplayOrderSlide({
               </div>
             </div>
 
-            <hr />
+            <hr className=" opacity-30" />
 
             <div className="p-4">
               <div className="flex gap-3">
@@ -114,7 +103,7 @@ export default function DisplayOrderSlide({
               </div>
             </div>
 
-            <hr />
+            <hr className=" opacity-30" />
 
             <div className="p-4">
               <div className="flex flex-col gap-3">
@@ -127,7 +116,7 @@ export default function DisplayOrderSlide({
               </div>
             </div>
 
-            <hr />
+            <hr className=" opacity-30" />
 
             <div className="p-4 flex flex-col gap-4">
               <p className="w-full font-semibold text-black/70 tracking-tight text-base">

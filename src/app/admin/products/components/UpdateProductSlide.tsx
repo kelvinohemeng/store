@@ -9,6 +9,7 @@ import { Product } from "@/lib/types";
 import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateQueryKey } from "@/Helpers";
+import { SlideHeading } from "@/components/_slideComponents";
 
 const UpdateProductSlide = ({
   product,
@@ -152,13 +153,8 @@ const UpdateProductSlide = ({
           state === "update" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
-        <div className="py-4 flex justify-end">
-          <button onClick={() => setState("")}>
-            <p>close menu</p>
-          </button>
-        </div>
-        <h1 className="text-2xl mb-6">Update Product</h1>
-        <hr />
+        <SlideHeading title="Update Product" action="" />
+
         <form
           ref={ref}
           action={updateAction}

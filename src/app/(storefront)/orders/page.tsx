@@ -45,7 +45,7 @@ export default function Page() {
             // <Link href={`/product/${order.order_items[0].product.id}`}>
             <div
               key={order.id}
-              className=" flex flex-col border p-4 w-full gap-4 rounded-[12px] shadow-sm"
+              className=" flex flex-col border  border-black/30 p-4 w-full gap-4 rounded-[12px] shadow-sm"
             >
               <div className="flex justify-between">
                 <div className="flex items-center gap-3">

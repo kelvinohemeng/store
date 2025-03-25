@@ -14,6 +14,7 @@ import UpdateProductSlide from "./UpdateProductSlide";
 import ProductButton from "./ProductButton";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateQueryKey, useScrollToTopOnView } from "@/Helpers";
+import { SlideHeading } from "@/components/_slideComponents";
 
 export default function ProductDisplaySlide({
   product,
@@ -58,17 +59,9 @@ export default function ProductDisplaySlide({
           state === "view" ? "translate-x-[0%]" : "translate-x-[100%]"
         }`}
       >
-        <div className="py-4 flex justify-end">
-          <button onClick={() => setState("")}>
-            <p>Close Menu</p>
-          </button>
-        </div>
+        <SlideHeading title="View Product" action="" />
 
-        <div className="pb-3 space-y-2">
-          <p className="text-base">View Product</p>
-          <h2 className="text-3xl font-medium">{product?.product_name}</h2>
-        </div>
-
+        <h3 className="text-e-2xl font-medium">{product?.product_name}</h3>
         {/* Product Images */}
         <div className="mt-6 relative overflow-hidden">
           <Swiper

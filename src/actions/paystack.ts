@@ -12,13 +12,12 @@ type PaystackInitialization = {
   email: string | undefined;
   amount: number;
   callbackUrl?: string;
-  metadata: {};
+  metadata?: {};
 };
 
 export const handlePaystackPurchase = async ({
   email,
   amount,
-  metadata,
 }: PaystackInitialization) => {
   try {
     const response = await fetch(

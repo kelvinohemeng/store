@@ -34,7 +34,7 @@ const ProductCard = ({ product, index }: ProdutCardT) => {
         className="z-10 group/cart absolute top-2 right-2 flex items-center gap-2"
       >
         <div className="relative flex items-center gap-3 w-[28px] h-[26px] overflow-hidden rounded-full bg-black/20 p-2 text-white text-sm transition-all duration-300 group-hover/cart:w-[110px]">
-          <div className="aspect-square border bg-white grid place-items-center rounded-full">
+          <div className="aspect-square border border-black/30 bg-white grid place-items-center rounded-full">
             <Plus size={12} color="black" weight="bold" />
           </div>
           <span className="whitespace-nowrap">Add to Cart</span>

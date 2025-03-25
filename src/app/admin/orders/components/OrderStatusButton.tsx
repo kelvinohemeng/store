@@ -62,9 +62,9 @@ export function OrderStatusButton({
               : status === "paid"
               ? "bg-green-100"
               : status === "delivered"
-              ? "bg-blue-100 bg-blue-800/20"
+              ? "bg-blue-800/20"
               : ""
-          } text-left flex gap-1 items-center font-medium rounded-[8px] border px-2 py-1 w-max ${
+          } text-left flex gap-1 items-center font-medium rounded-[8px] border-3 border-black/10 px-2 py-1 w-max ${
             isLoading ? "opacity-70" : ""
           }`}
         >

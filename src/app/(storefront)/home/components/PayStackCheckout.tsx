@@ -69,12 +69,14 @@ const PayStackCheckout = ({
   }, []);
 
   return (
-    <div className="spac-y-3">
+    <div className="space-y-3">
       <p className="text-xl font-semibold">Subotal: GHC {formatedAmount}</p>
-      <div className="space-y-2">
-        <form action={handlePayment} className="checkout space-y-4">
-          <label htmlFor="email" className="space-y-2">
-            <span>Please provide your email</span>
+      <div className="">
+        <form action={handlePayment} className="checkout flex flex-col gap-1">
+          <label htmlFor="email">
+            <div className="pb-2">
+              <p>Please provide your email</p>
+            </div>
             <Input
               name="email"
               type="email"
