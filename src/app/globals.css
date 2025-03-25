@@ -1,8 +1,31 @@
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+        --text-e-xs: "0.75rem",
+        --text-e-sm: "0.875rem",
+        --text-e-base: "1rem",
+        --text-e-lg: "1.125rem",
+        --text-e-xl: "1.25rem",
+        --text-e-2xl: "1.375rem",
+        --text-e-3xl: "1.4375rem",
+        --text-e-4xl: "1.5rem",
+        --text-e-5xl: "1.625rem",
+        --text-e-6xl: "1.75rem",
+        --text-e-7xl: "1.875rem",
+        --text-e-8xl: "2rem",
+        --text-e-9xl: "2.25rem",
+        --text-e-10xl: "3rem",
+        --text-e-11xl: "4rem",
+        --text-e-12xl: "4.5rem",
+        --text-e-13xl: "6rem",
+        --text-e-14xl: "7.5rem",
+        --text-e-15xl: "9rem",
+        --text-e-16xl: "11rem",
+
+        --font-helvetica: "Helvetica", sans-serif,
+        --font-bdo-grotesk: "BDO Grotesk",
+        --font-inter: "Inter",
+}
 
 @layer base {
   .display-size {
@@ -56,6 +79,8 @@
 
   .spacer {
     display: inline-block;
-    width: 1.5rem; /* Adjust this to control spacing */
+    width: 1.5rem;
   }
 }
+
+
