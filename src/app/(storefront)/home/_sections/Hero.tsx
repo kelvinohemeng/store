@@ -16,7 +16,7 @@ export default function Hero() {
           container="default"
         >
           <div>
-            <h1 className="text-white display-1">
+            <h1 className="display-1">
               OMAN <br /> KWESI
             </h1>
             <PrimaryBtn link={`/products`}>Explore Products</PrimaryBtn>
