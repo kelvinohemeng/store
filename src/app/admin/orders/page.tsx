@@ -1,5 +1,31 @@
-const Orders = () => {
-  return <div>Orders</div>;
-};
+"use client";
 
-export default Orders;
+import { getAllOrders } from "@/actions/order";
+import DisplayOrders from "./components/DisplayOrders";
+import { AdminOrderT, OrderData } from "@/lib/types";
+import { DataTable } from "./components/DataTable";
+import { Payment, columns } from "./components/Columns";
+import { useQuery } from "@tanstack/react-query";
+
+export default function Orders() {
+  // const allOrders = await getAllOrders();
+  // const { orders } = await allOrders;
+
+  const {
+    data: orders,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<OrderData[]>({
+    queryKey: ["orders"],
+    queryFn: async () => await getAllOrders(),
+  });
+
+  return (
+    <div className="  pt-5 pb-20 min-h-full">
+      <h1 className="text-4xl mb-6">Order List</h1>
+      {/* <DisplayOrders orders={orders} /> */}
+      <DataTable columns={columns} data={orders} />
+    </div>
+  );
+}

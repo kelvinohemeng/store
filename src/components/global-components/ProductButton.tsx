@@ -9,12 +9,13 @@ type ButtonProps = {
     | "secondary"
     | "ghost"
     | "link";
+  sizes?: "default" | "sm" | "lg" | "icon" | null | undefined;
 };
 
-const DefaultButton = ({ variant = "default", text }: ButtonProps) => {
+const DefaultButton = ({ variant = "default", text, sizes }: ButtonProps) => {
   return (
     <div>
-      <Button className="w-full" variant={variant}>
+      <Button className="w-full" variant={variant} size={sizes}>
         {text}
       </Button>
     </div>
