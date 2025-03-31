@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import SizeVariantSelector from "../_components/SizeVariantSelector";
 import AddToCartButton from "../_components/AddToCartButton";
 import Link from "next/link";
+import ProductSection from "../../home/_sections/ProductSection";
+import Stack from "@/components/global-components/Stack";
 
 export default async function ProductDetails({
   params,
@@ -24,7 +26,12 @@ export default async function ProductDetails({
 
   return (
     <section className="pt-[84px] h-full">
-      <div className="min-h-full flex px-5 gap-12 ">
+      <Stack
+        orientation="horizontal"
+        gap="default"
+        container="default"
+        className="min-h-full"
+      >
         {/* left side */}
         <div className="h-[calc(100vh-120px)] w-full flex-1 flex items-center sticky top-[84px] py-[84px]">
           <div className="space-y-4 ">
@@ -46,7 +53,7 @@ export default async function ProductDetails({
             </div>
 
             <div className="space-y-2">
-              <button className={`px-4 py-1 text-sm border rounded`}>
+              <button className={`px-4 py-1 text-sm border rounded capitalize`}>
                 {product.product_type}
               </button>
               <h3 className="font-semibold tracking-tighter">
@@ -70,7 +77,8 @@ export default async function ProductDetails({
             />
           ))}
         </div>
-      </div>
+      </Stack>
+      <ProductSection title="Continue Shopping" />
     </section>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash } from "@phosphor-icons/react";
 import { useFormStatus } from "react-dom";
 import UseAnimations from "react-useanimations";
 import loading from "react-useanimations/lib/loading";
@@ -14,8 +15,8 @@ export default function ProductButton({
   type?: "default" | "primary" | "secondary" | "destructive";
 }) {
   const states = {
-    default: "bg-gray-200 hover:bg-gray-300 text-gray-800",
-    primary: "bg-green-500 hover:bg-green-600 text-white",
+    default: "bg-gray-200 hover:bg-gray-300 text-black",
+    primary: "bg-black hover:bg-black/70 text-white",
     secondary: "bg-white hover:bg-gray-100 text-gray-800",
     destructive: "bg-red-500 hover:bg-red-600 text-white",
   };
@@ -43,7 +44,14 @@ export default function ProductButton({
           autoplay={true}
         />
       </div>
-      {pending ? <span>{pendingText}</span> : <span>{text}</span>}
+      {pending ? (
+        <span>{pendingText}</span>
+      ) : (
+        <span className=" flex gap-3 items-center">
+          {type === "destructive" ? <Trash size={16} weight="bold" /> : ""}
+          {text}
+        </span>
+      )}
     </button>
   );
 }

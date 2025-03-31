@@ -130,38 +130,46 @@ export async function checkAdminAuth() {
 
 // Function to sign up a user
 export const signupUser = async (formData: FormData) => {
+  "use server";
+  
   const supabaseSSR = await createSupabaseSSRClient();
 
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
+  
   const {
     data: { user },
     error,
   } = await supabaseSSR.auth.signUp(data);
 
   if (error) {
-    throw new Error(error.message);
+    return { success: false, error: error.message };
   }
 
-  // if (user) {
-  //   // Manually insert user into the `users` table with a default role
-  //   const { error: insertError } = await supabase.from("users").insert([
-  //     {
-  //       id: user.id, // Matches auth.users.id
-  //       email: user.email,
-  //       role: "user", // Default role, can be changed later
-  //     },
-  //   ]);
+  // Create a user profile entry
+  if (user) {
+    const { error: profileError } = await supabaseSSR
+      .from("user_profiles")
+      .insert([
+        {
+          id: user.id,
+          email: user.email,
+          role: "user",
+        },
+      ]);
 
-  //   if (insertError) {
-  //     throw new Error(insertError.message);
-  //   }
-  // }
+    if (profileError) {
+      return { success: false, error: profileError.message };
+    }
+  }
 
-  revalidatePath("/orders", "page");
-  redirect("/orders");
+  return { 
+    success: true, 
+    userData: user, 
+    error: null 
+  };
 };
 
 // Function to log in with OAuth providers

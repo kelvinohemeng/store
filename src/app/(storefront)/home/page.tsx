@@ -12,8 +12,9 @@ export default function HomePage() {
     <>
       <Loader />
       <Hero />
-      <ProductSection />
+      <ProductSection title="New Arrivals" />
       <ProductTypes />
+      <ProductSection />
     </>
   );
 }

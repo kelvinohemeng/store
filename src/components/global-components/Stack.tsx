@@ -25,8 +25,8 @@ export default function Stack({
 
   const containerStyles: Record<ContainerType, string> = {
     "full-width": "w-full px-5",
-    default: "max-w-[1440px] mx-auto",
-    max: "max-w-[1800px] mx-auto",
+    default: "max-w-[1440px] w-full mx-auto",
+    max: "max-w-[1800px] w-full mx-auto",
   };
 
   const gapStyles: Record<GapType, string> = {

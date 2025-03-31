@@ -14,7 +14,7 @@ export default function SizeVariantSelector({ product }: { product: Product }) {
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
-              className={`px-2 py-1 text-xl border rounded ${
+              className={`px-2 py-1 text-e-sm border rounded ${
                 size === selectedSize ? "bg-black text-white" : "bg-gray-100"
               }`}
             >

@@ -15,7 +15,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
   return (
     <button
       name="add to cart"
-      className=" bg-black text-white px-8 py-2"
+      className=" bg-black text-white px-8 py-2 rounded-md"
       onClick={handleAddToCart}
     >
       Add to Cart{" "}

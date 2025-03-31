@@ -1,6 +1,5 @@
 "use client";
 
-import CreateButton from "@/app/admin/products/components/CreateButton";
 import { usePathname } from "next/navigation";
 import React from "react";
 

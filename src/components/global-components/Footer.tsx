@@ -8,7 +8,7 @@ export default function Footer() {
       container="full-width"
       className=" h-auto p-5 pb-[44px] bg-black/90 text-white"
     >
-      <Stack orientation="vertical" gap="large">
+      <Stack orientation="vertical" gap="large" container="default">
         <h3 className=" capitalize tracking-tighter font-bold">
           Wear it proud
         </h3>

@@ -25,7 +25,7 @@ export default function Loader() {
   if (loading) {
     return (
       <div className="fixed z-[999] h-screen w-full grid place-items-center bg-black">
-        <h2 className="text-2xl font-bold uppercase">OM — K</h2>
+        <h2 className="text-2xl font-bold uppercase text-white">OM — K</h2>
       </div>
     );
   }

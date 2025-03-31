@@ -38,17 +38,19 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
       ></div>
       <div
         className={`cursor-pointer absolute w-[150px] right-0 mt-8 bg-white border border-black/40 p-2  rounded-lg shadow-sm flex flex-col z-[9] overflow-hidden ${
-          triggerDD ? "visible" : "invisible"
+          triggerDD
+            ? "visible translate-y-[0px]"
+            : "invisible translate-y-[-30px]"
         }`}
       >
-        <div
+        {/* <div
           onClick={() => setTriggerDD(!triggerDD)}
           className="px-5 py-3 w-full text-start hover:bg-black/10 rounded"
         >
           <Link href={"/profile"} className=" text-nowrap text-xl">
             Profile
           </Link>
-        </div>
+        </div> */}
         <div
           onClick={() => setTriggerDD(!triggerDD)}
           className="px-5 py-3 w-full text-start hover:bg-black/10 rounded"

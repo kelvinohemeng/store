@@ -24,9 +24,9 @@ export default function Navigation() {
           <Link href={"/home"}>
             <span className="">Home</span>
           </Link>
-          <Link href={"/about"}>
+          {/* <Link href={"/about"}>
             <span className="">Explore</span>
-          </Link>
+          </Link> */}
           <Link href={"/products"}>
             <span className="">Products</span>
           </Link>

@@ -5,6 +5,7 @@ import { Product } from "@/lib/types";
 import ProductCard from "../components/ProductCard";
 import { useProductStore } from "@/store";
 import { Button, PrimaryBtn } from "../../_storeComponents/Buttons";
+import Stack from "@/components/global-components/Stack";
 
 export default function ProductTypes() {
   const { products } = useProductStore();
@@ -23,8 +24,8 @@ export default function ProductTypes() {
   };
 
   return (
-    <section className="gap-3 px-5 py-[64px] h-auto">
-      <h2 className="test-lg tracking-tighter font-semibold">Categories</h2>
+    <Stack orientation="vertical" gap="default" container="default">
+      <h4 className="test-lg tracking-tighter font-semibold">Categories</h4>
       <div className="grid grid-cols-5 grid-rows-2 h-[600px] mt-6 gap-10">
         {Object.entries(productTypes).map(
           ([type, items], index) =>
@@ -57,6 +58,6 @@ export default function ProductTypes() {
             )
         )}
       </div>
-    </section>
+    </Stack>
   );
 }
