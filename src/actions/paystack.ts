@@ -31,9 +31,12 @@ export const handlePaystackPurchase = async ({
         },
         body: JSON.stringify({
           email,
-          amount: 1,
+          amount: amount * 100, // Paystack expects amount in kobo (smallest currency unit)
           currency: "GHS",
-          callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`, // Redirect after payment
+          callback_url:
+            process.env.NODE_ENV === "production"
+              ? `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/payment-success`
+              : `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`,
           channels: ["card", "bank_transfer", "ussd", "mobile_money"],
         }),
       }
