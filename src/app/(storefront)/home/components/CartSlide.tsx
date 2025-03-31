@@ -40,7 +40,7 @@ const CartSlide = () => {
             {items.length > 0 ? (
               <>
                 <div className="flex flex-col gap-5">
-                  <AnimatePresence>
+                  <AnimatePresence mode="popLayout">
                     {items.map((item) => (
                       <CartItem
                         key={`${item.id}-${item.selectedSize}-${

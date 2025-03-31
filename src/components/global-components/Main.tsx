@@ -14,7 +14,7 @@ export default function Main({
   // const adminRoutes = path.startsWith("/admin");
   return (
     <>
-      <main className={cn(`${className} h-full`)}>{children}</main>
+      <main className={cn(`${className} min-h-screen h-full`)}>{children}</main>
     </>
   );
 }

@@ -1,3 +1,4 @@
+import Loader from "../_storeComponents/PreLoader";
 import Hero from "./_sections/Hero";
 import ProductSection from "./_sections/ProductSection";
 import ProductTypes from "./_sections/ProductTypes";
@@ -9,10 +10,10 @@ export default function HomePage() {
 
     // </div>
     <>
+      <Loader />
       <Hero />
       <ProductSection />
       <ProductTypes />
-      <ProductSection />
     </>
   );
 }

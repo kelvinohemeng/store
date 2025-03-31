@@ -25,7 +25,7 @@ export default function Navigation() {
             <span className="">Home</span>
           </Link>
           <Link href={"/about"}>
-            <span className="">About</span>
+            <span className="">Explore</span>
           </Link>
           <Link href={"/products"}>
             <span className="">Products</span>
@@ -33,8 +33,7 @@ export default function Navigation() {
         </div>
         <Link href={"/home"}>
           <div className="flex items-center gap-2">
-            <ShoppingBag size={20} weight="fill" />
-            <h2 className="text-2xl font-['poppins']">ecomme</h2>
+            <h2 className="text-2xl font-bold uppercase">OM — K</h2>
           </div>
         </Link>
 
@@ -43,17 +42,14 @@ export default function Navigation() {
             <MagnifyingGlass size={24} weight="regular" />
           </div>
 
+          {storedUser && <UserProfile user={storedUser} />}
+
           <div
             onClick={() => setState("cart")}
-            className="activate-cart relative cursor-pointer"
+            className="activate-cart relative cursor-pointer border rounded-full aspect-square h-full grid place-items-center"
           >
-            <ShoppingBag size={20} weight="regular" />
-            <div className="absolute top-0 right-0 -translate-y-[50%] translate-x-[50%] w-[20px] h-[20px] bg-red-500 border-white grid place-items-center text-white rounded-full border-[3px] text-xs leading-[100%]">
-              {totalCartItems}
-            </div>
+            {totalCartItems}
           </div>
-
-          {storedUser && <UserProfile user={storedUser} />}
 
           {!storedUser && (
             <Link
