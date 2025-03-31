@@ -1,13 +1,9 @@
 "use client";
 
-import { PaystackButton } from "react-paystack";
-import { Product } from "@/lib/types";
 import { useCartStore, useSlide } from "@/store";
-import { useState } from "react";
 import CartItem from "./CartItem";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PayStackCheckout from "./PayStackCheckout";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
+import { AnimatePresence, LayoutGroup } from "motion/react";
 
 const CartSlide = () => {
   const { state, setState } = useSlide();
