@@ -1,12 +1,12 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { verifyPayment } from "@/actions/paystack";
 import Link from "next/link";
 import { useCartStore } from "@/store";
 
-export default function PaymentSuccess() {
+function PaymentSuccess() {
   const searchParams = useSearchParams();
   const { clearCart } = useCartStore();
   const router = useRouter();
@@ -113,5 +113,13 @@ export default function PaymentSuccess() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <PaymentSuccess />
+    </Suspense>
   );
 }
