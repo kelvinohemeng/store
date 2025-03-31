@@ -15,6 +15,7 @@ import ProductButton from "./ProductButton";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateQueryKey, useScrollToTopOnView } from "@/Helpers";
 import { SlideHeading } from "@/components/_slideComponents";
+import { toast } from "react-toastify";
 
 export default function ProductDisplaySlide({
   product,
@@ -36,6 +37,7 @@ export default function ProductDisplaySlide({
     try {
       await deleteProduct(product?.id);
       await invalidateQueryKey(queryClient, "products");
+      toast.success("Product deleted successfully");
     } finally {
       setState("");
     }

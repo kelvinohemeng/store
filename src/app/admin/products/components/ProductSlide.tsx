@@ -8,6 +8,7 @@ import imageCompression from "browser-image-compression";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateQueryKey } from "@/Helpers";
+import { toast } from "react-toastify";
 
 export default function CreateProductSlide() {
   const queryClient = useQueryClient(); // Add this line
@@ -96,8 +97,11 @@ export default function CreateProductSlide() {
       formData.append("sizes", JSON.stringify(sizes));
 
       await submitNewProduct(formData);
+      toast.success("Product created successfully");
+      //
     } catch (err: any) {
       alert(`Failed to create product: ${err.message}`);
+      toast.error("Error creating product, please try again later");
     } finally {
       setState("");
       setImages([]);

@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateQueryKey } from "@/Helpers";
 import { SlideHeading } from "@/components/_slideComponents";
+import { toast } from "react-toastify";
 
 const UpdateProductSlide = ({
   product,
@@ -131,9 +132,12 @@ const UpdateProductSlide = ({
       setNewImages([]);
       setExistingImages([]);
       setImagesToDelete([]);
+
+      toast.success("Product updated successfully");
     } catch (err: any) {
       console.error("Update error:", err);
       alert(`Failed to update product: ${err?.message}`);
+      toast.error("Failed to update product");
     } finally {
       ref.current?.reset();
       await invalidateQueryKey(queryClient, "products");
