@@ -2,6 +2,7 @@
 
 import { checkAdminAuth, logoutUser } from "@/actions/auth";
 import { StoreUser, useUserData } from "@/store";
+import { User } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -34,8 +35,10 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
     <div className="relative">
       <div
         onClick={() => setTriggerDD(!triggerDD)}
-        className="h-[30px] border-black/30 border-3 aspect-square rounded-full bg-slate-300"
-      ></div>
+        className="h-[30px] aspect-square grid place-items-center cursor-pointer"
+      >
+        <User size={16} weight="bold" />
+      </div>
       <div
         className={`cursor-pointer absolute w-[150px] right-0 mt-8 bg-white border border-black/40 p-2  rounded-lg shadow-sm flex flex-col z-[9] overflow-hidden ${
           triggerDD
