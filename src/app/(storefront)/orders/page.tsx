@@ -1,7 +1,7 @@
 "use client";
 
 import { getOrdersByEmail } from "@/actions/order";
-import { AdminOrderT, OrderData } from "@/lib/types";
+import { OrderData } from "@/lib/types";
 import { useUserData } from "@/store";
 import Image from "next/image";
 import Link from "next/link";

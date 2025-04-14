@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import Hero from "./_sections/Hero";
 import ProductSection from "./_sections/ProductSection";
 import ProductTypes from "./_sections/ProductTypes";
