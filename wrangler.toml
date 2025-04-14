@@ -1,5 +1,0 @@
-  name = "ecommerce-cloudflare"
-  compatibility_date = "2025-03-25"
-  compatibility_flags = ["nodejs_compat"]
-  [assets]
-  directory = ".open-next/assets"
