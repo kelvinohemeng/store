@@ -12,8 +12,6 @@ import { Row } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import UseAnimations from "react-useanimations";
-import loading from "react-useanimations/lib/loading";
 
 export function OrderStatusButton({
   id,
@@ -78,15 +76,7 @@ export function OrderStatusButton({
             } font-medium capitalize`}
           >
             {isLoading ? (
-              <div className="px-2 w-max flex items-center justify-center">
-                <p className="text-sm">Updating</p>
-                <UseAnimations
-                  animation={loading}
-                  size={16}
-                  strokeColor="black"
-                  autoplay={true}
-                />
-              </div>
+              <div className="w-5 h-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
             ) : (
               status
             )}

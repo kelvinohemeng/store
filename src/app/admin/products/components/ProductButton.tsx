@@ -2,8 +2,6 @@
 
 import { Trash } from "@phosphor-icons/react";
 import { useFormStatus } from "react-dom";
-import UseAnimations from "react-useanimations";
-import loading from "react-useanimations/lib/loading";
 
 export default function ProductButton({
   text = "Create new product",
@@ -32,18 +30,9 @@ export default function ProductButton({
       type="submit"
       disabled={pending}
     >
-      <div
-        className={`transition-opacity duration-200 ${
-          pending ? "opacity-100 block" : "opacity-0 hidden"
-        }`}
-      >
-        <UseAnimations
-          animation={loading}
-          size={20}
-          strokeColor="white"
-          autoplay={true}
-        />
-      </div>
+      {pending && (
+        <div className="w-5 h-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+      )}
       {pending ? (
         <span>{pendingText}</span>
       ) : (
