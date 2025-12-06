@@ -18,8 +18,8 @@ export async function middleware(request: NextRequest) {
   const isAdminAuthRoute = adminAuthRoutes.includes(path);
 
   // Fetch session & user from `updateSession`
-  const { response, user } = await updateSession(request);
-  const { adminResponse, adminUser } = await verifyAdmin(request);
+  const { response, supabase, user } = await updateSession(request);
+  const { adminUser } = await verifyAdmin(supabase, user);
 
   if (isHomeRoute) {
     return NextResponse.redirect(new URL("/home", request.url));
@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
 
   // Handle admin routes
   if (isAdminRoute) {
-    return adminResponse;
+    return response;
   }
 
   return NextResponse.next();

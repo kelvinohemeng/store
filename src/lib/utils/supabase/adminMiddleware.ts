@@ -1,52 +1,25 @@
-import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { type SupabaseClient, type User } from "@supabase/supabase-js";
 
-export async function verifyAdmin(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+export async function verifyAdmin(
+  supabase: SupabaseClient,
+  user: User | null
+) {
+  // If no user is logged in, they cannot be an admin.
+  if (!user) {
+    return { adminUser: null };
+  }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // if (!user) {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = "/admin/login";
-  //   return NextResponse.redirect(url);
-  // }
-
-  // Fetch user role from the database
+  // Fetch user role from the database using the existing client
   const { data: userData, error } = await supabase
     .from("user_profiles")
     .select("role")
-    .eq("id", user?.id)
+    .eq("id", user.id)
     .single();
 
-  // if (error || !userData || userData.role !== "admin") {
-  //   return NextResponse.redirect(new URL("/admin/login", request.url)); // Redirect non-admins
-  // }
+  if (error) {
+    console.error("Error fetching admin role:", error);
+    return { adminUser: null };
+  }
 
-  return { adminResponse: supabaseResponse, adminUser: userData };
+  return { adminUser: userData };
 }
