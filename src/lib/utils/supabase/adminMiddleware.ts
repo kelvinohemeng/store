@@ -1,9 +1,6 @@
 import { type SupabaseClient, type User } from "@supabase/supabase-js";
 
-export async function verifyAdmin(
-  supabase: SupabaseClient,
-  user: User | null
-) {
+export async function verifyAdmin(supabase: SupabaseClient, user: User | null) {
   // If no user is logged in, they cannot be an admin.
   if (!user) {
     return { adminUser: null };
