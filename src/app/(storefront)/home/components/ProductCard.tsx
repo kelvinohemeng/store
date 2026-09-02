@@ -70,7 +70,7 @@ const ProductCard = ({ product, index }: ProdutCardT) => {
             <p className="font-medium">
               GHC {product.product_price.toFixed(2)}
             </p>
-            {product?.compare_price > 0 && (
+            {!!product?.compare_price && product.compare_price > 0 && (
               <p className="line-through text-gray-500">
                 GHC {product.compare_price.toFixed(2)}
               </p>

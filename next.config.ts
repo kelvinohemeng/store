@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",
@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "qysorjsrzyfvzxicbnut.supabase.co",
+        hostname: "pub-b7a0c7d505474e7492372e5ed7b48645.r2.dev",
         pathname: "**",
       },
     ],

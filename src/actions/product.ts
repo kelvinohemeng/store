@@ -1,81 +1,77 @@
 "use server";
 
-import { supabase } from "@/lib/utils/supabase";
+import { eq } from "drizzle-orm";
+import { getDb, getBucket, getR2PublicUrl } from "@/db";
+import { products } from "@/db/schema";
+import { Product } from "@/lib/types";
+
+// upload multiple images to R2, returning their public URLs
+async function uploadProductImages(files: File[]): Promise<string[]> {
+  const bucket = getBucket();
+  const publicUrl = getR2PublicUrl();
+  const uploadedImageUrls: string[] = [];
+  const seen = new Set<string>();
+
+  for (const file of files) {
+    if (seen.has(file.name)) continue;
+    seen.add(file.name);
+
+    const fileExt = file.name.split(".").pop() || "jpeg";
+    const fileName = `product_${Date.now()}_${Math.random()
+      .toString(36)
+      .slice(2)}.${fileExt}`;
+    const key = `products/${fileName}`;
+
+    await bucket.put(key, await file.arrayBuffer(), {
+      httpMetadata: { contentType: file.type || "application/octet-stream" },
+    });
+
+    uploadedImageUrls.push(`${publicUrl}/${key}`);
+  }
+
+  return uploadedImageUrls;
+}
+
+// derive the R2 object key back out of a public URL we generated above
+function keyFromImageUrl(imageUrl: string): string | null {
+  const publicUrl = getR2PublicUrl();
+  if (!imageUrl.startsWith(`${publicUrl}/`)) return null;
+  return imageUrl.slice(publicUrl.length + 1);
+}
 
 // create/submit a new product
 export const submitNewProduct = async (formData: FormData) => {
-  const name = formData.get("name");
-  const description = formData.get("description");
-  const price = formData.get("price");
-  const compare_price = formData.get("compare_price");
-  const quantity = formData.get("stock");
-  const imageFiles = formData.getAll("images") as File[]; // Get multiple images
-  const category = formData.get("category") as string; // Get the category value
+  const name = formData.get("name") as string;
+  const description = formData.get("description") as string;
+  const price = formData.get("price") as string;
+  const compare_price = formData.get("compare_price") as string;
+  const quantity = formData.get("stock") as string;
+  const imageFiles = formData.getAll("images") as File[];
+  const category = formData.get("category") as string;
   const sizes = formData.get("sizes") as string;
 
   if (!imageFiles.length) {
     return { success: false, error: "At least one image is required" };
   }
 
-  // Upload multiple images and return their URLs
-  const uploadProductImages = async (files: File[]) => {
-    const uploadedImageUrls: string[] = [];
-
-    const uniqueFiles = new Map(); // To prevent duplicates
-
-    for (const file of files) {
-      const fileExt = file.name.split(".").pop() || "jpeg";
-
-      if (uniqueFiles.has(file.name)) continue;
-      uniqueFiles.set(file.name, true);
-
-      const fileName = `product_${Date.now()}_${Math.random()
-        .toString(36)
-        .slice(2)}.${fileExt}`;
-      const filePath = `products/${fileName}`;
-
-      //upload file
-      const { data, error } = await supabase.storage
-        .from("product_images")
-        .upload(filePath, file, { cacheControl: "3600", upsert: false });
-
-      if (error) {
-        console.error("Upload Error:", error.message);
-        throw new Error(`Image upload failed: ${error.message}`);
-      }
-
-      // Get the public URL
-      const imageUrl = supabase.storage
-        .from("product_images")
-        .getPublicUrl(filePath).data.publicUrl;
-
-      uploadedImageUrls.push(imageUrl);
-    }
-
-    return uploadedImageUrls;
-  };
-
   try {
     const imageUrls = await uploadProductImages(imageFiles);
+    const db = getDb();
 
-    // Insert into database (store as JSON array)
-    const { data, error } = await supabase
-      .from("Products")
-      .insert([
-        {
-          product_name: name,
-          product_description: description,
-          product_type: category,
-          image_url: imageUrls, // Store array of image URLs
-          product_price: price,
-          quantity: quantity,
-          sizes: sizes.split(","),
-          compare_price,
-        },
-      ])
-      .select();
+    const [data] = await db
+      .insert(products)
+      .values({
+        product_name: name,
+        product_description: description,
+        product_type: category,
+        image_url: imageUrls,
+        product_price: Number(price),
+        quantity: Number(quantity),
+        sizes: sizes ? sizes.split(",") : [],
+        compare_price: compare_price ? Number(compare_price) : null,
+      })
+      .returning();
 
-    if (error) throw error;
     return { success: true, data };
   } catch (e) {
     console.error("Error creating product:", e);
@@ -88,43 +84,27 @@ export const submitNewProduct = async (formData: FormData) => {
 
 // delete product from table
 export const deleteProduct = async (id: string | number | undefined) => {
+  if (id === undefined) {
+    return { success: false, error: "Missing product id" };
+  }
+
   try {
-    // First get the product to access its image URLs
-    const { data: product, error: fetchError } = await supabase
-      .from("Products")
-      .select("image_url")
-      .eq("id", id)
-      .single();
+    const db = getDb();
+    const bucket = getBucket();
 
-    if (fetchError) throw fetchError;
+    const [product] = await db
+      .select({ image_url: products.image_url })
+      .from(products)
+      .where(eq(products.id, Number(id)));
 
-    // Delete images from storage bucket
     if (product?.image_url?.length) {
       for (const imageUrl of product.image_url) {
-        const path = imageUrl.split("/products/").pop(); // Get filename from URL
-        if (path) {
-          const { error: deleteStorageError } = await supabase.storage
-            .from("product_images")
-            .remove([`products/${path}`]);
-
-          if (deleteStorageError) {
-            console.error(
-              "Error deleting image from storage:",
-              deleteStorageError
-            );
-            throw deleteStorageError;
-          }
-        }
+        const key = keyFromImageUrl(imageUrl);
+        if (key) await bucket.delete(key);
       }
     }
 
-    // Delete the product from the database
-    const { error: deleteError } = await supabase
-      .from("Products")
-      .delete()
-      .eq("id", id);
-
-    if (deleteError) throw deleteError;
+    await db.delete(products).where(eq(products.id, Number(id)));
 
     return { success: true };
   } catch (error) {
@@ -136,66 +116,32 @@ export const deleteProduct = async (id: string | number | undefined) => {
   }
 };
 
-//update product from table
-
-// ... existing code ...
-
+// update product from table
 export async function updateProduct(
   productId: string | number | undefined,
   formData: FormData
 ) {
+  if (productId === undefined) {
+    return { success: false, error: "Missing product id" };
+  }
+
   try {
-    // Get all the form data
+    const bucket = getBucket();
+    const db = getDb();
+
     const existingImages = formData.getAll("existingImages") as string[];
     const imagesToDelete = formData.getAll("imagesToDelete") as string[];
     const newImageFiles = formData.getAll("newImages") as File[];
 
-    // Delete images from storage
     for (const imageUrl of imagesToDelete) {
-      const path = imageUrl.split("/products/").pop(); // Get filename from URL
-      if (path) {
-        const { error: deleteError } = await supabase.storage
-          .from("product_images")
-          .remove([`products/${path}`]);
-
-        if (deleteError) {
-          console.error("Error deleting image:", deleteError);
-          throw new Error(`Failed to delete image: ${deleteError.message}`);
-        }
-      }
+      const key = keyFromImageUrl(imageUrl);
+      if (key) await bucket.delete(key);
     }
 
-    // Upload new images
-    const newImageUrls = await Promise.all(
-      newImageFiles.map(async (file) => {
-        const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
-        const fileName = `product_${Date.now()}_${Math.random()
-          .toString(36)
-          .slice(2)}.${fileExt}`;
-        const filePath = `products/${fileName}`;
+    const newImageUrls = newImageFiles.length
+      ? await uploadProductImages(newImageFiles)
+      : [];
 
-        const { data, error: uploadError } = await supabase.storage
-          .from("product_images")
-          .upload(filePath, file, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        if (uploadError) {
-          console.error("Error uploading image:", uploadError);
-          throw new Error(`Failed to upload image: ${uploadError.message}`);
-        }
-
-        // Get public URL
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("product_images").getPublicUrl(filePath);
-
-        return publicUrl;
-      })
-    );
-
-    // Combine existing and new image URLs
     const finalImageUrls = [...existingImages, ...newImageUrls];
     const sizes = formData.get("sizes") as string;
     const sizesArray = sizes
@@ -203,32 +149,25 @@ export async function updateProduct(
       .map((size) => size.trim())
       .filter((size) => size !== "");
 
-    // Parse numeric values
     const price = formData.get("price") ? Number(formData.get("price")) : null;
     const comparePrice = formData.get("compare_price")
       ? Number(formData.get("compare_price"))
       : null;
     const quantity = formData.get("stock") ? Number(formData.get("stock")) : 0;
 
-    // Update product in database
-    const { error: updateError } = await supabase
-      .from("Products") // Note the capital P in Products
-      .update({
-        product_name: formData.get("name"),
-        product_description: formData.get("description"),
-        product_type: formData.get("type"),
+    await db
+      .update(products)
+      .set({
+        product_name: formData.get("name") as string,
+        product_description: formData.get("description") as string,
+        product_type: formData.get("type") as string,
         image_url: finalImageUrls,
-        product_price: price,
+        product_price: price ?? 0,
         quantity: quantity,
         sizes: sizesArray,
         compare_price: comparePrice,
       })
-      .eq("id", productId);
-
-    if (updateError) {
-      console.error("Error updating product:", updateError);
-      throw new Error(`Database update failed: ${updateError.message}`);
-    }
+      .where(eq(products.id, Number(productId)));
 
     return { success: true };
   } catch (error) {
@@ -241,41 +180,20 @@ export async function updateProduct(
   }
 }
 
-// const uploadProductImages = async (files: File[]) => {
-//   const uploadedImageUrls: string[] = [];
-//   const uniqueFiles = new Map();
+// fetch all products (replaces the old client-side Supabase fetchProducts)
+export async function getProducts(): Promise<Product[]> {
+  const db = getDb();
+  const rows = await db.select().from(products);
+  return rows as unknown as Product[];
+}
 
-//   for (const file of files) {
-//     const fileExt = file.name.split(".").pop() || "jpeg";
-//     if (uniqueFiles.has(file.name)) continue;
-//     uniqueFiles.set(file.name, true);
-
-//     const fileName = `product_${Date.now()}_${Math.random()
-//       .toString(36)
-//       .slice(2)}.${fileExt}`;
-//     const filePath = `products/${fileName}`;
-
-//     const { error } = await supabase.storage
-//       .from("product_images")
-//       .upload(filePath, file, { cacheControl: "3600", upsert: false });
-
-//     if (error) throw new Error(`Image upload failed: ${error.message}`);
-
-//     const imageUrl = supabase.storage
-//       .from("product_images")
-//       .getPublicUrl(filePath).data.publicUrl;
-
-//     uploadedImageUrls.push(imageUrl);
-//   }
-
-//   return uploadedImageUrls;
-// };
-
-// const updateExistingProductImages = async (paths: string[]) => {
-//   const { data, error } = await supabase.storage
-//     .from("product_images")
-//     .update("public/avatar1.png", replacedFiles, {
-//       cacheControl: "3600",
-//       upsert: true,
-//     });
-// };
+export async function getProductById(
+  id: string | number
+): Promise<Product | null> {
+  const db = getDb();
+  const [row] = await db
+    .select()
+    .from(products)
+    .where(eq(products.id, Number(id)));
+  return (row as unknown as Product) ?? null;
+}

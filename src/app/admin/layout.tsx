@@ -5,6 +5,9 @@ import { redirect } from "next/navigation";
 import React, { ReactNode } from "react";
 import ToastProvider from "./_admin-components/ToastProvider";
 
+// Every admin page reads live session/DB state — never prerender this subtree.
+export const dynamic = "force-dynamic";
+
 export default async function AdminRoot({ children }: { children: ReactNode }) {
   const { isAuthenticated, isAdmin } = await checkAdminAuth();
 

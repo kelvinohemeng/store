@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { fetchProducts } from "@/lib/utils/supabase";
+import { getProducts } from "@/actions/product";
 import {
   CartState,
   ProductState,
@@ -9,7 +9,6 @@ import {
   SelectedOrderState,
   Product,
 } from "@/lib/types";
-import { User } from "@supabase/supabase-js";
 
 export type StoreUser = {
   id: string | number;
@@ -153,7 +152,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
   // setProducts: (products) => set({ products }),
   fetchProducts: async () => {
     try {
-      const data = await fetchProducts(); // Fetch products from Supabase
+      const data = await getProducts();
       set({ products: data }); // Update the state with fetched products
     } catch (error) {
       console.error("Error fetching products:", error);

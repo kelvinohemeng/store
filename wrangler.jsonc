@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "store",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "store-db",
+      "database_id": "dd6cc841-b500-4584-b7ec-1a7048d02575",
+      "migrations_dir": "./drizzle/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PRODUCT_IMAGES",
+      "bucket_name": "store-product-images"
+    }
+  ],
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:3000",
+    "R2_PUBLIC_URL": "https://pub-b7a0c7d505474e7492372e5ed7b48645.r2.dev"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

@@ -3,10 +3,7 @@
 import { OrderData } from "@/lib/types";
 import { checkExistingOrder, createOrder } from "./order";
 import { cookies } from "next/headers";
-import { channel } from "diagnostics_channel";
-
-// import { Dispatch, SetStateAction } from "react";
-// import { PaystackProps } from "./../../node_modules/react-paystack/dist/types.d";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 type PaystackInitialization = {
   email: string | undefined;
@@ -15,18 +12,30 @@ type PaystackInitialization = {
   metadata?: {};
 };
 
+type PaystackInitializeResponse = {
+  status: boolean;
+  message: string;
+  data?: { authorization_url: string; access_code: string; reference: string; status?: string };
+};
+
+type PaystackVerifyResponse = {
+  status: boolean;
+  message: string;
+  data?: { status: string; reference: string };
+};
+
 export const handlePaystackPurchase = async ({
   email,
   amount,
 }: PaystackInitialization) => {
   try {
+    const { env } = getCloudflareContext();
     const response = await fetch(
       "https://api.paystack.co/transaction/initialize",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env
-            .NEXT_PUBLIC_PAYSTACK_SECRET_KEY!}`,
+          Authorization: `Bearer ${env.PAYSTACK_SECRET_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -42,11 +51,11 @@ export const handlePaystackPurchase = async ({
       }
     );
 
-    const { data } = await response.json();
+    const { data } = (await response.json()) as PaystackInitializeResponse;
     return {
       success: true,
       data,
-      authorizationUrl: data.authorization_url,
+      authorizationUrl: data?.authorization_url,
     };
   } catch (error) {
     console.error("Paystack initialization error:", error);
@@ -69,20 +78,21 @@ export const verifyPayment = async (reference: string) => {
       };
     }
 
+    const { env } = getCloudflareContext();
+
     // Verify payment with Paystack
     const response = await fetch(
       `https://api.paystack.co/transaction/verify/${reference}`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${process.env
-            .NEXT_PUBLIC_PAYSTACK_SECRET_KEY!}`,
+          Authorization: `Bearer ${env.PAYSTACK_SECRET_KEY}`,
           "Content-Type": "application/json",
         },
       }
     );
 
-    const data = await response.json();
+    const data = (await response.json()) as PaystackVerifyResponse;
     console.log("Paystack verification response:", data);
 
     if (!data.status) {
@@ -104,10 +114,10 @@ export const verifyPayment = async (reference: string) => {
     if (existingOrder) {
       console.log("Order already exists:", existingOrder);
       return {
-        success: existingOrder.paymentStatus === "paid",
-        status: existingOrder.paymentStatus,
+        success: existingOrder.payment_status === "paid",
+        status: existingOrder.payment_status,
         message: "Order already exists and has been processed",
-        orderId: existingOrder.orderId,
+        orderId: existingOrder.id,
       };
     }
 

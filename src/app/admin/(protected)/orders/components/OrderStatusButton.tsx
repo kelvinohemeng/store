@@ -1,0 +1,113 @@
+"use client";
+import { updateOrderStatus as updateOrderAPI } from "@/actions/order";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useOrderStore } from "@/store/orders";
+import { Row } from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
+export function OrderStatusButton({
+  id,
+  initialStatus,
+}: {
+  id: string | number | undefined;
+  initialStatus: string;
+}) {
+  const { orders, updateOrderStatus } = useOrderStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const idKey = id !== undefined ? String(id) : undefined;
+
+  // Use Zustand's state if updated, otherwise use initial status
+  const status = idKey ? orders[idKey] ?? initialStatus : initialStatus;
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!idKey) return;
+
+    try {
+      setIsLoading(true);
+
+      // Call API to update order status
+      await updateOrderAPI(idKey, newStatus);
+
+      // Update Zustand state (this will trigger a re-render in the table)
+      updateOrderStatus(idKey, newStatus);
+
+      toast.success("Order Status Updated Successfully");
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+      toast.error("Failed to update order status");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className="select-none outline-none"
+        disabled={isLoading}
+      >
+        <div
+          className={`${
+            status === "pending"
+              ? "bg-yellow-500/10 "
+              : status === "paid"
+              ? "bg-green-100"
+              : status === "delivered"
+              ? "bg-blue-800/20"
+              : ""
+          } text-left flex gap-1 items-center font-medium rounded-[8px] border-3 border-black/10 px-2 py-1 w-max ${
+            isLoading ? "opacity-70" : ""
+          }`}
+        >
+          <span
+            className={`${
+              status === "pending"
+                ? "text-yellow-800"
+                : status === "paid"
+                ? "text-green-800"
+                : "text-blue-800"
+            } font-medium capitalize`}
+          >
+            {isLoading ? (
+              <div className="w-5 h-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              status
+            )}
+          </span>
+          {!isLoading && <ChevronDown className="h-4 w-4" />}
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="mt-2 w-52 bg-white rounded-[8px] shadow-md z-[100]"
+        align="end"
+        side="bottom"
+      >
+        <DropdownMenuCheckboxItem
+          checked={status === "pending"}
+          className="hover:bg-black/5 cursor-pointer"
+          onCheckedChange={() => handleStatusChange("pending")}
+          disabled={isLoading}
+        >
+          Pending
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuCheckboxItem
+          checked={status === "delivered"}
+          className="hover:bg-black/5 cursor-pointer"
+          onCheckedChange={() => handleStatusChange("delivered")}
+          disabled={isLoading}
+        >
+          Delivered
+        </DropdownMenuCheckboxItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

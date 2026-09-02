@@ -1,9 +1,11 @@
 "use server";
 // Creating the orders
 
-import { AdminOrderItemT, AdminOrderT, OrderData } from "@/lib/types";
-import { supabase } from "@/lib/utils/supabase";
+import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { getDb } from "@/db";
+import { orders, orderItems } from "@/db/schema";
+import { OrderData } from "@/lib/types";
 
 // fields required
 // Name
@@ -26,18 +28,13 @@ export const storePendingOrder = async (orderData: OrderData) => {
 
 export const checkExistingOrder = async (paystackReference: string) => {
   try {
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("paystack_reference", paystackReference)
-      .single(); // Fetch a single order
+    const db = getDb();
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.paystack_reference, paystackReference));
 
-    if (error) {
-      console.error("Error fetching existing order:", error.message);
-      return null;
-    }
-
-    return data; // Return the existing order if found
+    return order ?? null;
   } catch (error) {
     console.error("Unexpected error checking existing order:", error);
     return null;
@@ -46,42 +43,36 @@ export const checkExistingOrder = async (paystackReference: string) => {
 
 export async function createOrder(orderData: OrderData) {
   try {
-    // First, create the main order record
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert({
+    const db = getDb();
+
+    const [order] = await db
+      .insert(orders)
+      .values({
         customer_name: orderData.customer_name,
-        email: orderData.email,
+        email: orderData.email!,
         paystack_reference: orderData.paystack_reference,
         delivery_address: orderData.delivery_address,
         payment_status: orderData.payment_status,
         total_amount: orderData.total_amount,
-        created_at: new Date().toISOString(),
         order_note: orderData.order_note ?? "Order Note from Customer",
       })
-      .select("*")
-      .single();
+      .returning();
 
-    if (orderError)
-      throw new Error(`Order creation failed: ${orderError.message}`);
     if (!order) throw new Error("Order creation failed: No order returned.");
 
     console.log("Order created:", order);
 
-    const orderItems = orderData.order_items.map((item) => ({
-      order_id: order.id,
-      product_id: item.product_id,
-      price: item.price,
-      quantity: item.quantity,
-      variants: item.variants,
-    }));
-
-    const { error: itemsError } = await supabase
-      .from("order_items")
-      .insert(orderItems);
-
-    if (itemsError)
-      throw new Error(`Order items creation failed: ${itemsError.message}`);
+    if (orderData.order_items.length) {
+      await db.insert(orderItems).values(
+        orderData.order_items.map((item) => ({
+          order_id: order.id,
+          product_id: item.product_id ? Number(item.product_id) : null,
+          price: item.price,
+          quantity: item.quantity,
+          variants: item.variants,
+        }))
+      );
+    }
 
     return { success: true, orderId: order.id };
   } catch (error) {
@@ -95,21 +86,13 @@ export async function createOrder(orderData: OrderData) {
 
 export async function getOrdersByEmail(email: string) {
   try {
-    const { data: orders, error } = await supabase
-      .from("orders")
-      .select(
-        `
-        *,
-        order_items (
-          *,
-          product:Products (*)
-        )
-      `
-      )
-      .eq("email", email);
+    const db = getDb();
+    const rows = await db.query.orders.findMany({
+      where: eq(orders.email, email),
+      with: { order_items: { with: { product: true } } },
+    });
 
-    if (error) throw error;
-    return { success: true, orders };
+    return { success: true, orders: rows };
   } catch (error) {
     console.error("Error fetching orders:", error);
     return { success: false, error: "Failed to fetch orders" };
@@ -121,12 +104,12 @@ export async function updateOrderStatus(
   order_status: "pending" | "delivered" | any
 ) {
   try {
-    const { error } = await supabase
-      .from("orders")
-      .update({ order_status: order_status })
-      .eq("id", orderId);
+    const db = getDb();
+    await db
+      .update(orders)
+      .set({ order_status })
+      .where(eq(orders.id, Number(orderId)));
 
-    if (error) throw error;
     return { success: true };
   } catch (error) {
     console.error("Error updating order status:", error);
@@ -136,19 +119,12 @@ export async function updateOrderStatus(
 
 export async function getAllOrders() {
   try {
-    const { data: orders, error } = await supabase.from("orders").select(
-      `
-        *,
-        order_items (
-          *,
-          product:Products (*)
-        )
-      `
-    );
+    const db = getDb();
+    const rows = await db.query.orders.findMany({
+      with: { order_items: { with: { product: true } } },
+    });
 
-    if (error) throw error;
-
-    return (orders as OrderData[]) || [];
+    return (rows as unknown as OrderData[]) || [];
   } catch (error) {
     console.error("Error fetching orders:", error);
     throw new Error("Failed to fetch orders");

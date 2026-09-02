@@ -35,7 +35,7 @@ export default function SignupPage() {
       className="min-h-screen !px-0 bg-gray-50"
     >
       {/* Brand section */}
-      <div className="hidden md:flex md:flex-col md:justify-start text-white w-full bg-green-50 p-12 h-screen  bg-[url('https://qysorjsrzyfvzxicbnut.supabase.co/storage/v1/object/public/product_images/products/product_1742119652629_i3lpaxqwn1a.jpg')] bg-no-repeat bg-cover">
+      <div className="hidden md:flex md:flex-col md:justify-start text-white w-full bg-green-50 p-12 h-screen  bg-[url('/assets/heroimg.jpg')] bg-no-repeat bg-cover">
         <h1 className="display-1 font-bold tracking-tight">
           OMAN <br /> KWESI
         </h1>

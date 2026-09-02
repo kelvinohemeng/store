@@ -1,5 +1,4 @@
-import { Product } from "@/lib/types";
-import { supabase } from "@/lib/utils/supabase";
+import { getProductById } from "@/actions/product";
 import { redirect } from "next/navigation";
 import SizeVariantSelector from "../_components/SizeVariantSelector";
 import AddToCartButton from "../_components/AddToCartButton";
@@ -12,13 +11,9 @@ export default async function ProductDetails({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { data: product, error } = await supabase
-    .from("Products")
-    .select("*")
-    .eq("id", (await params).slug)
-    .single<Product>();
+  const product = await getProductById((await params).slug);
 
-  if (error || !product) {
+  if (!product) {
     redirect("/404");
   }
 

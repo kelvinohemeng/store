@@ -58,7 +58,9 @@ const PayStackCheckout = ({
         })),
       });
 
-      window.location.href = payStackResponse.authorizationUrl;
+      if (payStackResponse.authorizationUrl) {
+        window.location.href = payStackResponse.authorizationUrl;
+      }
     } else {
       alert(payStackResponse.error);
     }

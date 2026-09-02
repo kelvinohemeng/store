@@ -15,7 +15,7 @@ function PaymentSuccess() {
   const [verificationStatus, setVerificationStatus] = useState<{
     success?: boolean;
     message?: string;
-    orderId?: string;
+    orderId?: string | number;
   }>({});
 
   const hasVerified = useRef(false);

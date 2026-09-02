@@ -1,13 +1,14 @@
-// "use client";
+import { checkAdminAuth, loginAdmin } from "@/actions/auth";
+import { redirect } from "next/navigation";
 
-// import { useState } from "react";
-import { loginAdmin } from "@/actions/auth"; // Import Supabase client
-// import Link from "next/link";
-// import { useRouter, redirect } from "next/navigation";
-// import { useUserData } from "@/store";
-// import { set } from "react-hook-form";
+export const dynamic = "force-dynamic";
 
 export default async function AdminLogin() {
+  const { isAdmin } = await checkAdminAuth();
+  if (isAdmin) {
+    redirect("/admin/dashboard");
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-2xl font-bold mb-4">Login</h1>

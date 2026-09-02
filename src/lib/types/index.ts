@@ -1,14 +1,14 @@
 export interface Product {
   id: string | number;
   product_name: string;
-  create_at: string;
+  created_at: string | Date;
   product_description: string;
   product_price: number;
   product_type: string;
   quantity: number;
   image_url: string[];
   sizes: string[];
-  compare_price: number;
+  compare_price: number | null;
   selectedSize?: string;
   selectedColor?: string;
 }
@@ -112,22 +112,22 @@ export interface ProductVariant {
 }
 
 export interface OrderItem {
-  id?: string;
-  created_ay?: string;
+  id?: string | number;
+  created_at?: string | Date;
   order_id?: string | number;
-  product_id?: string | number;
+  product_id?: string | number | null;
   quantity: number;
   price: number;
-  variants?: Record<string, any>;
-  product?: Product;
+  variants?: Record<string, any> | null;
+  product?: Product | null;
 }
 
 export interface OrderData {
-  id?: string;
-  created_at?: string;
-  customer_name: string | undefined;
-  email: string | undefined;
-  paystack_reference?: string;
+  id?: string | number;
+  created_at?: string | Date;
+  customer_name: string | null | undefined;
+  email: string | null | undefined;
+  paystack_reference?: string | null;
   order_items: OrderItem[];
   delivery_address: {
     street: string;
@@ -135,9 +135,9 @@ export interface OrderData {
     state: string;
     postalCode: string;
     country: string;
-  };
+  } | null;
   payment_status: "pending" | "completed" | "failed" | any;
-  order_note?: string; // Optional notes from customer
+  order_note?: string | null; // Optional notes from customer
   total_amount: number; // Total order amount
   order_status?: "pending" | "delivered" | any;
 }
