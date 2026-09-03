@@ -10,6 +10,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useMemo } from "react";
 
+const navItems = [
+  { key: "dashboard", href: "/admin/dashboard", label: "Dashboard", icon: SquaresFour },
+  { key: "products", href: "/admin/products", label: "Products", icon: ShoppingBagOpen },
+  { key: "orders", href: "/admin/orders", label: "Orders", icon: Invoice },
+] as const;
+
 const SidebarNav = () => {
   const currentPath = usePathname();
 
@@ -22,72 +28,59 @@ const SidebarNav = () => {
   }, [currentPath]);
 
   return (
-    <nav>
-      <header className="w-full h-screen min-w-[300px] p-5 pb-10 flex flex-col justify-between">
+    <nav className="shrink-0 border-r border-neutral-200 bg-white">
+      <header className="w-[240px] h-screen p-4 flex flex-col justify-between">
         <div>
-          <h1 className="text-2xl font-semibold mb-8 line-clamp-1 p-5">
+          <h1 className="text-base font-semibold tracking-tight px-3 py-2 mb-4 line-clamp-1">
             GEN Studio
           </h1>
 
-          <div className="links flex flex-col gap-y-3">
-            <Link href="/admin/dashboard" prefetch>
-              <button
-                className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-50 flex gap-2 transition duration-300 ${
-                  isActive.dashboard && "bg-slate-50"
-                }`}
-              >
-                <SquaresFour
-                  size={22}
-                  weight={isActive.dashboard ? "fill" : "regular"}
-                />
-                <p>Dashboard</p>
-              </button>
-            </Link>
-            <Link href="/admin/products" prefetch>
-              <button
-                className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-50 flex gap-2 transition duration-300 ${
-                  isActive.products && "bg-slate-50"
-                }`}
-              >
-                <ShoppingBagOpen
-                  size={22}
-                  weight={isActive.products ? "fill" : "regular"}
-                />
-                <p>Products</p>
-              </button>
-            </Link>
-            <Link href="/admin/orders" prefetch>
-              <button
-                className={`w-full py-4 px-5 rounded-lg items-center hover:bg-slate-50 flex gap-2 transition duration-300 ${
-                  isActive.orders && "bg-slate-50"
-                }`}
-              >
-                <Invoice
-                  size={22}
-                  weight={isActive.orders ? "fill" : "regular"}
-                />
-                <p>Orders</p>
-              </button>
-            </Link>
+          <p className="px-3 text-xs font-medium uppercase tracking-wide text-neutral-400 mb-2">
+            Store
+          </p>
+
+          <div className="links flex flex-col gap-y-0.5">
+            {navItems.map(({ key, href, label, icon: Icon }) => (
+              <Link href={href} prefetch key={key}>
+                <button
+                  className={`w-full py-2 px-3 rounded-md items-center hover:bg-neutral-100 flex gap-2.5 text-sm transition-colors duration-150 ${
+                    isActive[key]
+                      ? "bg-neutral-100 text-neutral-900 font-medium"
+                      : "text-neutral-600"
+                  }`}
+                >
+                  <Icon
+                    size={18}
+                    weight={isActive[key] ? "fill" : "regular"}
+                    className={isActive[key] ? "text-neutral-900" : "text-neutral-500"}
+                  />
+                  <p>{label}</p>
+                </button>
+              </Link>
+            ))}
           </div>
         </div>
 
-        <div className=" relative flex w-full my-4  h-[64px] p-3 gap-3 rounded-xl justify-between items-center cursor-pointer group before:absolute before:inset-0 before:bg-slate-50 before:rounded-xl before:hover:scale-105 before:transition before:duration-200">
-          <div className=" relative w-full h-full flex gap-3 ">
-            <div className=" h-full ">
-              <div className="bg-slate-400 aspect-square h-full rounded-full"></div>
-            </div>
-            <div className="relative">
-              <p>Ecommerce Store</p>
-              <Link href={`/home`}>
-                <span className="border-b border-slate-800">website.com</span>
-              </Link>
+        <Link
+          href="/home"
+          className="group flex items-center justify-between gap-2 rounded-md border border-neutral-200 p-2.5 hover:bg-neutral-50 transition-colors duration-150"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="size-8 rounded-full bg-neutral-200 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-neutral-900 truncate">
+                Ecommerce Store
+              </p>
+              <span className="text-xs text-neutral-500 truncate block">
+                website.com
+              </span>
             </div>
           </div>
-          <div className="absolute transition duration-200 right-4 top-1/2 -translate-y-[50%] group-hover:translate-x-[-4px]">
-            <CaretRight size={22} />
-          </div>
-        </div>
+          <CaretRight
+            size={16}
+            className="text-neutral-400 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5"
+          />
+        </Link>
       </header>
     </nav>
   );

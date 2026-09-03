@@ -8,6 +8,7 @@ import { OrderStatusButton } from "./OrderStatusButton";
 import { X } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
 import { SlideHeading } from "@/components/_slideComponents/index";
+import { Badge } from "@/components/ui/badge";
 
 export default function DisplayOrderSlide({
   order,
@@ -28,12 +29,12 @@ export default function DisplayOrderSlide({
       {state == "view-order" && (
         <div
           onClick={() => setState("")}
-          className="fixed inset-0 bg-slate-800 opacity-30"
+          className="fixed inset-0 bg-neutral-900/30 z-[98]"
         ></div>
       )}
       <div
         ref={containerRef}
-        className={`max-w-[450px] p-6 w-full border border-black/30 fixed z-[99] right-0 h-full top-0 bg-white transform overflow-y-scroll transition-all duration-300 ${
+        className={`max-w-[450px] p-6 w-full border-l border-neutral-200 fixed z-[99] right-0 h-full top-0 bg-white transform overflow-y-scroll transition-all duration-300 ${
           state === "view-order" ? "translate-x-[0%]" : "translate-x-[100%]"
         }`}
       >
@@ -41,28 +42,34 @@ export default function DisplayOrderSlide({
         <SlideHeading title="Order Details" action="" />
 
         {/* header */}
-        <main className=" space-y-6">
-          <div className=" flex items-center gap-2 p-6 rounded-[16px] bg-black/5">
-            <div className=" w-[50px] aspect-square bg-red-500 rounded-full capitalize text-2xl font-bold text-white flex items-center justify-center">
+        <main className="space-y-6">
+          <div className="flex items-center gap-3 p-4 rounded-lg bg-neutral-50 border border-neutral-200">
+            <div className="w-10 aspect-square bg-neutral-900 rounded-full capitalize text-base font-semibold text-white flex items-center justify-center shrink-0">
               {order?.email?.split("")[0]}
             </div>
-            <p className="text-xl font-medium">{order?.email}</p>
+            <p className="text-sm font-medium text-neutral-900 truncate">
+              {order?.email}
+            </p>
           </div>
 
-          <div className="space-y-3  rounded-2xl shadow-sm border border-black/10">
+          <div className="rounded-lg border border-neutral-200 divide-y divide-neutral-100">
             <div className="flex items-center p-4">
-              <div className=" w-full">
-                <span className=" text-slate-600">Customer Name</span>
-                <p className="text-xl font-medium">
+              <div className="w-full">
+                <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  Customer Name
+                </span>
+                <p className="text-base font-medium text-neutral-900">
                   {order?.email?.split("@")[0]}
                   {/* {order?.customer_name ?? order?.email?.split("@")[0]} */}
                 </p>
               </div>
-              <div className=" flex flex-col items-end">
-                <p className="text-base text-nowrap">{formatDate(orderDate)}</p>
-                <p className="flex gap-2 text-base font-semibold">
+              <div className="flex flex-col items-end">
+                <p className="text-sm text-nowrap text-neutral-500">
+                  {formatDate(orderDate)}
+                </p>
+                <p className="flex gap-1.5 text-sm font-medium text-neutral-900">
                   {order?.order_items?.length}{" "}
-                  <span className=" text-nowrap">
+                  <span className="text-nowrap">
                     {(order?.order_items?.length ?? 0) > 1 ? "Items" : "Item"}{" "}
                     Ordered
                   </span>
@@ -70,17 +77,15 @@ export default function DisplayOrderSlide({
               </div>
             </div>
 
-            <hr className=" opacity-30" />
-
             <div className="p-4 flex flex-col items-center gap-4">
               <div className="w-full flex items-center gap-2">
-                <p className="w-full text-slate-600 text-lg">Payment Status</p>
-                <p className="text-sm px-4 py-1 rounded-[8px] bg-green-500 border-[3px] text-white w-fit border-green-300 font-medium capitalize">
+                <p className="w-full text-sm text-neutral-500">Payment Status</p>
+                <Badge tone={order?.payment_status === "paid" ? "green" : "yellow"} dot>
                   {order?.payment_status}
-                </p>
+                </Badge>
               </div>
               <div className="w-full flex items-center gap-2">
-                <p className="w-full text-slate-600 text-lg">Order Status</p>
+                <p className="w-full text-sm text-neutral-500">Order Status</p>
                 <div>
                   {order && (
                     <OrderStatusButton
@@ -92,40 +97,36 @@ export default function DisplayOrderSlide({
               </div>
             </div>
 
-            <hr className=" opacity-30" />
-
             <div className="p-4">
               <div className="flex gap-3">
-                <p className="w-full">Total Amount</p>
-                <p className="text-nowrap font-semibold">
+                <p className="w-full text-sm text-neutral-500">Total Amount</p>
+                <p className="text-nowrap font-semibold text-neutral-900">
                   GHC {order?.total_amount}
                 </p>
               </div>
             </div>
 
-            <hr className=" opacity-30" />
-
             <div className="p-4">
-              <div className="flex flex-col gap-3">
-                <p className="w-full font-semibold text-black/70 tracking-tight text-base">
+              <div className="flex flex-col gap-2">
+                <p className="w-full text-xs font-medium uppercase tracking-wide text-neutral-500">
                   Order Note
                 </p>
-                <p className="text-nowrap font-medium text-base">
-                  {order?.order_note}
+                <p className="font-medium text-sm text-neutral-700">
+                  {order?.order_note || "—"}
                 </p>
               </div>
             </div>
 
-            <hr className=" opacity-30" />
-
-            <div className="p-4 flex flex-col gap-4">
-              <p className="w-full font-semibold text-black/70 tracking-tight text-base">
-                Ordered items
-              </p>{" "}
+            <div className="p-4">
               <div className="flex flex-col gap-3">
-                {order?.order_items?.map((orderItem, index) => (
-                  <OrderProduct orderItem={orderItem} />
-                ))}
+                <p className="w-full text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  Ordered items
+                </p>
+                <div className="flex flex-col gap-3">
+                  {order?.order_items?.map((orderItem, index) => (
+                    <OrderProduct key={index} orderItem={orderItem} />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

@@ -13,6 +13,8 @@ import { Row } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { badgeVariants } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export function OrderStatusButton({
   id,
@@ -29,6 +31,9 @@ export function OrderStatusButton({
 
   // Use Zustand's state if updated, otherwise use initial status
   const status = idKey ? orders[idKey] ?? initialStatus : initialStatus;
+
+  const tone =
+    status === "pending" ? "yellow" : status === "delivered" ? "blue" : "green";
 
   const handleStatusChange = async (newStatus: string) => {
     if (!idKey) return;
@@ -64,44 +69,29 @@ export function OrderStatusButton({
         title={isDemo ? "Disabled in demo mode" : undefined}
       >
         <div
-          className={`${
-            status === "pending"
-              ? "bg-yellow-500/10 "
-              : status === "paid"
-              ? "bg-green-100"
-              : status === "delivered"
-              ? "bg-blue-800/20"
-              : ""
-          } text-left flex gap-1 items-center font-medium rounded-[8px] border-3 border-black/10 px-2 py-1 w-max ${
-            isLoading ? "opacity-70" : ""
-          }`}
+          className={cn(
+            badgeVariants({ tone }),
+            "gap-1.5 pr-1.5 cursor-pointer",
+            isLoading && "opacity-70"
+          )}
         >
-          <span
-            className={`${
-              status === "pending"
-                ? "text-yellow-800"
-                : status === "paid"
-                ? "text-green-800"
-                : "text-blue-800"
-            } font-medium capitalize`}
-          >
-            {isLoading ? (
-              <div className="w-5 h-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
-              status
-            )}
-          </span>
-          {!isLoading && <ChevronDown className="h-4 w-4" />}
+          <span className={cn(`size-1.5 rounded-full shrink-0 bg-current opacity-70`)} />
+          {isLoading ? (
+            <div className="w-3 h-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          ) : (
+            status
+          )}
+          {!isLoading && <ChevronDown className="h-3 w-3" />}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="mt-2 w-52 bg-white rounded-[8px] shadow-md z-[100]"
+        className="mt-2 w-44 bg-white rounded-md border border-neutral-200 shadow-md z-[100]"
         align="end"
         side="bottom"
       >
         <DropdownMenuCheckboxItem
           checked={status === "pending"}
-          className="hover:bg-black/5 cursor-pointer"
+          className="hover:bg-neutral-50 cursor-pointer text-sm"
           onCheckedChange={() => handleStatusChange("pending")}
           disabled={isLoading}
         >
@@ -110,7 +100,7 @@ export function OrderStatusButton({
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
           checked={status === "delivered"}
-          className="hover:bg-black/5 cursor-pointer"
+          className="hover:bg-neutral-50 cursor-pointer text-sm"
           onCheckedChange={() => handleStatusChange("delivered")}
           disabled={isLoading}
         >

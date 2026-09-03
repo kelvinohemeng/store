@@ -1,7 +1,6 @@
 "use client";
 import { Product } from "@/lib/types";
 import { useCartStore, useSlide, useVariantSelectionStore } from "@/store";
-import { useState } from "react";
 
 export default function AddToCartButton({ product }: { product: Product }) {
   const { addItem } = useCartStore();
@@ -15,10 +14,10 @@ export default function AddToCartButton({ product }: { product: Product }) {
   return (
     <button
       name="add to cart"
-      className=" bg-black text-white px-8 py-2 rounded-md"
+      className="w-full bg-ink px-8 py-3.5 font-sans text-sm font-semibold uppercase tracking-wide text-paper hover:bg-ink/85"
       onClick={handleAddToCart}
     >
-      Add to Cart{" "}
+      Add to Cart
     </button>
   );
 }

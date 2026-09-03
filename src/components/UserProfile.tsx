@@ -40,38 +40,36 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
         <User size={16} weight="bold" />
       </div>
       <div
-        className={`cursor-pointer absolute w-[150px] right-0 mt-8 bg-white border border-black/40 p-2  rounded-lg shadow-sm flex flex-col z-[9] overflow-hidden ${
+        className={`cursor-pointer absolute w-[160px] right-0 mt-8 bg-paper border border-ink/30 flex flex-col z-[9] overflow-hidden ${
           triggerDD
             ? "visible translate-y-[0px]"
             : "invisible translate-y-[-30px]"
         }`}
       >
-        {/* <div
-          onClick={() => setTriggerDD(!triggerDD)}
-          className="px-5 py-3 w-full text-start hover:bg-black/10 rounded"
-        >
-          <Link href={"/profile"} className=" text-nowrap text-xl">
-            Profile
-          </Link>
-        </div> */}
         <div
           onClick={() => setTriggerDD(!triggerDD)}
-          className="px-5 py-3 w-full text-start hover:bg-black/10 rounded"
+          className="px-4 py-3 w-full text-start hover:bg-ink/5"
         >
-          <Link href={"/orders"} className=" text-nowrap text-xl">
+          <Link
+            href={"/orders"}
+            className="text-nowrap font-sans text-sm font-semibold uppercase tracking-wide text-ink"
+          >
             My Orders
           </Link>
         </div>
         {isAdmin && (
-          <div className="px-5 py-3 w-full text-start hover:bg-black/10 rounded">
-            <Link href={"/admin/dashboard"} className=" text-nowrap text-xl">
+          <div className="px-4 py-3 w-full text-start hover:bg-ink/5">
+            <Link
+              href={"/admin/dashboard"}
+              className="text-nowrap font-sans text-sm font-semibold uppercase tracking-wide text-ink"
+            >
               Dashboard
             </Link>
           </div>
         )}
         <button
           onClick={logOut}
-          className=" cursor-pointer px-5 py-3 w-full text-nowrap text-xl text-start hover:bg-black/10 rounded"
+          className="cursor-pointer px-4 py-3 w-full text-nowrap font-sans text-sm font-semibold uppercase tracking-wide text-start text-ink hover:bg-ink/5"
           type="submit"
         >
           Log out

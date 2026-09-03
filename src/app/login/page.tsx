@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth/client";
 import Link from "next/link";
 import { useUserData } from "@/store";
-import { isDemoEmail } from "@/lib/demo";
+import { DEMO_USER_EMAIL, DEMO_USER_PASSWORD, isDemoEmail } from "@/lib/demo";
 import Stack from "@/components/global-components/Stack";
 import AuthFormButton from "../(storefront)/_storeComponents/AuthFormButton";
 
@@ -128,6 +128,18 @@ export default function LoginPage() {
             >
               Sign up
             </Link>
+          </p>
+
+          <p className="mt-4 text-center text-sm text-gray-500">
+            Just want to look around? Try the demo account —{" "}
+            <span className="font-medium text-gray-700">
+              {DEMO_USER_EMAIL}
+            </span>{" "}
+            /{" "}
+            <span className="font-medium text-gray-700">
+              {DEMO_USER_PASSWORD}
+            </span>
+            . It has admin access but can&apos;t save changes.
           </p>
         </div>
       </div>

@@ -14,17 +14,19 @@ export const SlideHeading = ({ title, action }: SHeadingT) => {
   const newAction = title.includes("Update") ? "view" : "";
 
   return (
-    <div className="flex items-center my-6">
-      <div className="w-full">
-        <h1 className="text-2xl font-semibold">{title}</h1>
-      </div>
+    <div className="flex items-center justify-between pb-4 mb-6 border-b border-neutral-200">
+      <h1 className="text-lg font-semibold text-neutral-900">{title}</h1>
       <button
         type="button"
         title="Close order details"
         onClick={() => setState(newAction)}
-        className="cursor-pointer p-3 border border-black/10 shadow-md rounded-[8px] hover:opacity-70 hover:scale-[95%] transition-all duration-300 origin-center"
+        className="cursor-pointer size-8 flex items-center justify-center border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors duration-150"
       >
-        {title.includes("Update") ? <p>Back</p> : <X size={16} color="black" />}
+        {title.includes("Update") ? (
+          <span className="text-xs font-medium px-1">Back</span>
+        ) : (
+          <X size={14} color="black" />
+        )}
       </button>
     </div>
   );

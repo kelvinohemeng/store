@@ -24,14 +24,25 @@
   --text-e-15xl: 9rem;
   --text-e-16xl: 11rem;
 
-  --font-helvetica: "Helvetica", sans-serif;
-  --font-bdo-grotesk: "BDO Grotesk";
-  --font-inter: "Inter";
+  /* Type system — bold condensed display + light serif accent, per BRAND-ANALYSIS.md */
+  --font-display: var(--font-anton), sans-serif;
+  --font-sans: var(--font-archivo), sans-serif;
+  --font-serif: var(--font-fraunces), serif;
+  --font-body: var(--font-inter), sans-serif;
+
+  /* Monochrome-first palette — color comes from product photography */
+  --color-ink: #0a0a0a;
+  --color-paper: #faf8f4;
+  --color-studio: #dfdedb;
+  --color-accent: #b8492e;
 }
 
 @layer utilities {
   .display-1 {
-    @apply text-e-10xl font-bold text-white leading-[120%] tracking-tighter md:text-e-15xl lg:leading-[100%];
+    @apply text-e-10xl font-display text-white leading-[95%] tracking-tight uppercase md:text-e-15xl lg:leading-[88%];
+  }
+  .eyebrow {
+    @apply font-serif italic text-e-xl text-ink/60 md:text-e-2xl;
   }
 }
 
@@ -39,33 +50,36 @@
   button {
     cursor: pointer;
   }
+  body {
+    @apply font-sans bg-paper text-ink;
+  }
   h1,
   .heading-1 {
-    @apply text-e-10xl lg:text-e-12xl;
+    @apply text-e-10xl font-display uppercase tracking-tight lg:text-e-12xl;
   }
   h2,
   .heading-2 {
-    @apply text-e-7xl lg:text-e-11xl;
+    @apply text-e-7xl font-display uppercase tracking-tight lg:text-e-11xl;
   }
   h3,
   .heading-3 {
-    @apply text-e-8xl lg:text-e-10xl;
+    @apply text-e-8xl font-sans font-semibold tracking-tight lg:text-e-10xl;
   }
   h4,
   .heading-4 {
-    @apply text-e-9xl;
+    @apply text-e-9xl font-sans font-semibold tracking-tight;
   }
   h5,
   .heading-5 {
-    @apply text-e-8xl;
+    @apply text-e-8xl font-sans font-semibold tracking-tight;
   }
   h6,
   .heading-6 {
-    @apply text-e-4xl;
+    @apply text-e-4xl font-sans font-semibold tracking-tight;
   }
   p,
   .p {
-    @apply text-e-lg;
+    @apply text-e-lg font-body;
   }
 }
 

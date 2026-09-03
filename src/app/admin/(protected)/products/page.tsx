@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useProductStore, useSelectedState } from "@/store";
 import ProductDisplaySlide from "./components/ProductDIsplaySLide";
 import CreateButton from "./components/CreateButton";
+import PageHeader from "@/app/admin/_admin-components/PageHeader";
 
 export default function Products() {
   const { fetchProducts } = useProductStore();
@@ -25,12 +26,12 @@ export default function Products() {
   });
 
   return (
-    <div className=" p-5 h-full">
-      <div className="flex justify-between">
-        <h1 className="text-4xl mb-6">All products</h1>
-        <CreateButton action="create" text="Add new products" />
-      </div>
-      {/* <ProductDisplay products={products} /> */}
+    <div className="h-full">
+      <PageHeader
+        eyebrow="Catalog"
+        title="Products"
+        actions={<CreateButton action="create" text="Add new product" />}
+      />
       <DataTable columns={columns} data={products} />
       <CreateProductSlide />
       <ProductDisplaySlide product={selectedProduct} />

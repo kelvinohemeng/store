@@ -149,11 +149,11 @@ const UpdateProductSlide = ({
       {state === "update" && (
         <div
           onClick={() => setState("")}
-          className="fixed inset-0 bg-slate-800 opacity-30"
+          className="fixed inset-0 bg-neutral-900/30 z-[98]"
         ></div>
       )}
       <div
-        className={`overflow-y-scroll max-w-[450px] p-6 w-full border absolute z-[99] right-0 h-full top-0 bg-white transform ${
+        className={`overflow-y-scroll max-w-[450px] p-6 w-full border-l border-neutral-200 absolute z-[99] right-0 h-full top-0 bg-white transform ${
           state === "update" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
@@ -162,32 +162,36 @@ const UpdateProductSlide = ({
         <form
           ref={ref}
           action={updateAction}
-          className="mt-6 min-w-full flex flex-col gap-4 "
+          className="mt-2 min-w-full flex flex-col gap-4"
         >
-          <label htmlFor="product_name" className="space-y-3 py-3">
-            <p>What is the name of this Product?</p>
+          <label htmlFor="product_name" className="space-y-2 py-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Product Name
+            </p>
             <div id="product_name">
               <input
                 type="text"
                 name="name"
                 defaultValue={product?.product_name}
-                className=" border border-gray-400/30 focus:border-gray-900/60 outline-none p-3 text-lg w-full rounded-[4px]"
+                className="border border-neutral-200 focus:border-neutral-900/60 outline-none p-2.5 text-sm w-full rounded-md"
               />
             </div>
           </label>
 
-          <div className="space-y-3 h-full py-3">
-            <p>Product Images (Max 3)</p>
+          <div className="space-y-2 h-full py-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Product Images (Max 3)
+            </p>
             <div
               id="product_image"
-              className=" p-4 border rounded-[4px] flex gap-4"
+              className="p-4 border border-neutral-200 rounded-md flex gap-4"
             >
               <div className="flex flex-wrap gap-3">
                 {/* Existing Images */}
                 {existingImages.map((url, index) => (
                   <div
                     key={`existing-${index}`}
-                    className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-[4px] overflow-hidden"
+                    className="relative aspect-square h-[90px] group transition duration-200 bg-neutral-900 rounded-md overflow-hidden"
                   >
                     <Image
                       src={url}
@@ -209,7 +213,7 @@ const UpdateProductSlide = ({
                 {newImages.map((file, index) => (
                   <div
                     key={`new-${index}`}
-                    className="relative aspect-square h-[90px] group transition duration-200 bg-slate-950 rounded-[4px] overflow-hidden"
+                    className="relative aspect-square h-[90px] group transition duration-200 bg-neutral-900 rounded-md overflow-hidden"
                   >
                     <img
                       src={URL.createObjectURL(file)}
@@ -229,7 +233,7 @@ const UpdateProductSlide = ({
                 {/* Upload Button */}
                 {existingImages.length + newImages.length < 3 && (
                   <label className="flex flex-col gap-4 cursor-pointer">
-                    <div className="flex items-center justify-center relative h-[90px] aspect-square border border-slate-400 rounded-[4px]">
+                    <div className="flex items-center justify-center relative h-[90px] aspect-square border border-dashed border-neutral-300 rounded-md text-neutral-400 hover:border-neutral-400 transition-colors">
                       <input
                         type="file"
                         accept="image/*"
@@ -237,7 +241,7 @@ const UpdateProductSlide = ({
                         onChange={handleImageChange}
                         className="w-full h-full opacity-0 absolute cursor-pointer"
                       />
-                      <span className="text-4xl">+</span>
+                      <span className="text-2xl">+</span>
                     </div>
                   </label>
                 )}
@@ -245,41 +249,47 @@ const UpdateProductSlide = ({
             </div>
           </div>
 
-          <label htmlFor="product_description" className="space-y-3 py-3">
-            <p>Please descibe your Product</p>
+          <label htmlFor="product_description" className="space-y-2 py-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Product Description
+            </p>
             <div id="product_description">
               <textarea
                 name="description"
                 defaultValue={product?.product_description}
-                className=" border border-gray-400/50 focus:border-gray-900/50 outline-none p-3 text-lg w-full min-h-[150px] rounded-[4px] h-auto resize-none"
+                className="border border-neutral-200 focus:border-neutral-900/60 outline-none p-2.5 text-sm w-full min-h-[120px] rounded-md h-auto resize-none"
               />
             </div>
           </label>
 
-          <div className="flex justify-center gap-3 py-3">
-            <label htmlFor="product_price" className="space-y-3">
-              <p>Product Price</p>
-              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] focus:border-gray-900/50">
-                <span>GHC</span>
+          <div className="flex justify-center gap-3 py-2">
+            <label htmlFor="product_price" className="space-y-2 w-full">
+              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                Product Price
+              </p>
+              <div className="flex items-center gap-2 border border-neutral-200 p-2.5 text-sm w-full rounded-md focus-within:border-neutral-900/60">
+                <span className="text-neutral-500">GHC</span>
                 <input
                   id="product_price"
                   type="number"
                   name="price"
-                  className="text-lg w-full focus:outline-none focus:border-transparent "
+                  className="text-sm w-full focus:outline-none focus:border-transparent"
                   placeholder="Product Price"
                   defaultValue={product?.product_price?.toString()}
                 />
               </div>
             </label>
-            <label htmlFor="compare_price" className="space-y-3">
-              <p>Compare Price</p>
-              <div className="flex items-center gap-2 border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] focus:outline-none focus:border-gray-900/50">
-                <span>GHC</span>
+            <label htmlFor="compare_price" className="space-y-2 w-full">
+              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                Compare Price
+              </p>
+              <div className="flex items-center gap-2 border border-neutral-200 p-2.5 text-sm w-full rounded-md focus-within:border-neutral-900/60">
+                <span className="text-neutral-500">GHC</span>
                 <input
                   id="compare_price"
                   type="number"
                   name="compare_price"
-                  className="text-lg w-full focus:outline-none focus:border-transparent "
+                  className="text-sm w-full focus:outline-none focus:border-transparent"
                   placeholder="Compare Price"
                   defaultValue={product?.compare_price?.toString()}
                 />
@@ -287,26 +297,30 @@ const UpdateProductSlide = ({
             </label>
           </div>
 
-          <label htmlFor="stock" className="space-y-3">
-            <p>Available in Stock</p>
+          <label htmlFor="stock" className="space-y-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Available in Stock
+            </p>
             <div>
               <input
                 id="stock"
                 type="number"
                 name="stock"
-                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] outline-none focus:outline-none focus:border-gray-900/50"
+                className="border border-neutral-200 p-2.5 text-sm w-full rounded-md outline-none focus:border-neutral-900/60"
                 placeholder="How many products are available"
                 defaultValue={product?.quantity?.toString()}
               />
             </div>
           </label>
 
-          <label htmlFor="product_type" className="space-y-3 py-3">
-            <p>Select Product Type</p>
+          <label htmlFor="product_type" className="space-y-2 py-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Select Product Type
+            </p>
             <div id="product_type">
               <select
                 name="type"
-                className=" border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px] outline-none focus:outline-none focus:border-gray-900/50"
+                className="border border-neutral-200 p-2.5 text-sm w-full rounded-md outline-none focus:border-neutral-900/60"
                 defaultValue={product?.product_type}
               >
                 {categories.map((category) => (
@@ -318,14 +332,16 @@ const UpdateProductSlide = ({
             </div>
           </label>
 
-          <label htmlFor="product_sizes" className="space-y-3 py-3">
-            <p>Available Sizes (comma-separated)</p>
+          <label htmlFor="product_sizes" className="space-y-2 py-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Available Sizes (comma-separated)
+            </p>
             <div>
               <input
                 id="product_sizes"
                 type="text"
                 name="sizes"
-                className="border border-gray-200 shadow-sm p-3 text-lg w-full rounded-[4px]"
+                className="border border-neutral-200 p-2.5 text-sm w-full rounded-md focus:border-neutral-900/60 outline-none"
                 placeholder="e.g., S, M, L, XL"
                 defaultValue={product?.sizes?.join(", ")}
                 onChange={handleSizeChange}

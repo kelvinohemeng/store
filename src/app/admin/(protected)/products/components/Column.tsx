@@ -2,8 +2,8 @@
 
 import { formatCurrencyGHC } from "@/Helpers";
 import { Product } from "@/lib/types";
-import { Check } from "@phosphor-icons/react";
 import { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -24,7 +24,7 @@ export const columns: ColumnDef<Product>[] = [
       return (
         <div className="flex items-center justify-start gap-2 p-2">
           {images.length > 0 ? (
-            <div className="flex gap-2 rounded-[4px] overflow-hidden">
+            <div className="flex gap-2 rounded-md overflow-hidden border border-neutral-200">
               <img
                 src={images[0]}
                 alt={`Image of ${productName}`}
@@ -32,11 +32,11 @@ export const columns: ColumnDef<Product>[] = [
               />
             </div>
           ) : (
-            <div className="max-w-[40px] w-full aspect-square rounded-md bg-slate-400">
-              No images
+            <div className="max-w-[40px] w-full aspect-square rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center text-[9px] text-neutral-400 text-center leading-tight">
+              No image
             </div>
           )}
-          <span>{productName}</span>
+          <span className="font-medium text-neutral-900">{productName}</span>
         </div>
       );
     },
@@ -59,18 +59,15 @@ export const columns: ColumnDef<Product>[] = [
       const sizes: string[] = row.original.sizes || [];
 
       return (
-        <div className=" font-medium space-x-2">
+        <div className="flex flex-wrap gap-1.5">
           {sizes.length > 0 ? (
             sizes.map((size, index) => (
-              <span
-                key={`${size}_${index}`}
-                className=" bg-black/5 rounded-[4px] text-xs px-2 py-1"
-              >
+              <Badge key={`${size}_${index}`} tone="neutral">
                 {size}
-              </span>
+              </Badge>
             ))
           ) : (
-            <span>-</span>
+            <span className="text-neutral-400">—</span>
           )}
         </div>
       );
@@ -81,11 +78,7 @@ export const columns: ColumnDef<Product>[] = [
     header: "Category",
     cell: ({ row }) => {
       const cat: string = row.getValue("product_type");
-      return (
-        <div className="text-left flex gap-2 items-center font-medium bg-black text-white rounded-[4px] tracking-normal capitalize px-2 py-1 w-max">
-          <span>{cat}</span>
-        </div>
-      );
+      return <Badge tone="dark">{cat}</Badge>;
     },
   },
   {
@@ -94,19 +87,18 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const status: string = row.getValue("product_status");
       return (
-        <div className="text-left flex gap-2 items-center font-medium bg-green-100 rounded-[4px] text-green-900 tracking-medium px-2 pr-3 py-1 w-max">
-          <Check size={12} color="#14532d " weight="bold" />
-          <span>{status}</span>
-        </div>
+        <Badge tone={status === "active" ? "green" : "neutral"} dot>
+          {status}
+        </Badge>
       );
     },
   },
   {
     accessorKey: "quantity",
-    header: () => <div className="text-right p-2">In Stock</div>,
+    header: () => <div className="text-right">In Stock</div>,
     cell: ({ row }) => {
       const quantity: number = row.getValue("quantity");
-      return <div className="text-right font-medium p-2">{quantity}</div>;
+      return <div className="text-right font-medium">{quantity}</div>;
     },
   },
 

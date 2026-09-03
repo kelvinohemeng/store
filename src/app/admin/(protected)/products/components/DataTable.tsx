@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSelectedState, useSlide } from "@/store";
 import { Product } from "@/lib/types";
+import { CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -68,21 +69,27 @@ export function DataTable<TData, TValue>({
     <>
       <div className="">
         <div className="flex items-center py-4">
-          <Input
-            placeholder="Filter via product name"
-            value={
-              (table.getColumn("product_name")?.getFilterValue() as string) ??
-              ""
-            }
-            onChange={(event) =>
-              table
-                .getColumn("product_name")
-                ?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+          <div className="relative max-w-sm w-full">
+            <MagnifyingGlass
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+            />
+            <Input
+              placeholder="Search products"
+              value={
+                (table.getColumn("product_name")?.getFilterValue() as string) ??
+                ""
+              }
+              onChange={(event) =>
+                table
+                  .getColumn("product_name")
+                  ?.setFilterValue(event.target.value)
+              }
+              className="pl-9"
+            />
+          </div>
         </div>
-        <div className=" rounded-md border">
+        <div className="rounded-lg border border-neutral-200 bg-white overflow-hidden">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -134,26 +141,33 @@ export function DataTable<TData, TValue>({
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+        <div className="flex items-center justify-between py-4">
+          <p className="text-sm text-neutral-500">
+            {table.getFilteredRowModel().rows.length} product
+            {table.getFilteredRowModel().rows.length === 1 ? "" : "s"}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-8"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <CaretLeft size={16} />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-8"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <CaretRight size={16} />
+            </Button>
+          </div>
         </div>
       </div>
-      {/* <ProductDisplaySlide product={selectedProduct} /> */}
     </>
   );
 }

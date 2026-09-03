@@ -17,58 +17,74 @@ export default async function ProductDetails({
     redirect("/404");
   }
 
-  // const slugID = (await params).slug;
-
   return (
     <section className="pt-[84px] h-full">
       <Stack
         orientation="horizontal"
-        gap="default"
+        gap="medium"
         container="default"
-        className="min-h-full"
+        className="min-h-full flex-col px-5 md:flex-row md:px-10 lg:px-16"
       >
         {/* left side */}
-        <div className="h-[calc(100vh-120px)] w-full flex-1 flex items-center sticky top-[84px] py-[84px]">
-          <div className="space-y-4 ">
-            <div className="flex items-center gap-3 w-full">
+        <div className="h-full md:h-[calc(100vh-120px)] w-full flex-1 flex items-center md:sticky md:top-[84px] py-10 md:py-[84px]">
+          <div className="w-full space-y-6">
+            <div className="flex items-center gap-2 font-body text-sm">
               <Link
-                href={"/"}
-                className="text-black/50 font-medium hover:font-semibold hover:text-black/100 transition-all duration-300"
+                href={"/home"}
+                className="text-ink/50 hover:text-ink transition-colors duration-300"
               >
                 Home
-              </Link>{" "}
-              / {}
+              </Link>
+              <span className="text-ink/30">/</span>
               <Link
                 href={"/products"}
-                className="text-black/50 font-medium hover:font-semibold hover:text-black/100 transition-all duration-300"
+                className="text-ink/50 hover:text-ink transition-colors duration-300"
               >
                 Products
-              </Link>{" "}
-              / <p className="text-black/50 ">{product.product_name}</p>
+              </Link>
+              <span className="text-ink/30">/</span>
+              <p className="text-ink/50">{product.product_name}</p>
             </div>
 
-            <div className="space-y-2">
-              <button className={`px-4 py-1 text-sm border rounded capitalize`}>
+            <div className="space-y-3">
+              <span className="inline-block border border-ink/30 px-3 py-1 font-sans text-xs font-semibold uppercase tracking-wide text-ink/60">
                 {product.product_type}
-              </button>
-              <h3 className="font-semibold tracking-tighter">
+              </span>
+              <h1 className="font-display uppercase tracking-tight text-e-9xl leading-[0.95] md:text-e-11xl">
                 {product?.product_name}
-              </h3>
+              </h1>
             </div>
-            <p>{product?.product_description}</p>
-            <SizeVariantSelector product={product} />
-            <AddToCartButton product={product} />
+
+            <div className="flex items-center gap-3 font-body text-xl">
+              <p className="font-semibold text-ink">
+                GHC {product.product_price.toFixed(2)}
+              </p>
+              {!!product?.compare_price && product.compare_price > 0 && (
+                <p className="line-through text-ink/40">
+                  GHC {product.compare_price.toFixed(2)}
+                </p>
+              )}
+            </div>
+
+            <p className="font-body text-ink/70 max-w-md">
+              {product?.product_description}
+            </p>
+
+            <div className="space-y-6 border-t border-ink/15 pt-6">
+              <SizeVariantSelector product={product} />
+              <AddToCartButton product={product} />
+            </div>
           </div>
         </div>
 
         {/* right side */}
-        <div className="w-full flex-1">
+        <div className="w-full flex-1 space-y-1 pb-10 md:pb-0">
           {product?.image_url.map((image, index) => (
             <img
               key={index}
               src={image}
-              alt=""
-              className="max-h-[80vh] w-full object-cover object-top"
+              alt={product.product_name}
+              className="max-h-[80vh] w-full bg-studio object-cover object-top"
             />
           ))}
         </div>

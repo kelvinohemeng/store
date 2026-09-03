@@ -5,6 +5,7 @@ import { AdminOrderT, OrderData } from "@/lib/types";
 import { DataTable } from "./components/DataTable";
 import { Payment, columns } from "./components/Columns";
 import { useQuery } from "@tanstack/react-query";
+import PageHeader from "@/app/admin/_admin-components/PageHeader";
 
 export default function Orders() {
   // const allOrders = await getAllOrders();
@@ -21,8 +22,8 @@ export default function Orders() {
   });
 
   return (
-    <div className="  pt-5 pb-20 min-h-full">
-      <h1 className="text-4xl mb-6">Order List</h1>
+    <div className="pb-20 min-h-full">
+      <PageHeader eyebrow="Sales" title="Orders" />
       <DataTable columns={columns} data={orders} />
     </div>
   );

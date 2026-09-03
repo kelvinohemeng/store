@@ -18,14 +18,16 @@ const CartSlide = () => {
         ></div>
       )}
       <div
-        className={`max-w-[450px] w-full h-full border border-black/30 fixed flex flex-col z-[9] right-0 top-0 bg-white transform ${
+        className={`max-w-[450px] w-full h-full border border-ink/20 fixed flex flex-col z-[9] right-0 top-0 bg-paper transform ${
           state === "cart" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
-        <div className="flex justify-between items-center py-3 mb-5 border-b border-black/30 p-8 pt-12">
-          <h5 className="text-xl">{totalItems()} Items in Cart</h5>
+        <div className="flex justify-between items-center py-3 mb-5 border-b border-ink/15 p-8 pt-12">
+          <h5 className="font-sans font-semibold text-xl text-ink">
+            {totalItems()} Items in Cart
+          </h5>
           <button
-            className="p-4 py-3 font-medium text-base bg-slate-50 rounded-lg"
+            className="border border-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wide text-ink hover:bg-ink hover:text-paper"
             onClick={() => setState("")}
           >
             Close

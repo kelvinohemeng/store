@@ -19,9 +19,10 @@ import {
 } from "@/lib/types";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { Check, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { OrderStatusButton } from "./OrderStatusButton";
+import { Badge } from "@/components/ui/badge";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -61,18 +62,15 @@ export const columns: ColumnDef<OrderData>[] = [
       const itemsOrdered = row.original.order_items as OrderItem[];
 
       return (
-        <div
-          className={`text-left flex gap-2 items-center font-medium  rounded-lg  tracking-normal py-2 w-max`}
-        >
-          <div className="flex gap-1 border border-black/20 p-0.5 rounded-[8px]">
-            {itemsOrdered.map((item, index) => (
-              <img
-                className="w-[25px] aspect-square rounded-[6px] border border-slate-300"
-                src={item.product?.image_url[0]}
-                alt=""
-              />
-            ))}
-          </div>
+        <div className="flex -space-x-2">
+          {itemsOrdered.map((item, index) => (
+            <img
+              key={index}
+              className="w-[26px] aspect-square rounded-full border-2 border-white ring-1 ring-neutral-200 object-cover"
+              src={item.product?.image_url[0]}
+              alt=""
+            />
+          ))}
         </div>
       );
     },
@@ -101,27 +99,9 @@ export const columns: ColumnDef<OrderData>[] = [
     cell: ({ row }) => {
       const status: string = row.getValue("payment_status");
       return (
-        <div
-          className={`${
-            status === "pending"
-              ? "bg-yellow-100 "
-              : status === "paid"
-              ? "bg-green-100"
-              : ""
-          }text-left flex gap-2 items-center font-medium  rounded-lg  tracking-normal px-3 py-2 w-max`}
-        >
-          <span
-            className={`${
-              status === "pending"
-                ? " text-orange-800"
-                : status === "paid"
-                ? " text-green-800"
-                : ""
-            } font-medium`}
-          >
-            {status}
-          </span>
-        </div>
+        <Badge tone={status === "paid" ? "green" : "yellow"} dot>
+          {status}
+        </Badge>
       );
     },
   },

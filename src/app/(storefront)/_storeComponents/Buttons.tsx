@@ -10,6 +10,9 @@ type ButtonProps = PropsWithChildren & {
   type?: ButtonTypes;
 };
 
+const base =
+  "inline-flex items-center gap-3 cursor-pointer uppercase tracking-tight font-sans font-semibold text-e-lg leading-[1] px-5 py-3 transition-colors duration-200";
+
 export const PrimaryBtn = ({
   link = "/",
   children,
@@ -18,16 +21,10 @@ export const PrimaryBtn = ({
   return (
     <Link href={link}>
       <button
-        className={`flex px-1 cursor-pointer items-center gap-3 bg-white text-black rounded-full ${className}`}
+        className={`${base} bg-ink text-paper hover:bg-ink/85 ${className}`}
       >
-        <div className="py-3 pl-3">
-          <p className="leading-[1] text-e-lg font-semibold tracking-tight">
-            {children}
-          </p>
-        </div>
-        <div className="bg-black h-[28px] aspect-square rounded-full grid place-items-center">
-          <ArrowUpRight size={16} color="white" />
-        </div>
+        {children}
+        <ArrowUpRight size={18} />
       </button>
     </Link>
   );
@@ -41,16 +38,10 @@ export const SecondaryBtn = ({
   return (
     <Link href={link}>
       <button
-        className={`flex px-1 cursor-pointer items-center gap-3 bg-black text-white rounded-full border border-white ${className}`}
+        className={`${base} bg-paper text-ink border border-ink hover:bg-studio ${className}`}
       >
-        <div className="py-3 pl-3">
-          <p className="leading-[1] text-e-lg font-semibold tracking-tight">
-            {children}
-          </p>
-        </div>
-        <div className="bg-white h-[28px] aspect-square rounded-full grid place-items-center">
-          <ArrowUpRight size={16} color="black" />
-        </div>
+        {children}
+        <ArrowUpRight size={18} />
       </button>
     </Link>
   );
@@ -64,16 +55,10 @@ export const GhostBtn = ({
   return (
     <Link href={link}>
       <button
-        className={`flex px-1 cursor-pointer items-center gap-3 bg-transparent text-white rounded-full border border-white/30 hover:border-white/70 transition-all ${className}`}
+        className={`${base} bg-transparent text-white border border-white/40 hover:border-white hover:bg-white/10 ${className}`}
       >
-        <div className="py-3 pl-3">
-          <p className="leading-[1] text-e-lg font-semibold tracking-tight">
-            {children}
-          </p>
-        </div>
-        <div className="bg-white/20 hover:bg-white/40 transition-all h-[28px] aspect-square rounded-full grid place-items-center">
-          <ArrowUpRight size={16} color="white" />
-        </div>
+        {children}
+        <ArrowUpRight size={18} />
       </button>
     </Link>
   );

@@ -52,18 +52,20 @@ export default function ProductDisplaySlide({
       {state === "view" && (
         <div
           onClick={() => setState("")}
-          className="fixed inset-0 bg-slate-800 opacity-30"
+          className="fixed inset-0 bg-neutral-900/30 z-[98]"
         ></div>
       )}
       <div
         ref={containerRef}
-        className={`max-w-[450px] p-6 w-full border fixed z-[99] right-0 h-full top-0 bg-white transform overflow-y-auto transition-all duration-300 ${
+        className={`max-w-[450px] p-6 w-full border-l border-neutral-200 fixed z-[99] right-0 h-full top-0 bg-white transform overflow-y-auto transition-all duration-300 ${
           state === "view" ? "translate-x-[0%]" : "translate-x-[100%]"
         }`}
       >
         <SlideHeading title="View Product" action="" />
 
-        <h3 className="text-e-2xl font-medium">{product?.product_name}</h3>
+        <h3 className="text-lg font-semibold text-neutral-900">
+          {product?.product_name}
+        </h3>
         {/* Product Images */}
         <div className="mt-6 relative overflow-hidden">
           <Swiper
@@ -109,25 +111,31 @@ export default function ProductDisplaySlide({
         </div>
 
         {/* Product Details */}
-        <div className="space-y-2 py-3 pt-10">
-          <span className="text-slate-600">Product Description</span>
-          <p className="font-medium">{product?.product_description}</p>
+        <div className="space-y-2 py-3 pt-8">
+          <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+            Product Description
+          </span>
+          <p className="text-sm text-neutral-700">{product?.product_description}</p>
         </div>
 
-        <div className="flex flex-col justify-between gap-3 py-3">
-          <div className="pt-4 space-y-2 w-full">
-            <span>Category</span>
-            <div className="p-2 px-3 bg-black/10 rounded-[4px] w-max">
-              <span className="font-medium">{product?.product_type}</span>
+        <div className="flex flex-col gap-5 py-3 divide-y divide-neutral-100">
+          <div className="pt-4 space-y-2 w-full first:pt-0">
+            <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Category
+            </span>
+            <div className="p-2 px-3 bg-neutral-100 rounded-md w-max">
+              <span className="text-sm font-medium">{product?.product_type}</span>
             </div>
           </div>
 
           <div className="pt-4 space-y-2 w-full">
-            <span>Product Price</span>
-            <div className="p-2 px-3 bg-black/10 font-semibold rounded-[4px] w-max space-x-4">
+            <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Product Price
+            </span>
+            <div className="p-2 px-3 bg-neutral-100 font-semibold rounded-md w-max space-x-4 text-sm">
               <span>GHC {product?.product_price.toFixed(2)}</span>
               {product?.compare_price && (
-                <span className="line-through text-black/70">
+                <span className="line-through text-neutral-400 font-normal">
                   {product?.compare_price.toFixed(2)}
                 </span>
               )}
@@ -135,26 +143,30 @@ export default function ProductDisplaySlide({
           </div>
 
           <div className="pt-4 space-y-2 w-full">
-            <span>In Stock</span>
-            <div className="p-2 px-3 bg-black/10 rounded-[4px] w-max">
-              <span className="font-medium">{product?.quantity}</span>
+            <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              In Stock
+            </span>
+            <div className="p-2 px-3 bg-neutral-100 rounded-md w-max">
+              <span className="text-sm font-medium">{product?.quantity}</span>
             </div>
           </div>
 
           <div className="pt-4 space-y-2 w-full">
-            <span>Sizes</span>
-            <div className="w-max flex gap-2">
+            <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              Sizes
+            </span>
+            <div className="w-max flex gap-2 flex-wrap">
               {product?.sizes?.length ? (
                 product?.sizes.map((size, index) => (
                   <span
                     key={`size_${index}`}
-                    className="p-2 px-3 bg-black/10 rounded-[4px]"
+                    className="p-2 px-3 bg-neutral-100 rounded-md text-sm"
                   >
                     {size}
                   </span>
                 ))
               ) : (
-                <span>None</span>
+                <span className="text-sm text-neutral-400">None</span>
               )}
             </div>
           </div>
