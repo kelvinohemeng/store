@@ -4,6 +4,10 @@ import { eq } from "drizzle-orm";
 import { getDb, getBucket, getR2PublicUrl } from "@/db";
 import { products } from "@/db/schema";
 import { Product } from "@/lib/types";
+import { isCurrentUserDemo } from "@/actions/auth";
+
+const DEMO_BLOCKED_MESSAGE =
+  "This is the public demo account — write actions are disabled here. Everything else is fully explorable!";
 
 // upload multiple images to R2, returning their public URLs
 async function uploadProductImages(files: File[]): Promise<string[]> {
@@ -54,6 +58,10 @@ export const submitNewProduct = async (formData: FormData) => {
     return { success: false, error: "At least one image is required" };
   }
 
+  if (await isCurrentUserDemo()) {
+    return { success: false, error: DEMO_BLOCKED_MESSAGE };
+  }
+
   try {
     const imageUrls = await uploadProductImages(imageFiles);
     const db = getDb();
@@ -86,6 +94,10 @@ export const submitNewProduct = async (formData: FormData) => {
 export const deleteProduct = async (id: string | number | undefined) => {
   if (id === undefined) {
     return { success: false, error: "Missing product id" };
+  }
+
+  if (await isCurrentUserDemo()) {
+    return { success: false, error: DEMO_BLOCKED_MESSAGE };
   }
 
   try {
@@ -123,6 +135,10 @@ export async function updateProduct(
 ) {
   if (productId === undefined) {
     return { success: false, error: "Missing product id" };
+  }
+
+  if (await isCurrentUserDemo()) {
+    return { success: false, error: DEMO_BLOCKED_MESSAGE };
   }
 
   try {

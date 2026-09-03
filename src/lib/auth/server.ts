@@ -12,7 +12,12 @@ function buildAuth() {
     database: drizzleAdapter(getDb(), { provider: "sqlite" }),
     baseURL: env.BETTER_AUTH_URL,
     secret: env.BETTER_AUTH_SECRET,
-    trustedOrigins: [env.BETTER_AUTH_URL],
+    // BETTER_AUTH_URL is pinned to :3473, but Ship Studio's dev server runs
+    // on a dynamically-assigned port (e.g. :60050) — a plain equality check
+    // here would reject every real local request as "invalid origin". The
+    // wildcard covers any localhost port; BETTER_AUTH_URL stays listed too
+    // for the fixed production/preview origin.
+    trustedOrigins: ["http://localhost:*", env.BETTER_AUTH_URL],
     emailAndPassword: {
       enabled: true,
     },

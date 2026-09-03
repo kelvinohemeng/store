@@ -6,6 +6,10 @@ import { cookies } from "next/headers";
 import { getDb } from "@/db";
 import { orders, orderItems } from "@/db/schema";
 import { OrderData } from "@/lib/types";
+import { isCurrentUserDemo } from "@/actions/auth";
+
+const DEMO_BLOCKED_MESSAGE =
+  "This is the public demo account — write actions are disabled here. Everything else is fully explorable!";
 
 // fields required
 // Name
@@ -103,6 +107,10 @@ export async function updateOrderStatus(
   orderId: string | number,
   order_status: "pending" | "delivered" | any
 ) {
+  if (await isCurrentUserDemo()) {
+    return { success: false, error: DEMO_BLOCKED_MESSAGE };
+  }
+
   try {
     const db = getDb();
     await db

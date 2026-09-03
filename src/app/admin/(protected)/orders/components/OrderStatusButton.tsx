@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useOrderStore } from "@/store/orders";
+import { useUserData } from "@/store";
 import { Row } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
@@ -22,6 +23,8 @@ export function OrderStatusButton({
 }) {
   const { orders, updateOrderStatus } = useOrderStore();
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUserData();
+  const isDemo = !!user?.isDemo;
   const idKey = id !== undefined ? String(id) : undefined;
 
   // Use Zustand's state if updated, otherwise use initial status
@@ -29,6 +32,11 @@ export function OrderStatusButton({
 
   const handleStatusChange = async (newStatus: string) => {
     if (!idKey) return;
+
+    if (isDemo) {
+      toast.info("Disabled in demo mode — order status can't be changed here.");
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -53,6 +61,7 @@ export function OrderStatusButton({
       <DropdownMenuTrigger
         className="select-none outline-none"
         disabled={isLoading}
+        title={isDemo ? "Disabled in demo mode" : undefined}
       >
         <div
           className={`${

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser } from "@/actions/auth";
+import { signIn } from "@/lib/auth/client";
 import Link from "next/link";
 import { useUserData } from "@/store";
+import { isDemoEmail } from "@/lib/demo";
 import Stack from "@/components/global-components/Stack";
 import AuthFormButton from "../(storefront)/_storeComponents/AuthFormButton";
 
@@ -16,15 +17,38 @@ export default function LoginPage() {
   const handleLogin = async (formData: FormData) => {
     setError("");
 
-    try {
-      const response = await loginUser(formData);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-      if (response.success) {
-        router.replace("/home");
-        setUser(response.userData);
-      } else {
-        setError(response.error);
+    try {
+      // Sign in through the real /api/auth/sign-in/email HTTP endpoint (the
+      // better-auth client), not the loginUser server action. A Server
+      // Action's Set-Cookie has to be forwarded via next/headers, and that
+      // forwarding doesn't reliably reach the browser on the OpenNext
+      // Cloudflare Workers runtime — the session gets created in D1 but the
+      // browser never ends up with the cookie, so the very next
+      // getSession() call comes back empty. A normal fetch response's
+      // Set-Cookie is handled by the browser's own cookie jar directly, so
+      // it isn't subject to that gap.
+      const { data, error: signInError } = await signIn.email({
+        email,
+        password,
+      });
+
+      if (signInError || !data?.user) {
+        setError(signInError?.message ?? "Login failed");
+        return;
       }
+
+      setUser({
+        id: data.user.id,
+        email: data.user.email,
+        display_name: data.user.name,
+        role: (data.user as { role?: string }).role ?? "user",
+        created_at: new Date(data.user.createdAt).toISOString(),
+        isDemo: isDemoEmail(data.user.email),
+      });
+      router.replace("/home");
     } catch (error) {
       setError((error as Error).message);
     }

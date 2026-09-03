@@ -16,6 +16,9 @@ export type StoreUser = {
   email: string;
   role: string;
   display_name: string;
+  // True for the public demo account (see src/lib/demo.ts) — UI that
+  // performs writes reads this to disable itself for demo visitors.
+  isDemo: boolean;
 };
 type UserT = {
   user: StoreUser | undefined | null;
