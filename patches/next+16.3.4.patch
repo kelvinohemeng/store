@@ -1,0 +1,69 @@
+diff --git a/node_modules/next/dist/esm/server/og/cache-image-response.js b/node_modules/next/dist/esm/server/og/cache-image-response.js
+index 87055e8..0cb06e1 100644
+--- a/node_modules/next/dist/esm/server/og/cache-image-response.js
++++ b/node_modules/next/dist/esm/server/og/cache-image-response.js
+@@ -11,11 +11,9 @@ import { prerenderToNodeStream } from 'react-server-dom-webpack/static';
+ // eslint-disable-next-line import/no-extraneous-dependencies
+ import { createFromNodeStream } from 'react-server-dom-webpack/client';
+ function importOgModule() {
+-    // Cache Components is Node-only (rejected for the edge runtime at compile
+-    // time), so we always load the Node build. Loading it dynamically keeps the
+-    // heavy `@vercel/og` renderer (satori + WASM) off the module-load path, so
+-    // it's pulled in only when an image is actually rendered.
+-    return import('next/dist/compiled/@vercel/og/index.node.js');
++    // Patched: see esm/server/og/image-response.js — dropped to keep the
++    // Worker under Cloudflare's free-plan size limit.
++    throw new Error("next/og's ImageResponse is disabled in this deployment to keep the Worker under Cloudflare's free-plan size limit.");
+ }
+ /**
+  * Builds the body for a Cache Components `ImageResponse`. The rendered image is
+diff --git a/node_modules/next/dist/esm/server/og/image-response.js b/node_modules/next/dist/esm/server/og/image-response.js
+index 9736758..5bb832f 100644
+--- a/node_modules/next/dist/esm/server/og/image-response.js
++++ b/node_modules/next/dist/esm/server/og/image-response.js
+@@ -1,5 +1,6 @@
+ function importModule() {
+-    return import(process.env.NEXT_RUNTIME === 'edge' ? 'next/dist/compiled/@vercel/og/index.edge.js' : 'next/dist/compiled/@vercel/og/index.node.js');
++    // Patched: see dist/server/og/image-response.js for why.
++    throw new Error("next/og's ImageResponse is disabled in this deployment to keep the Worker under Cloudflare's free-plan size limit.");
+ }
+ // The Cache Components-specific caching path (and its React Flight and Node
+ // stream dependencies) lives in a separate module that is only required for
+diff --git a/node_modules/next/dist/server/og/cache-image-response.js b/node_modules/next/dist/server/og/cache-image-response.js
+index 4be67c9..120bb45 100644
+--- a/node_modules/next/dist/server/og/cache-image-response.js
++++ b/node_modules/next/dist/server/og/cache-image-response.js
+@@ -19,11 +19,9 @@ const _manifestssingleton = require("../app-render/manifests-singleton");
+ const _static = require("react-server-dom-webpack/static");
+ const _client = require("react-server-dom-webpack/client");
+ function importOgModule() {
+-    // Cache Components is Node-only (rejected for the edge runtime at compile
+-    // time), so we always load the Node build. Loading it dynamically keeps the
+-    // heavy `@vercel/og` renderer (satori + WASM) off the module-load path, so
+-    // it's pulled in only when an image is actually rendered.
+-    return import('next/dist/compiled/@vercel/og/index.node.js');
++    // Patched: see dist/server/og/image-response.js — dropped to keep the
++    // Worker under Cloudflare's free-plan size limit.
++    throw new Error("next/og's ImageResponse is disabled in this deployment to keep the Worker under Cloudflare's free-plan size limit.");
+ }
+ function getCachedImageResponseBody(args) {
+     return new ReadableStream({
+diff --git a/node_modules/next/dist/server/og/image-response.js b/node_modules/next/dist/server/og/image-response.js
+index 09f2e84..937f1a9 100644
+--- a/node_modules/next/dist/server/og/image-response.js
++++ b/node_modules/next/dist/server/og/image-response.js
+@@ -9,7 +9,13 @@ Object.defineProperty(exports, "ImageResponse", {
+     }
+ });
+ function importModule() {
+-    return import(process.env.NEXT_RUNTIME === 'edge' ? 'next/dist/compiled/@vercel/og/index.edge.js' : 'next/dist/compiled/@vercel/og/index.node.js');
++    // Patched: the real @vercel/og bundles (resvg.wasm + yoga.wasm, ~1.4MB)
++    // pull the Worker over Cloudflare's free-plan 3 MiB size limit even
++    // though this app never renders an ImageResponse. Dropping the dynamic
++    // import keeps esbuild from bundling either variant; if ImageResponse
++    // is ever actually used, this will throw at call time instead of at
++    // deploy time — remove this patch (see patches/next+*.patch) then.
++    throw new Error("next/og's ImageResponse is disabled in this deployment to keep the Worker under Cloudflare's free-plan size limit.");
+ }
+ // The Cache Components-specific caching path (and its React Flight and Node
+ // stream dependencies) lives in a separate module that is only required for

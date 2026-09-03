@@ -2,11 +2,9 @@ import { checkAdminAuth } from "@/actions/auth";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
-// The real admin-role gate. Kept out of proxy.ts (middleware) on purpose —
-// checking the session there would need a D1/DB call, and Cloudflare's
-// OpenNext adapter flags DB-touching middleware as experimental "Node.js
-// middleware". A route-group layout does the same job through the normal,
-// fully-supported request path instead. /admin/login lives outside this
+// The real admin-role gate, on the normal request path rather than in
+// middleware — see the comment in src/app/login/layout.tsx for why this
+// project has no proxy.ts at all. /admin/login lives outside this route
 // group so it isn't gated by it.
 export const dynamic = "force-dynamic";
 

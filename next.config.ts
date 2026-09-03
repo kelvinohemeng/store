@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
+  // Used to be a NextResponse.redirect in proxy.ts (middleware). Moved here
+  // so the redirect is static config instead of code that needs a Worker
+  // request to run — see the comment in src/app/login/layout.tsx for why
+  // proxy.ts was removed.
+  async redirects() {
+    return [{ source: "/", destination: "/home", permanent: false }];
+  },
   // Next bundles @vercel/og's resvg/yoga wasm (~1.4MB) into the server
   // build unconditionally, as part of its built-in icon/opengraph-image
   // route machinery — even though nothing here uses next/og or defines an
