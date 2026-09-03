@@ -93,7 +93,6 @@ export const verifyPayment = async (reference: string) => {
     );
 
     const data = (await response.json()) as PaystackVerifyResponse;
-    console.log("Paystack verification response:", data);
 
     if (!data.status) {
       console.error("Paystack API error:", data.message);
@@ -112,7 +111,6 @@ export const verifyPayment = async (reference: string) => {
     const existingOrder = await checkExistingOrder(paystack_reference);
 
     if (existingOrder) {
-      console.log("Order already exists:", existingOrder);
       return {
         success: existingOrder.payment_status === "paid",
         status: existingOrder.payment_status,

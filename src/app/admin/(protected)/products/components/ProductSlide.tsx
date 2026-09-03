@@ -14,7 +14,7 @@ import { SlideHeading } from "@/components/_slideComponents";
 export default function CreateProductSlide() {
   const queryClient = useQueryClient(); // Add this line
 
-  const categories = ["Dress", "Shoe", "Glasses"];
+  const categories = ["Apparel", "Shoe", "Glasses"];
   // const [selectedCategory, setSelectedCategory] = useState("");
 
   // const handleCategoryChange = (

@@ -3,10 +3,19 @@
 import { useProductStore } from "@/store";
 import { Button } from "../../_storeComponents/Buttons";
 import Stack from "@/components/global-components/Stack";
+import { Product } from "@/lib/types";
 import Image from "next/image";
 
-export default function ProductTypes() {
-  const { products } = useProductStore();
+export default function ProductTypes({
+  // Server-fetched catalog for this page's first render — see the same
+  // prop on ProductSection for why, and why the store takes over once it
+  // has data.
+  initialProducts = [],
+}: {
+  initialProducts?: Product[];
+}) {
+  const storeProducts = useProductStore((state) => state.products);
+  const products = storeProducts.length > 0 ? storeProducts : initialProducts;
 
   if (!products || products.length === 0) {
     return null;
@@ -17,7 +26,7 @@ export default function ProductTypes() {
   // and are passed straight through as the `?type=` query param so the
   // /products filter chips can match them without translation.
   const productTypes = {
-    dress: products.filter((product) => product.product_type === "dress"),
+    apparel: products.filter((product) => product.product_type === "apparel"),
     shoe: products.filter((product) => product.product_type === "shoe"),
     glasses: products.filter((product) => product.product_type === "glasses"),
   };
@@ -25,7 +34,7 @@ export default function ProductTypes() {
   // Display labels only — the object keys above are what gets sent as
   // `?type=` and must stay equal to the raw product_type values.
   const typeLabels: Record<string, string> = {
-    dress: "Dresses",
+    apparel: "Apparel",
     shoe: "Shoes",
     glasses: "Glasses",
   };

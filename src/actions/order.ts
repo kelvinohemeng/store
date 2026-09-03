@@ -64,8 +64,6 @@ export async function createOrder(orderData: OrderData) {
 
     if (!order) throw new Error("Order creation failed: No order returned.");
 
-    console.log("Order created:", order);
-
     if (orderData.order_items.length) {
       await db.insert(orderItems).values(
         orderData.order_items.map((item) => ({

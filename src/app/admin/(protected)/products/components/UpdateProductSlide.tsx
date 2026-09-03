@@ -19,7 +19,7 @@ const UpdateProductSlide = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const categories = ["Shoe", "Dress", "Glasses"];
+  const categories = ["Shoe", "Apparel", "Glasses"];
   const { state, setState } = useSlide();
   const ref = useRef<HTMLFormElement>(null);
   const [newImages, setNewImages] = useState<File[]>([]);

@@ -3,6 +3,7 @@
 import Stack from "@/components/global-components/Stack";
 import ProductCard from "../components/ProductCard";
 import { useProductStore } from "@/store";
+import { Product } from "@/lib/types";
 import Link from "next/link";
 
 type ProductSectionVariant = "new" | "featured";
@@ -10,11 +11,20 @@ type ProductSectionVariant = "new" | "featured";
 export default function ProductSection({
   title = "Featured",
   variant = "featured",
+  initialProducts = [],
 }: {
   title?: string;
   variant?: ProductSectionVariant;
+  // Server-fetched catalog for this page's first render (see home/page.tsx),
+  // so this section has real products in the initial HTML instead of
+  // waiting on the client-side fetch that fills the global product store.
+  // Once that store has data (from this fetch completing, or from having
+  // already been populated by another page), it takes over as the source
+  // of truth — it's the one that stays fresh across client navigation.
+  initialProducts?: Product[];
 }) {
-  const { products } = useProductStore();
+  const storeProducts = useProductStore((state) => state.products);
+  const products = storeProducts.length > 0 ? storeProducts : initialProducts;
 
   // The two variants must actually show different products, not just carry
   // different titles — "new" is a recency sort, "featured" prioritizes

@@ -26,9 +26,34 @@ const inter = Inter({
   display: "swap",
 });
 
+// Mirrors wrangler.jsonc's `vars.BETTER_AUTH_URL` — the deployed Worker's
+// canonical URL. Kept as a plain constant (rather than read from env) since
+// `metadata` is a static export evaluated at module scope, before any
+// request/Cloudflare context exists.
+const SITE_URL = "https://store.kelvinohemeng59.workers.dev";
+const SITE_NAME = "Oman Kwesi";
+const SITE_DESCRIPTION = "Oman Kwesi — dresses, traditional wear, shoes & glasses.";
+
 export const metadata: Metadata = {
-  title: "Oman Kwesi",
-  description: "Oman Kwesi — dresses, traditional wear, shoes & glasses.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s — ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default async function RootLayout({
