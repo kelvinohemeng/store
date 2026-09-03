@@ -10,7 +10,7 @@ import { useState } from "react";
 export default function Navigation() {
   const { user: storedUser } = useUserData();
   const { setState } = useSlide();
-  const { totalItems } = useCartStore();
+  const { totalItems, _hasHydrated } = useCartStore();
   const path = usePathname();
   const router = useRouter();
   const adminRoutes = path.startsWith("/admin");
@@ -18,7 +18,12 @@ export default function Navigation() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const totalCartItems = totalItems();
+  // The cart is persisted to localStorage, which doesn't exist on the
+  // server — so the real count is only trustworthy once the client has
+  // rehydrated it. Showing 0 until then keeps the first client render
+  // identical to the server-rendered markup instead of a hydration
+  // mismatch (React would otherwise discard and redo this whole subtree).
+  const totalCartItems = _hasHydrated ? totalItems() : 0;
 
   if (adminRoutes) return null;
 
@@ -68,7 +73,7 @@ export default function Navigation() {
                 <button
                   type="button"
                   onClick={() => setSearchOpen(false)}
-                  className="ml-2 grid h-6 w-6 place-items-center"
+                  className="ml-2 grid h-6 w-6 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
                   aria-label="Close search"
                 >
                   <XIcon size={16} />
@@ -78,7 +83,7 @@ export default function Navigation() {
               <button
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search"
-                className="grid h-6 w-6 place-items-center"
+                className="grid h-6 w-6 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
               >
                 <MagnifyingGlassIcon size={20} weight="regular" />
               </button>
@@ -90,7 +95,7 @@ export default function Navigation() {
           <button
             onClick={() => setState("cart")}
             aria-label="Cart"
-            className="activate-cart relative flex h-7 min-w-7 items-center justify-center border border-ink px-1.5 font-sans text-xs font-semibold text-ink"
+            className="activate-cart relative flex h-7 min-w-7 items-center justify-center border border-ink px-1.5 font-sans text-xs font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
           >
             {totalCartItems}
           </button>

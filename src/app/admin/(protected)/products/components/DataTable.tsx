@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSelectedState, useSlide } from "@/store";
 import { Product } from "@/lib/types";
@@ -55,15 +55,11 @@ export function DataTable<TData, TValue>({
   });
 
   const handleRowClick = (row: Product | TData) => {
-    //@ts-ignore
+    // @ts-expect-error — TData is generic here, but this table is always
+    // instantiated with Product rows in practice.
     setSelectedProduct(row);
     setState("view");
-    console.log(row);
   };
-
-  useEffect(() => {
-    console.log(data);
-  }, []);
 
   return (
     <>

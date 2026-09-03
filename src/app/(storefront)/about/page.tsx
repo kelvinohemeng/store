@@ -1,5 +1,6 @@
 import { PrimaryBtn } from "../_storeComponents/Buttons";
 import Stack from "@/components/global-components/Stack";
+import Image from "next/image";
 
 export const metadata = {
   title: "About — Oman Kwesi",
@@ -9,7 +10,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="pt-[62px]">
+    <div className="pt-nav-flush">
       {/* Split intro */}
       <section className="w-full">
         <Stack
@@ -17,11 +18,13 @@ export default function AboutPage() {
           container="full-width"
           className="min-h-[80vh] flex-col md:flex-row"
         >
-          <div className="w-full flex-1 bg-studio">
-            <img
+          <div className="relative w-full flex-1 bg-studio h-[50vh] md:h-[80vh]">
+            <Image
               src="/assets/heroimg.jpg"
               alt="Oman Kwesi"
-              className="h-[50vh] w-full object-cover object-center md:h-[80vh]"
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover object-center"
             />
           </div>
           <div className="flex w-full flex-1 flex-col justify-center gap-6 px-5 py-16 md:px-16">

@@ -2,9 +2,9 @@ import { handlePaystackPurchase } from "@/actions/paystack";
 import { Input } from "@/components/ui/input";
 import { useCartStore, useUserData } from "@/store";
 
-export default function page() {
-  const { items, totalPrice } = useCartStore();
-  const { user: storedUser, setUser } = useUserData();
+export default function CheckoutPage() {
+  const { totalPrice } = useCartStore();
+  const { user: storedUser } = useUserData();
 
   //   const { data, isLoading, isError, isSuccess } = useQuery({
   //     queryKey: ["paystack_initialization"],

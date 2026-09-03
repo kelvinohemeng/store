@@ -17,7 +17,7 @@ export default async function StoreFrontRootLayout({
   const initialUser = await getCurrentStoreUser();
 
   return (
-    <div className="minh-full">
+    <div className="min-h-full">
       <Navigation />
       <LoadProducts />
       <CartSlide />

@@ -3,6 +3,7 @@
 import { useProductStore } from "@/store";
 import { Button } from "../../_storeComponents/Buttons";
 import Stack from "@/components/global-components/Stack";
+import Image from "next/image";
 
 export default function ProductTypes() {
   const { products } = useProductStore();
@@ -11,10 +12,22 @@ export default function ProductTypes() {
     return null;
   }
 
+  // Keys must match the canonical `product_type` values written by the
+  // admin product form (see ProductSlide.tsx / UpdateProductSlide.tsx),
+  // and are passed straight through as the `?type=` query param so the
+  // /products filter chips can match them without translation.
   const productTypes = {
-    dresses: products.filter((product) => product.product_type === "dress"),
-    shoes: products.filter((product) => product.product_type === "shoe"),
+    dress: products.filter((product) => product.product_type === "dress"),
+    shoe: products.filter((product) => product.product_type === "shoe"),
     glasses: products.filter((product) => product.product_type === "glasses"),
+  };
+
+  // Display labels only — the object keys above are what gets sent as
+  // `?type=` and must stay equal to the raw product_type values.
+  const typeLabels: Record<string, string> = {
+    dress: "Dresses",
+    shoe: "Shoes",
+    glasses: "Glasses",
   };
 
   return (
@@ -35,17 +48,19 @@ export default function ProductTypes() {
                 >
                   <div className="absolute top-0 left-0 flex w-full items-start justify-between gap-3 p-6 z-10">
                     <h5 className="font-serif italic text-2xl text-white capitalize">
-                      {type}
+                      {typeLabels[type] ?? type}
                     </h5>
                     <Button type="ghost" link={`/products?type=${type}`}>
                       Explore
                     </Button>
                   </div>
                   <div className="absolute inset-0 bg-black/35 z-[1] transition-all duration-300 group-hover:bg-black/45" />
-                  <img
-                    className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  <Image
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                     src={items[0].image_url[0]}
                     alt={`${type} category`}
+                    fill
+                    sizes="(min-width: 768px) 40vw, 100vw"
                   />
                 </div>
               )

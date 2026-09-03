@@ -6,9 +6,9 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <ProductSection title="New Arrivals" />
+      <ProductSection title="New Arrivals" variant="new" />
       <ProductTypes />
-      <ProductSection />
+      <ProductSection title="Featured" variant="featured" />
     </>
   );
 }

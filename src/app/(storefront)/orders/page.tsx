@@ -12,27 +12,35 @@ export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
   const { user: storedUser } = useUserData();
 
-  async function fetchOrders() {
+  useEffect(() => {
     if (!storedUser?.email) return;
 
-    setLoading(true);
-    try {
-      const result = await getOrdersByEmail(storedUser.email);
-      setOrders(result?.orders);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+    // Guard against setting state from a stale request if the signed-in
+    // user changes (or this unmounts) before the fetch resolves.
+    let cancelled = false;
 
-  useEffect(() => {
-    fetchOrders();
+    async function loadOrders(email: string) {
+      setLoading(true);
+      try {
+        const result = await getOrdersByEmail(email);
+        if (!cancelled) setOrders(result?.orders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        if (!cancelled) setOrders([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadOrders(storedUser.email);
+
+    return () => {
+      cancelled = true;
+    };
   }, [storedUser?.email]);
 
   return (
-    <div className="pt-[120px] px-5 md:px-10 pb-20">
+    <div className="pt-nav-section px-5 md:px-10 pb-20">
       <div className="border-b border-ink/15 pb-6 mb-10">
         <p className="eyebrow">Account</p>
         <h1 className="font-display uppercase tracking-tight text-e-9xl md:text-e-11xl">

@@ -1,11 +1,10 @@
 "use client";
 
 import { useSlide } from "@/store";
-import { OrderData, OrderItem, Product } from "@/lib/types";
+import { OrderData } from "@/lib/types";
 import OrderProduct from "./OrderProduct";
-import { formatDate, useScrollToTopOnView } from "@/Helpers";
+import { formatDate, scrollToTopOnView } from "@/Helpers";
 import { OrderStatusButton } from "./OrderStatusButton";
-import { X } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
 import { SlideHeading } from "@/components/_slideComponents/index";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +20,7 @@ export default function DisplayOrderSlide({
   const { state, setState } = useSlide();
 
   useEffect(() => {
-    useScrollToTopOnView(state, containerRef);
+    scrollToTopOnView(state, containerRef);
   }, [state]);
 
   return (
@@ -39,7 +38,7 @@ export default function DisplayOrderSlide({
         }`}
       >
         {/* Card Name */}
-        <SlideHeading title="Order Details" action="" />
+        <SlideHeading title="Order Details" />
 
         {/* header */}
         <main className="space-y-6">

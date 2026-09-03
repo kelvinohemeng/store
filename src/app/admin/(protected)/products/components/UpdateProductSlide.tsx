@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import ProductButton from "./ProductButton";
 import { useSlide } from "@/store";
 import { updateProduct } from "@/actions/product";
@@ -23,15 +23,22 @@ const UpdateProductSlide = ({
   const { state, setState } = useSlide();
   const ref = useRef<HTMLFormElement>(null);
   const [newImages, setNewImages] = useState<File[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>(
+    product?.image_url || []
+  );
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [sizes, setSizes] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (product) {
-      setExistingImages(product.image_url || []);
-    }
-  }, [product]);
+  // Reset the image draft when a different product is loaded into this
+  // slide-over. Adjusted during render (React's recommended pattern for
+  // "reset state when a prop changes") rather than in a useEffect, so the
+  // reset is visible on the same render instead of causing a cascading
+  // re-render — see https://react.dev/learn/you-might-not-need-an-effect
+  const [lastProductId, setLastProductId] = useState(product?.id);
+  if (product?.id !== lastProductId) {
+    setLastProductId(product?.id);
+    setExistingImages(product?.image_url || []);
+  }
 
   // function to handle size changes
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,7 +164,7 @@ const UpdateProductSlide = ({
           state === "update" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
-        <SlideHeading title="Update Product" action="" />
+        <SlideHeading title="Update Product" />
 
         <form
           ref={ref}
@@ -215,10 +222,14 @@ const UpdateProductSlide = ({
                     key={`new-${index}`}
                     className="relative aspect-square h-[90px] group transition duration-200 bg-neutral-900 rounded-md overflow-hidden"
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element --
+                        transient local blob: preview of a not-yet-uploaded
+                        file; not a remote/static asset next/image can
+                        optimize, and it's gone as soon as the form submits */}
                     <img
                       src={URL.createObjectURL(file)}
                       alt={`New upload ${index + 1}`}
-                      className="object-cover group-hover:opacity-80"
+                      className="w-full h-full object-cover group-hover:opacity-80"
                     />
                     <button
                       type="button"

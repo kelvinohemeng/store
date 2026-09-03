@@ -60,6 +60,13 @@ export interface CartState {
   updateQuantity: (productId: string | number, newQuantity: number) => void;
   totalPrice: () => number;
   totalItems: () => number;
+  // True once zustand/persist has rehydrated `items` from localStorage on
+  // the client. Always false during SSR and the first client render —
+  // gate any always-visible cart-derived UI (cart count badge) on this so
+  // that first render matches the server instead of jumping right after
+  // mount and tripping a hydration-mismatch warning.
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 }
 export interface ProductState {
   products: Product[];

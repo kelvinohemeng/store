@@ -1,15 +1,12 @@
 "use client";
-import { Action } from "@/lib/types";
 import { useSlide } from "@/store";
 import { X } from "@phosphor-icons/react";
-import React from "react";
 
 type SHeadingT = {
   title: string;
-  action: Action;
 };
 
-export const SlideHeading = ({ title, action }: SHeadingT) => {
+export const SlideHeading = ({ title }: SHeadingT) => {
   const { setState } = useSlide();
   const newAction = title.includes("Update") ? "view" : "";
 

@@ -1,7 +1,6 @@
 import { checkAdminAuth } from "@/actions/auth";
 import SidebarNav from "@/app/admin/_admin-components/SidebarNav";
-import { redirect } from "next/navigation";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import ToastProvider from "./_admin-components/ToastProvider";
 
 // Every admin page reads live session/DB state — never prerender this subtree.

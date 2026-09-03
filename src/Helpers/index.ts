@@ -36,7 +36,11 @@ export const formatDate = (dateString: Date): string => {
   })}, ${date.getFullYear()}`;
 };
 
-export function useScrollToTopOnView(
+// Not a hook — it calls no hooks internally, just imperatively touches a
+// ref's scrollTop. It was previously named useScrollToTopOnView, and the
+// `use` prefix made React's hooks linter treat call sites (inside a
+// useEffect body) as a rules-of-hooks violation.
+export function scrollToTopOnView(
   state: string,
   containerRef: RefObject<HTMLDivElement | null>
 ) {

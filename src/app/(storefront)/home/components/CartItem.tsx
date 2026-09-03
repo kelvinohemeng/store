@@ -3,8 +3,9 @@
 import { Product } from "@/lib/types";
 import { useCartStore } from "@/store";
 import { Minus, Plus, X } from "@phosphor-icons/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
+import Image from "next/image";
 
 function CartItem({ item, index }: { item: Product; index: number | string }) {
   const { addItem, removeItem, removeItemById, items } = useCartStore();
@@ -13,10 +14,15 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
   const [isSelectingSize, setIsSelectingSize] = useState(false);
   const [selectedSize, setSelectedSize] = useState(item.selectedSize || "");
 
-  // Update local state when item changes
-  useEffect(() => {
+  // Keep selectedSize in sync when the underlying cart item's size changes
+  // (e.g. this row gets re-matched to a different variant). Adjusted during
+  // render rather than in a useEffect — see the same pattern in
+  // UpdateProductSlide.tsx for why.
+  const [lastSelectedSize, setLastSelectedSize] = useState(item.selectedSize);
+  if (item.selectedSize !== lastSelectedSize) {
+    setLastSelectedSize(item.selectedSize);
     setSelectedSize(item.selectedSize || "");
-  }, [item.selectedSize]);
+  }
 
   const getVariantKey = (item: Product, size: string) =>
     `${item.id}-${size}-${item.selectedColor || ""}`;
@@ -43,8 +49,6 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
       // Pass the current item's selectedSize to properly identify the variant
       removeItemById(item.id, item.selectedSize);
       addItem(updatedVariant, { size });
-
-      console.log("Merged quantities. New quantity:", newQuantity);
     } else {
       // No matching variant exists: treat it as a new variant
       const updatedItem = { ...item, selectedSize: size };
@@ -52,8 +56,6 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
 
       removeItemById(item.id, item.selectedSize);
       addItem(updatedItem, { size });
-
-      console.log("Created new variant:", size);
     }
 
     setIsSelectingSize(false);
@@ -67,31 +69,37 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }} // Animate out when removed
       transition={{ duration: 0.3 }}
-      className="flex gap-3 py-3 p-8 rounded-xl"
+      className="flex gap-3 py-3 p-8"
     >
-      <div className="flex items-center gap-4 rounded-[6px] overflow-hidden">
-        <img
-          className="max-w-[120px] aspect-[1/1.6] w-full object-cover object-center"
-          src={item.image_url[0]}
-          alt=""
-        />
+      <div className="relative max-w-[120px] aspect-[1/1.6] w-full overflow-hidden">
+        {item.image_url[0] && (
+          <Image
+            className="object-cover object-center"
+            src={item.image_url[0]}
+            alt=""
+            fill
+            sizes="120px"
+          />
+        )}
       </div>
 
       <div className="flex flex-col justify-between w-full min-h-full">
         <div className="flex justify-between">
-          <p>{item.product_name}</p>
-          <p>GHC {item.product_price.toFixed(2)}</p>
+          <p className="text-sm font-semibold">{item.product_name}</p>
+          <p className="text-sm font-semibold">
+            GHC {item.product_price.toFixed(2)}
+          </p>
         </div>
 
         <div className="flex flex-col gap-2">
           {/* Size selector */}
           <div className="flex flex-col">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Size</span>
+              <span className="text-xs text-gray-500">Size</span>
               {!isSelectingSize && (
                 <button
                   onClick={() => setIsSelectingSize(true)}
-                  className="text-xs text-blue-500 underline cursor-pointer hover:text-blue-700 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  className="text-xs text-blue-500 cursor-pointer hover:text-blue-700 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 >
                   Change
                 </button>
@@ -105,7 +113,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
                     <button
                       key={size}
                       onClick={() => handleSizeSelect(size)}
-                      className={`px-2 py-1 text-xs border-black/50 rounded cursor-pointer ${
+                      className={`px-3 py-1 text-sm border border-black/10 cursor-pointer ${
                         size === selectedSize
                           ? "bg-black text-white"
                           : "bg-gray-100"
@@ -116,7 +124,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
                   ))}
               </div>
             ) : (
-              <span className="font-medium">
+              <span className="text-md font-medium">
                 {item.selectedSize || "Select a size"}
               </span>
             )}
@@ -132,7 +140,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
 
           {/* Quantity controls */}
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3 bg-black/5 rounded-[4px] px-2 py-1 ">
+            <div className="flex items-center gap-3 bg-black/5 px-2 py-1 ">
               <button
                 className="cursor-pointer"
                 title="add"
@@ -145,7 +153,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
               >
                 <Plus size={12} />
               </button>
-              <p>{item.quantity}</p>
+              <p className="text-sm">{item.quantity}</p>
               <button
                 className="cursor-pointer"
                 title="minus"
@@ -156,7 +164,7 @@ function CartItem({ item, index }: { item: Product; index: number | string }) {
             </div>
             <button
               title="remove_item"
-              className="bg-black/5 rounded-[4px] p-2 cursor-pointer"
+              className="bg-black/5 p-2 cursor-pointer"
               onClick={() => removeItemById(item.id, item.selectedSize)}
             >
               <X size={12} />

@@ -1,22 +1,14 @@
 "use client";
 
 import { getAllOrders } from "@/actions/order";
-import { AdminOrderT, OrderData } from "@/lib/types";
+import { OrderData } from "@/lib/types";
 import { DataTable } from "./components/DataTable";
-import { Payment, columns } from "./components/Columns";
+import { columns } from "./components/Columns";
 import { useQuery } from "@tanstack/react-query";
 import PageHeader from "@/app/admin/_admin-components/PageHeader";
 
 export default function Orders() {
-  // const allOrders = await getAllOrders();
-  // const { orders } = await allOrders;
-
-  const {
-    data: orders,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery<OrderData[]>({
+  const { data: orders } = useQuery<OrderData[]>({
     queryKey: ["orders"],
     queryFn: async () => await getAllOrders(),
   });

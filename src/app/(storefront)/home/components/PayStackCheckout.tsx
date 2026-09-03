@@ -4,10 +4,9 @@ import { storePendingOrder } from "@/actions/order";
 import { handlePaystackPurchase } from "@/actions/paystack";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/Helpers";
-import { OrderData, Product } from "@/lib/types";
-// components/Checkout.tsx
+import { Product } from "@/lib/types";
 import { useCartStore, useUserData } from "@/store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const PayStackCheckout = ({
   amount,
@@ -16,10 +15,12 @@ const PayStackCheckout = ({
   amount: number;
   orderItems: Product[];
 }) => {
-  const [orderNoteLocal, setOrderNoteLocal] = useState("");
+  // No UI sets this yet (order_note is always sent empty) — kept as the
+  // single read path so wiring up a note field later is a one-line change.
+  const [orderNoteLocal] = useState("");
   const formatedAmount = formatCurrency(amount);
   const { clearCart } = useCartStore();
-  const { user: storedUser, setUser } = useUserData();
+  const { user: storedUser } = useUserData();
 
   const handlePayment = async () => {
     const email = storedUser?.email;
@@ -66,25 +67,25 @@ const PayStackCheckout = ({
     }
   };
 
-  useEffect(() => {
-    console.log(storedUser);
-  }, []);
-
   return (
     <div className="space-y-3">
-      <p className="text-xl font-semibold">Subotal: GHC {formatedAmount}</p>
+      <p className="font-sans font-semibold text-ink">
+        Subtotal: GHC {formatedAmount}
+      </p>
       <div className="">
-        <form action={handlePayment} className="checkout flex flex-col gap-1">
+        <form action={handlePayment} className="checkout flex flex-col gap-2">
           <label htmlFor="email">
             <div className="pb-2">
-              <p>Please provide your email</p>
+              <p className="font-body text-sm text-ink/60">
+                Please provide your email
+              </p>
             </div>
             <Input
               name="email"
               type="email"
               placeholder="Enter your email"
               defaultValue={storedUser?.email}
-              className="p-4 h-auto px-6"
+              className="p-4 h-auto px-6 border-ink/20 focus-visible:ring-ink/30"
               disabled={storedUser?.email ? true : false}
             />
           </label>
@@ -92,15 +93,17 @@ const PayStackCheckout = ({
           <button
             disabled={orderItems.length > 0 ? false : true}
             className={`${
-              orderItems.length > 0 ? "cursor-pointer" : "cursor-not-allowed"
-            } border-green-200 border-[3px] py-4 text-center bg-green-600 text-white font-semibold w-full rounded-[8px]`}
+              orderItems.length > 0
+                ? "cursor-pointer bg-ink hover:bg-ink/85"
+                : "cursor-not-allowed bg-ink/40"
+            } border border-ink py-3.5 text-center font-sans text-xs font-semibold uppercase tracking-wide text-paper w-full transition-colors`}
           >
             Proceed to Payment
           </button>
         </form>
         <button
           onClick={() => clearCart()}
-          className=" border-slate-200 border-[3px] py-4 text-center bg-black text-white font-semibold w-full rounded-[8px]"
+          className="mt-2 border border-ink/20 py-3.5 text-center font-sans text-xs font-semibold uppercase tracking-wide text-ink/70 w-full hover:bg-ink/5 transition-colors"
         >
           Clear Cart
         </button>

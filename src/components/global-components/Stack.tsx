@@ -1,4 +1,5 @@
-import { CSSProperties, PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
+import { cn } from "@/lib/utils";
 
 type StackProps = PropsWithChildren & {
   orientation: "horizontal" | "vertical";
@@ -18,9 +19,12 @@ export default function Stack({
   container = "full-width",
   gap = "default",
 }: StackProps) {
+  // No gap value here — gapStyles below is the single source of truth for
+  // gap-*, so the two utilities can't ever land in the compiled CSS with
+  // conflicting values and race on generated rule order.
   const orientationStyles: Record<StackProps["orientation"], string> = {
-    horizontal: "flex gap-1",
-    vertical: "flex flex-col gap-1",
+    horizontal: "flex",
+    vertical: "flex flex-col",
   };
 
   const containerStyles: Record<ContainerType, string> = {
@@ -37,11 +41,12 @@ export default function Stack({
 
   return (
     <div
-      className={`
-        ${orientationStyles[orientation]} 
-        ${containerStyles[container]}
-        ${gapStyles[gap]}
-        ${className || ""}`}
+      className={cn(
+        orientationStyles[orientation],
+        containerStyles[container],
+        gapStyles[gap],
+        className
+      )}
     >
       {children}
     </div>

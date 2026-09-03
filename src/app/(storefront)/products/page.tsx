@@ -3,15 +3,24 @@ import { useProductStore } from "@/store";
 import ProductCard from "../home/components/ProductCard";
 import { useEffect, useState } from "react";
 import Stack from "@/components/global-components/Stack";
-import { Product } from "@/lib/types";
 import { AnimatePresence, motion } from "motion/react";
 import { useSearchParams } from "next/navigation";
+
+// `value` is the canonical `product_type` written by the admin product
+// form — keep this in sync with the categories list in ProductSlide.tsx /
+// UpdateProductSlide.tsx rather than inventing separate display strings.
+// Static, so it lives outside the component instead of being rebuilt every render.
+const filterButtons = [
+  { label: "All", value: "all" },
+  { label: "Dresses", value: "dress" },
+  { label: "Shoes", value: "shoe" },
+  { label: "Glasses", value: "glasses" },
+];
 
 export default function ProductPage() {
   const { products, fetchProducts } = useProductStore();
   const searchParams = useSearchParams();
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilter, setActiveFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
 
   const query = searchParams.get("search")?.toLowerCase().trim() ?? "";
@@ -29,47 +38,43 @@ export default function ProductPage() {
     loadProducts();
   }, [fetchProducts, products.length]);
 
-  // Sync the type query param (from category tiles) into the filter row
-  useEffect(() => {
-    if (typeParam) {
-      const match = filterButtons.find(
-        (f) => f.toLowerCase() === typeParam.toLowerCase()
-      );
-      if (match) setActiveFilter(match);
-    }
-  }, [typeParam]);
+  // Sync the type query param (from home page category tiles) into the
+  // filter row. Adjusted during render rather than in a useEffect — see the
+  // same pattern in UpdateProductSlide.tsx / CartItem.tsx.
+  const [lastTypeParam, setLastTypeParam] = useState(typeParam);
+  if (typeParam !== lastTypeParam) {
+    setLastTypeParam(typeParam);
+    const match = filterButtons.find(
+      (f) => f.value === typeParam?.toLowerCase(),
+    );
+    if (match) setActiveFilter(match.value);
+  }
 
-  useEffect(() => {
-    let result = products;
-
-    if (activeFilter !== "All") {
-      result = result.filter(
-        (product) =>
-          product.product_type.toLowerCase() === activeFilter.toLowerCase()
-      );
-    }
-
-    if (query) {
-      result = result.filter((product) =>
-        product.product_name.toLowerCase().includes(query)
-      );
-    }
-
-    setFilteredProducts(result);
-  }, [products, activeFilter, query]);
+  // Derived from products/activeFilter/query directly — no need to mirror
+  // it into its own state via an effect (see
+  // https://react.dev/learn/you-might-not-need-an-effect).
+  let filteredProducts = products;
+  if (activeFilter !== "all") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.product_type.toLowerCase() === activeFilter,
+    );
+  }
+  if (query) {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.product_name.toLowerCase().includes(query),
+    );
+  }
 
   const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
   };
-
-  const filterButtons = ["All", "Dress", "Tradition", "Shoes", "Glasses"];
 
   return (
     <Stack
       orientation="vertical"
       gap="large"
       container="full-width"
-      className="pt-[120px] px-5 md:px-10 pb-20"
+      className="pt-nav-section px-5 md:px-10 pb-20"
     >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-ink/15 pb-6">
         <div>
@@ -81,16 +86,17 @@ export default function ProductPage() {
         <div className="flex flex-wrap gap-2 h-auto items-center">
           {filterButtons.map((filter) => (
             <button
-              key={filter}
-              onClick={() => handleFilterClick(filter)}
-              className={`px-3 py-1.5 border border-ink font-sans text-sm font-semibold uppercase tracking-wide cursor-pointer transition-all
+              key={filter.value}
+              onClick={() => handleFilterClick(filter.value)}
+              aria-pressed={activeFilter === filter.value}
+              className={`px-3 py-1.5 border border-ink font-sans text-sm font-semibold uppercase tracking-wide cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper
                 ${
-                  activeFilter === filter
+                  activeFilter === filter.value
                     ? "bg-ink text-paper"
                     : "text-ink/70 hover:bg-ink/5"
                 }`}
             >
-              {filter}
+              {filter.label}
             </button>
           ))}
         </div>

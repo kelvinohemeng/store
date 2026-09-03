@@ -1,11 +1,11 @@
-import Link from "next/link";
+import StatusPage from "@/components/global-components/StatusPage";
 
 export default function NotFound() {
   return (
-    <div>
-      <h2>Not Found</h2>
-      <p>Could not find requested resource</p>
-      <Link href="/">Return Home</Link>
-    </div>
+    <StatusPage
+      eyebrow="404"
+      title="Page not found"
+      description="The page you're looking for doesn't exist or may have moved."
+    />
   );
 }

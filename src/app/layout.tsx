@@ -41,7 +41,7 @@ export default async function RootLayout({
       lang="en"
       className={`${anton.variable} ${archivo.variable} ${fraunces.variable} ${inter.variable}`}
     >
-      <body className=" overflow-x-hidden minh-full">
+      <body className="overflow-x-hidden min-h-full">
         <Provider>{children}</Provider>
       </body>
     </html>

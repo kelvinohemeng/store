@@ -12,13 +12,19 @@ const UserProfile = ({ user }: { user: StoreUser }) => {
   const [triggerDD, setTriggerDD] = React.useState<boolean>(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
   const { setUser } = useUserData();
-  async function checkAdmin() {
-    const checkAdminAuthentication = await checkAdminAuth();
-    setIsAdmin(checkAdminAuthentication.isAdmin);
-  }
 
   useEffect(() => {
-    checkAdmin();
+    // Guard against setting state from a stale request if `user` changes
+    // again (or this unmounts) before checkAdminAuth() resolves.
+    let cancelled = false;
+
+    checkAdminAuth().then((result) => {
+      if (!cancelled) setIsAdmin(result.isAdmin);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
   const logOut = async () => {

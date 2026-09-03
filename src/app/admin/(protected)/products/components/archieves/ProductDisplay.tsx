@@ -73,7 +73,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
         </div>
       ) : (
         products.map((product, index) => (
-          <AnimatePresence>
+          <AnimatePresence key={product.id || index}>
             {product.quantity > 0 ? (
               <motion.div
                 key={product.id || index}

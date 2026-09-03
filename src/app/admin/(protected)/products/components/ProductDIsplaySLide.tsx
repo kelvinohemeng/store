@@ -13,9 +13,10 @@ import { deleteProduct } from "@/actions/product";
 import UpdateProductSlide from "./UpdateProductSlide";
 import ProductButton from "./ProductButton";
 import { useQueryClient } from "@tanstack/react-query";
-import { invalidateQueryKey, useScrollToTopOnView } from "@/Helpers";
+import { invalidateQueryKey, scrollToTopOnView } from "@/Helpers";
 import { SlideHeading } from "@/components/_slideComponents";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 export default function ProductDisplaySlide({
   product,
@@ -44,7 +45,7 @@ export default function ProductDisplaySlide({
   };
 
   useEffect(() => {
-    useScrollToTopOnView(state, containerRef);
+    scrollToTopOnView(state, containerRef);
   }, [state]);
 
   return (
@@ -61,7 +62,7 @@ export default function ProductDisplaySlide({
           state === "view" ? "translate-x-[0%]" : "translate-x-[100%]"
         }`}
       >
-        <SlideHeading title="View Product" action="" />
+        <SlideHeading title="View Product" />
 
         <h3 className="text-lg font-semibold text-neutral-900">
           {product?.product_name}
@@ -85,11 +86,13 @@ export default function ProductDisplaySlide({
           >
             {product?.image_url?.map((imageFile, index) => (
               <SwiperSlide key={index} className="w-auto h-auto">
-                <div className="overflow-hidden rounded-2xl max-w-[254px] w-full h-[320px]">
-                  <img
-                    className="w-full h-full object-cover"
+                <div className="relative overflow-hidden rounded-2xl max-w-[254px] w-full h-[320px]">
+                  <Image
+                    className="object-cover"
                     src={imageFile}
                     alt=""
+                    fill
+                    sizes="254px"
                   />
                 </div>
               </SwiperSlide>

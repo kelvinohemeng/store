@@ -9,7 +9,7 @@ type PaystackInitialization = {
   email: string | undefined;
   amount: number;
   callbackUrl?: string;
-  metadata?: {};
+  metadata?: Record<string, string>;
 };
 
 type PaystackInitializeResponse = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { verifyPayment } from "@/actions/paystack";
 import Link from "next/link";
@@ -9,7 +9,6 @@ import { useCartStore } from "@/store";
 function PaymentSuccess() {
   const searchParams = useSearchParams();
   const { clearCart } = useCartStore();
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [verificationStatus, setVerificationStatus] = useState<{
@@ -24,53 +23,48 @@ function PaymentSuccess() {
     [searchParams]
   );
 
-  async function checkPayment() {
-    try {
-      console.log("Reference from URL:", reference);
+  useEffect(() => {
+    if (hasVerified.current) return;
+    hasVerified.current = true;
 
+    async function checkPayment() {
       if (!reference) {
         setMessage("No payment reference found");
         setLoading(false);
         return;
       }
 
-      console.log("Verifying payment with reference:", reference);
-      const response = await verifyPayment(reference);
-      console.log("Verification response:", response);
+      try {
+        const response = await verifyPayment(reference);
+        setVerificationStatus(response);
 
-      setVerificationStatus(response);
-
-      if (response.success) {
+        if (response.success) {
+          setMessage(
+            `Payment successful! Your order #${response.orderId} has been placed.`
+          );
+          clearCart();
+        } else {
+          setMessage(
+            `Payment verification status: ${response.status || "unknown"}. ${
+              response.message
+            }`
+          );
+        }
+      } catch (err) {
+        console.error("Error during payment verification:", err);
         setMessage(
-          `Payment successful! Your order #${response.orderId} has been placed.`
+          "An error occurred during payment verification. Please contact support."
         );
-        clearCart();
-      } else {
-        // More detailed error message
-        setMessage(
-          `Payment verification status: ${response.status || "unknown"}. ${
-            response.message
-          }`
-        );
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error during payment verification:", err);
-      setMessage(
-        "An error occurred during payment verification. Please contact support."
-      );
-    } finally {
-      setLoading(false);
     }
-  }
-  useEffect(() => {
-    if (!reference || hasVerified.current) return;
 
-    hasVerified.current = true;
     checkPayment();
-  }, [reference]);
+  }, [reference, clearCart]);
 
   return (
-    <div className="pt-[120px] flex flex-col items-center justify-center max-w-md mx-auto p-6 space-y-6">
+    <div className="pt-nav-section flex flex-col items-center justify-center max-w-md mx-auto p-6 space-y-6">
       {loading ? (
         <div className="text-center">
           <p className="text-xl font-medium">Verifying payment...</p>

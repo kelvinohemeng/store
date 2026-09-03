@@ -141,10 +141,16 @@ export const useCartStore = create<CartState>()(
       // Get total number of items in cart (sum of quantities)
       totalItems: () =>
         get().items.reduce((sum, item) => sum + item.quantity, 0),
+
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
       name: "cart-storage", // Key for localStorage
       storage: createJSONStorage(() => localStorage), // Use localStorage
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

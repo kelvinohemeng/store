@@ -20,12 +20,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSelectedOrder, useSlide } from "@/store";
 import { OrderItem } from "@/lib/types";
 import DisplayOrderSlide from "./DisplayOrderSlide";
-import { useOrderStore } from "@/store/orders";
 import { CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
 
 interface DataTableProps<TData, TValue> {
@@ -57,15 +56,11 @@ export function DataTable<TData, TValue>({
   });
 
   const handleRowClick = (row: OrderItem | TData) => {
-    //@ts-ignore
+    // @ts-expect-error — TData is generic here, but this table is always
+    // instantiated with OrderData rows in practice.
     setSelectedOrder(row);
     setState("view-order");
-    console.log(row);
   };
-
-  useEffect(() => {
-    console.log(data);
-  }, []);
 
   // Add this function before the return statement
   const shouldCellBeNonClickable = (cell: Cell<TData, unknown>): boolean => {

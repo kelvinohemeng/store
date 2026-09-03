@@ -30,7 +30,10 @@ export default function CreateProductSlide() {
   const [sizes, setSizes] = useState<string[]>([]);
 
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<number[]>([]);
+  // Tracked per-file but not rendered anywhere yet — no progress-bar UI
+  // exists to read it. Kept (rather than dropped) so wiring one up later is
+  // additive instead of re-threading this tracking back in.
+  const [, setUploadProgress] = useState<number[]>([]);
 
   // function to handle size changes
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +127,7 @@ export default function CreateProductSlide() {
           state === "create" ? "translate-x-[0%]" : "translate-x-[100%]"
         } transition-all duration-300`}
       >
-        <SlideHeading title="Create a New Product" action="" />
+        <SlideHeading title="Create a New Product" />
         <form
           ref={ref}
           action={submitAction}
@@ -156,6 +159,10 @@ export default function CreateProductSlide() {
                     key={index}
                     className="relative aspect-square h-[90px] group transition duration-200 bg-neutral-900 rounded-md overflow-hidden"
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element --
+                        transient local blob: preview of a not-yet-uploaded
+                        file; not a remote/static asset next/image can
+                        optimize, and it's gone as soon as the form submits */}
                     <img
                       src={url}
                       alt={`Preview ${index}`}

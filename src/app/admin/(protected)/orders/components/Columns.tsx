@@ -1,39 +1,11 @@
 "use client";
 
-import { updateOrderStatus } from "@/actions/order";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { formatCurrencyGHC, formatDate } from "@/Helpers";
-import {
-  AdminOrderItemT,
-  AdminOrderT,
-  OrderData,
-  OrderItem,
-  Product,
-} from "@/lib/types";
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { OrderData, OrderItem } from "@/lib/types";
+import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
 import { OrderStatusButton } from "./OrderStatusButton";
 import { Badge } from "@/components/ui/badge";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
-
-type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 export const columns: ColumnDef<OrderData>[] = [
   {
@@ -63,14 +35,18 @@ export const columns: ColumnDef<OrderData>[] = [
 
       return (
         <div className="flex -space-x-2">
-          {itemsOrdered.map((item, index) => (
-            <img
-              key={index}
-              className="w-[26px] aspect-square rounded-full border-2 border-white ring-1 ring-neutral-200 object-cover"
-              src={item.product?.image_url[0]}
-              alt=""
-            />
-          ))}
+          {itemsOrdered.map((item, index) =>
+            item.product?.image_url[0] ? (
+              <Image
+                key={index}
+                className="w-[26px] aspect-square rounded-full border-2 border-white ring-1 ring-neutral-200 object-cover"
+                src={item.product.image_url[0]}
+                alt=""
+                width={26}
+                height={26}
+              />
+            ) : null
+          )}
         </div>
       );
     },

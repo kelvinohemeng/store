@@ -4,6 +4,7 @@ import { formatCurrencyGHC } from "@/Helpers";
 import { Product } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -25,10 +26,12 @@ export const columns: ColumnDef<Product>[] = [
         <div className="flex items-center justify-start gap-2 p-2">
           {images.length > 0 ? (
             <div className="flex gap-2 rounded-md overflow-hidden border border-neutral-200">
-              <img
+              <Image
                 src={images[0]}
                 alt={`Image of ${productName}`}
-                className="max-w-[40px] w-full aspect-square  object-cover object-center"
+                width={40}
+                height={40}
+                className="max-w-[40px] w-full aspect-square object-cover object-center"
               />
             </div>
           ) : (

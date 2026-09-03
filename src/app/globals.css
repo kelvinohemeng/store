@@ -35,6 +35,25 @@
   --color-paper: #faf8f4;
   --color-studio: #dfdedb;
   --color-accent: #b8492e;
+
+  /* Fixed-header (Navigation.tsx) clearance, named once instead of as
+     independent hand-typed pt-[Npx] values scattered per page — before this
+     there were three unexplained magic numbers (62/84/120px) that would
+     silently drift out of sync with each other and with the real header if
+     anyone touched Navigation.tsx's padding/font sizes. Three names, not
+     one, because pages genuinely want different amounts of clearance, not
+     because the header itself changes height:
+       - nav-flush: just clears the header, for full-bleed content that
+         starts immediately below it (Hero.tsx, about/page.tsx)
+       - nav-sticky: also used as a `top-*`/`py-*` value for a `sticky`
+         column, so this one specifically must stay accurate or the sticky
+         column will show a gap/overlap on scroll (products/[slug]/page.tsx)
+       - nav-section: header clearance plus visual breathing room before a
+         listing page's heading (products/page.tsx, orders/page.tsx)
+     Update these here if Navigation.tsx's own height ever changes. */
+  --spacing-nav-flush: 62px;
+  --spacing-nav-sticky: 84px;
+  --spacing-nav-section: 120px;
 }
 
 @layer utilities {
@@ -192,7 +211,11 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+  /* No body rule here on purpose — the real body background/text color is
+     set once, above, by the ink/paper design system. This block used to
+     also set `body { @apply bg-background text-foreground; }`, which won
+     the cascade (same layer, declared later) and silently overrode
+     bg-paper/text-ink with the unused shadcn defaults. Admin components
+     under components/ui/* still use --border/--ring/--input etc. via the
+     tokens above, so those stay. */
 }

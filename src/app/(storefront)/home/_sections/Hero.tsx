@@ -1,14 +1,18 @@
 import Stack from "@/components/global-components/Stack";
 import { PrimaryBtn } from "../../_storeComponents/Buttons";
+import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="w-full h-screen pt-[62px]">
+    <section className="w-full h-screen pt-nav-flush">
       <div className="relative bg-ink/10 w-full h-full p-6 md:p-10">
-        <img
-          className="absolute inset-0 object-center object-cover w-full h-full"
+        <Image
+          className="object-center object-cover"
           src="/assets/heroimg.jpg"
           alt="Oman Kwesi — dresses, traditional wear, shoes and glasses"
+          fill
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
         <Stack
@@ -26,9 +30,9 @@ export default function Hero() {
           </div>
           <div className="w-full">
             <p className="text-white max-w-xl font-body">
-              Dresses, traditional wear, shoes and glasses — chosen for
-              people who dress like it matters. New pieces every week,
-              shipped across Ghana and beyond.
+              Dresses, traditional wear, shoes and glasses — chosen for people
+              who dress like it matters. New pieces every week, shipped across
+              Ghana and beyond.
             </p>
           </div>
         </Stack>

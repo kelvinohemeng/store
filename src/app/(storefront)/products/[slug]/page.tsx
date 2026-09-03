@@ -5,6 +5,7 @@ import AddToCartButton from "../_components/AddToCartButton";
 import Link from "next/link";
 import ProductSection from "../../home/_sections/ProductSection";
 import Stack from "@/components/global-components/Stack";
+import Image from "next/image";
 
 export default async function ProductDetails({
   params,
@@ -18,15 +19,15 @@ export default async function ProductDetails({
   }
 
   return (
-    <section className="pt-[84px] h-full">
+    <section className="pt-nav-sticky h-full">
       <Stack
         orientation="horizontal"
         gap="medium"
         container="default"
-        className="min-h-full flex-col px-5 md:flex-row md:px-10 lg:px-16"
+        className="h-200 flex-col px-5 md:flex-row md:px-10 lg:px-16"
       >
         {/* left side */}
-        <div className="h-full md:h-[calc(100vh-120px)] w-full flex-1 flex items-center md:sticky md:top-[84px] py-10 md:py-[84px]">
+        <div className="h-full w-full flex-1 flex items-center md:sticky md:top-nav-sticky py-10 md:py-nav-sticky">
           <div className="w-full space-y-6">
             <div className="flex items-center gap-2 font-body text-sm">
               <Link
@@ -78,14 +79,18 @@ export default async function ProductDetails({
         </div>
 
         {/* right side */}
-        <div className="w-full flex-1 space-y-1 pb-10 md:pb-0">
+        <div className="w-full h-full flex-1 space-y-1 pb-10 md:pb-0">
           {product?.image_url.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={product.product_name}
-              className="max-h-[80vh] w-full bg-studio object-cover object-top"
-            />
+            <div key={index} className="relative w-full h-full bg-studio">
+              <Image
+                src={image}
+                alt={product.product_name}
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                priority={index === 0}
+                className="object-cover object-top"
+              />
+            </div>
           ))}
         </div>
       </Stack>
